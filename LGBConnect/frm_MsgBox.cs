@@ -15,9 +15,18 @@ namespace LGBConnect
     /// </summary>
     public partial class frm_MsgBox : Form
     {
+        System.Windows.Forms.Timer t = new System.Windows.Forms.Timer();
         public frm_MsgBox()
         {
             InitializeComponent();
+        }
+
+        private void frm_MsgBox_Load(object sender, EventArgs e)
+        {
+            t.Interval = 15000; // specify interval time as you want
+            t.Tick += new EventHandler(timer_Tick);
+            t.Start();
+
         }
 
         private void btn_Ok_Click(object sender, EventArgs e)
@@ -31,6 +40,12 @@ namespace LGBConnect
             lbl_Text.Text = text;
             this.Show();
             this.TopMost = true;
+        }
+
+        void timer_Tick(object sender, EventArgs e)
+        {
+            t.Stop();
+            this.Close();
         }
     }
 }

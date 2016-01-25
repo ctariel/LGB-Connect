@@ -197,6 +197,8 @@ namespace LGBConnect
                             if (type_poste == "usager")
                             {
                                 goFullscreen(true);
+                                Fonction.blocageGestionnaireDesTaches(true);
+                                Fonction.blocageChangementMotDePasse(true);
                             }
                             if (type_poste == "animateur")
                             {

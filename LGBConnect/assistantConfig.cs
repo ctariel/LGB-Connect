@@ -253,7 +253,7 @@ namespace LGBConnect
             foreach (NetworkInterface nic in NetworkInterface.GetAllNetworkInterfaces())
             {
 
-                if (nic.NetworkInterfaceType == NetworkInterfaceType.Ethernet && nic.OperationalStatus == OperationalStatus.Up)
+                if (nic.OperationalStatus == OperationalStatus.Up)
                 {
                     ComboboxItem item = new ComboboxItem();
                     if (nic.GetPhysicalAddress().ToString().Length == 12) {
@@ -328,6 +328,7 @@ namespace LGBConnect
         {
             // mise à jour des variables principales
             String usage = "";
+            Dictionary<string, string> config = new Dictionary<string, string>();
 
             parentForm.nom_poste = comboBox_Poste.Text;
             parentForm.id_poste = comboBox_Poste.SelectedValue.ToString();
@@ -349,7 +350,7 @@ namespace LGBConnect
             try {
                 // ecriture du fichier de configuration
 
-                Dictionary<string, string> config = new Dictionary<string, string>();
+
 
                 config["mysql_hote"] = parentForm.db_hote;
                 config["mysql_base"] = parentForm.db_base;
@@ -357,7 +358,14 @@ namespace LGBConnect
                 config["mysql_mot_de_passe"] = parentForm.db_motdepasse;
                 config["poste_nom"] = parentForm.nom_poste;
                 config["poste_id"] = parentForm.id_poste;
-                config["poste_adresse_MAC"] = (comboBox_MAC.SelectedItem as ComboboxItem).Value.ToString();
+                if (comboBox_MAC.Items.Count > 0)
+                {
+                    config["poste_adresse_MAC"] = (comboBox_MAC.SelectedItem as ComboboxItem).Value.ToString();
+                }
+                else
+                {
+                    config["poste_adresse_MAC"] = "";
+                }
                 config["poste_type"] = parentForm.type_poste;
                 //Fonction.Base64Encode("");
 
@@ -378,7 +386,7 @@ namespace LGBConnect
 
                 string sql = "UPDATE tab_computer " +
                     "SET usage_computer='" + usage + "', " +
-                    "adresse_mac_computer='" + (comboBox_MAC.SelectedItem as ComboboxItem).Text.ToString() + "', " +
+                    "adresse_mac_computer='" + config["poste_adresse_MAC"] + "', " +
                     "adresse_ip_computer='" + lbl_IP.Text + "', " +
                     "nom_hote_computer='" + parentForm.nom_poste + "', " +
                     "configurer_epnconnect_computer='1'" +

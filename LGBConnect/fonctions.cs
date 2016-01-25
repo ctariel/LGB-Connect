@@ -78,11 +78,14 @@ namespace LGBConnect
         /// <param name="blocage"></param>
         public static void blocageGestionnaireDesTaches(bool blocage)
         {
+            //MessageBox.Show("Début du blocage");
+
             ServiceFonctionsAdmin.FonctionsAdminClient client = new ServiceFonctionsAdmin.FonctionsAdminClient();
 
             foreach (KeyValuePair<string, string> entry in client.lireProfiles())
             {
                 string userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\').Last();
+
                 if (userName.Equals(entry.Key))
                 {
                     client.desactiverGestionnaireDesTaches(entry.Value, blocage);
@@ -175,7 +178,7 @@ namespace LGBConnect
 
                 rdr.Close();
 
-                sql = "SELECT sum(duree_resa) as dureedujour FROM `tab_resa` WHERE id_user_resa = 3 AND date_resa = '" + DateTime.Today.ToString("yyyy-MM-dd") + "'";
+                sql = "SELECT sum(duree_resa) as dureedujour FROM `tab_resa` WHERE id_user_resa = "+ id_utilisateur + " AND date_resa = '" + DateTime.Today.ToString("yyyy-MM-dd") + "'";
                 cmd = new MySqlCommand(sql, cnn);
                 rdr = cmd.ExecuteReader();
                 while (rdr.Read())

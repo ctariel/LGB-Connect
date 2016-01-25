@@ -65,6 +65,7 @@
             this.Controls.Add(this.lbl_Text);
             this.Name = "frm_MsgBox";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Load += new System.EventHandler(this.frm_MsgBox_Load);
             this.ResumeLayout(false);
 
         }

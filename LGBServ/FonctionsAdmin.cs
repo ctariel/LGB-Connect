@@ -103,19 +103,30 @@ namespace LGBServ
 
             RegistryKey OurKey = Registry.LocalMachine;
             OurKey = OurKey.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList", true); // refusé par l'UAC sous windows 10....
+            //Service_LGB.WriteLog("Accès à la clé ProfileList");
+
+
             Dictionary<String, String> liste = new Dictionary<string, string>();
 
             try {
                 foreach (string Keyname in OurKey.GetSubKeyNames())
                 {
+                    //Service_LGB.WriteLog("Clé en cours : " + Keyname);
                     if (Keyname.StartsWith("S-1-5-21"))
                     {
-                        RegistryKey key = Registry.Users.OpenSubKey(Keyname).OpenSubKey("Volatile Environment");
-                        if (key.GetValue("USERNAME") != null)
+                        //Service_LGB.WriteLog("Clé trouvé : " + Keyname);
+                        RegistryKey key = Registry.Users.OpenSubKey(Keyname);
+                        if (key != null)
                         {
-                            Service_LGB.WriteLog("Profil trouvé : name  = " + key.GetValue("USERNAME").ToString() + " / SSID = " + Keyname);
-                            liste[key.GetValue("USERNAME").ToString()] = Keyname;
+                            key = key.OpenSubKey("Volatile Environment");
+                            //Service_LGB.WriteLog("Ouverture de Volatile");
+                            if (key.GetValue("USERNAME") != null)
+                            {
+                                Service_LGB.WriteLog("Profil trouvé : name  = " + key.GetValue("USERNAME").ToString() + " / SSID = " + Keyname);
+                                liste[key.GetValue("USERNAME").ToString()] = Keyname;
+                            }
                         }
+
                     }
                 }
                 return liste;

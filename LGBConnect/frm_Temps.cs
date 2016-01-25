@@ -168,7 +168,7 @@ namespace LGBConnect
         {
 
             if (parentForm.statut_utilisateur == 1) { // utilisateur standard
-               tuerLesProcess();
+               //tuerLesProcess();
             }
 
 

@@ -22,13 +22,13 @@
         "Entry"
         {
         "MsmKey" = "8:_47498E6A7860256499E5BD14B86B7703"
-        "OwnerKey" = "8:_F044970FCD1B4BD6907E1FF14F111F64"
+        "OwnerKey" = "8:_4C7ED981A3654CCDB13472BDB7A41AE8"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_47498E6A7860256499E5BD14B86B7703"
-        "OwnerKey" = "8:_4C7ED981A3654CCDB13472BDB7A41AE8"
+        "OwnerKey" = "8:_F044970FCD1B4BD6907E1FF14F111F64"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -64,13 +64,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_0A606129339103BE60CCF819CC34047A"
+        "OwnerKey" = "8:_47498E6A7860256499E5BD14B86B7703"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_47498E6A7860256499E5BD14B86B7703"
+        "OwnerKey" = "8:_0A606129339103BE60CCF819CC34047A"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -384,15 +384,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:LGBConnect"
-        "ProductCode" = "8:{8CF57944-CCA3-41E1-89F9-A04AD70E8EC7}"
-        "PackageCode" = "8:{799F791F-40C6-4974-A501-EBD443AE9282}"
+        "ProductCode" = "8:{35B5F3DF-442A-495E-8146-723A42F354FB}"
+        "PackageCode" = "8:{5EF0C8A1-5E17-4B83-83E5-8E3EEA542552}"
         "UpgradeCode" = "8:{6A7B3082-68C6-42ED-ACBD-614AE3A2BB68}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:0.1.0"
+        "ProductVersion" = "8:0.1.1"
         "Manufacturer" = "8:LGB"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
