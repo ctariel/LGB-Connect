@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using Microsoft.Win32;
 using System.ComponentModel;
 using System.Data;
@@ -71,6 +72,20 @@ namespace LGBConnect
 
             return strBuilder.ToString();
         }
+
+        /// <summary>
+        /// Fonction simple pour la vérification d'un email
+        /// </summary>
+        /// <param name="strIn"></param>
+        /// <returns></returns>
+        public static bool IsValidEmail(string strIn)
+        {
+            // Return true if strIn is in valid e-mail format.
+            return Regex.IsMatch(strIn,
+                   @"^(?("")("".+?""@)|(([0-9a-zA-Z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-zA-Z])@))" +
+                   @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,6}))$");
+        }
+
 
         /// <summary>
         /// Bloquer la possibilité d'accèder au gestionnaire des taches

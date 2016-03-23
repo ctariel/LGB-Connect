@@ -119,6 +119,12 @@
     <Compile Include="frm_MsgBox.Designer.cs">
       <DependentUpon>frm_MsgBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="frm_preinscription.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frm_preinscription.Designer.cs">
+      <DependentUpon>frm_preinscription.cs</DependentUpon>
+    </Compile>
     <Compile Include="frm_Temps.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -150,6 +156,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frm_MsgBox.resx">
       <DependentUpon>frm_MsgBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frm_preinscription.resx">
+      <DependentUpon>frm_preinscription.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frm_Temps.resx">
       <DependentUpon>frm_Temps.cs</DependentUpon>

@@ -38,8 +38,11 @@
             this.textBox_Utilisateur = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.lbl_Espace = new System.Windows.Forms.Label();
+            this.groupBox_inscription = new System.Windows.Forms.GroupBox();
+            this.btn_inscription = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.groupBox_inscription.SuspendLayout();
             this.SuspendLayout();
             // 
             // notifyIcon1
@@ -56,14 +59,16 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.Controls.Add(this.groupBox1, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.lbl_Espace, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.groupBox_inscription, 1, 2);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 3;
+            this.tableLayoutPanel1.RowCount = 4;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 150F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 75F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(758, 470);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(684, 462);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // groupBox1
@@ -74,7 +79,7 @@
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.textBox_Utilisateur);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Location = new System.Drawing.Point(232, 163);
+            this.groupBox1.Location = new System.Drawing.Point(195, 121);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(294, 144);
             this.groupBox1.TabIndex = 1;
@@ -135,12 +140,33 @@
             this.tableLayoutPanel1.SetColumnSpan(this.lbl_Espace, 3);
             this.lbl_Espace.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_Espace.ForeColor = System.Drawing.Color.LightSeaGreen;
-            this.lbl_Espace.Location = new System.Drawing.Point(333, 67);
+            this.lbl_Espace.Location = new System.Drawing.Point(296, 46);
             this.lbl_Espace.Name = "lbl_Espace";
             this.lbl_Espace.Size = new System.Drawing.Size(91, 26);
             this.lbl_Espace.TabIndex = 2;
             this.lbl_Espace.Text = "Espace";
             this.lbl_Espace.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // groupBox_inscription
+            // 
+            this.groupBox_inscription.Controls.Add(this.btn_inscription);
+            this.groupBox_inscription.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox_inscription.Location = new System.Drawing.Point(195, 271);
+            this.groupBox_inscription.Name = "groupBox_inscription";
+            this.groupBox_inscription.Size = new System.Drawing.Size(294, 69);
+            this.groupBox_inscription.TabIndex = 3;
+            this.groupBox_inscription.TabStop = false;
+            this.groupBox_inscription.Text = "Vous n\'avez pas encore de compte ?";
+            // 
+            // btn_inscription
+            // 
+            this.btn_inscription.Location = new System.Drawing.Point(70, 28);
+            this.btn_inscription.Name = "btn_inscription";
+            this.btn_inscription.Size = new System.Drawing.Size(158, 22);
+            this.btn_inscription.TabIndex = 4;
+            this.btn_inscription.Text = "Inscrivez-vous !";
+            this.btn_inscription.UseVisualStyleBackColor = true;
+            this.btn_inscription.Click += new System.EventHandler(this.btn_inscription_Click);
             // 
             // MainForm
             // 
@@ -148,9 +174,10 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(758, 470);
+            this.ClientSize = new System.Drawing.Size(684, 462);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "MainForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "LGB Connect";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.Load += new System.EventHandler(this.MainForm_Load);
@@ -159,6 +186,7 @@
             this.tableLayoutPanel1.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.groupBox_inscription.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -175,6 +203,8 @@
         private System.Windows.Forms.TextBox textBox_Utilisateur;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label lbl_Espace;
+        private System.Windows.Forms.GroupBox groupBox_inscription;
+        private System.Windows.Forms.Button btn_inscription;
     }
 }
 

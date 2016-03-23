@@ -95,7 +95,7 @@ namespace LGBConnect
         {
             parentForm.connectionString = "server=" + parentForm.db_hote + ";database=" + parentForm.db_base + ";uid=" + parentForm.db_utilisateur + ";pwd=" + parentForm.db_motdepasse + ";"; ;
             MySqlConnection cnn;
-            System.Diagnostics.Debug.WriteLine("connection string = " + parentForm.connectionString);
+            //System.Diagnostics.Debug.WriteLine("connection string = " + parentForm.connectionString);
             try
             {
                 cnn = new MySqlConnection(parentForm.connectionString);

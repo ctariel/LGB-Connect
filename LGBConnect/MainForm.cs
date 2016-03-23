@@ -26,10 +26,10 @@ namespace LGBConnect
         public string db_hote, db_base, db_utilisateur, db_motdepasse, connectionString, nom_poste, id_poste, type_poste;
         public string login_utilisateur, login_motdepasse;
         public string nom_utilisateur, prenom_utilisateur;
-        public int id_utilisateur, statut_utilisateur;
+        public int id_utilisateur, statut_utilisateur, id_espace;
         public long id_resa;
 
-        System.Windows.Forms.Timer timer_MAJEtat = new System.Windows.Forms.Timer();
+        Timer timer_MAJEtat = new Timer();
 
         ToolStripMenuItem menuItemParametres, menuItemFinSession, menuItemQuitter;
         frm_Temps frmTemps;
@@ -71,6 +71,20 @@ namespace LGBConnect
 
         }
 
+        private void btn_inscription_Click(object sender, EventArgs e)
+        {
+            frm_preinscription form_preinscription = new frm_preinscription(this);
+            this.TopMost = false;
+            form_preinscription.Show();
+            if (type_poste == "usager")
+            {
+                form_preinscription.TopMost = true;
+                form_preinscription.FormBorderStyle = FormBorderStyle.None;
+                form_preinscription.WindowState = FormWindowState.Maximized;
+                form_preinscription.Bounds = Screen.PrimaryScreen.Bounds;
+            }
+        }
+
         private void MainForm_Load(object sender, EventArgs e)
         {
             int retour = 0;
@@ -103,10 +117,12 @@ namespace LGBConnect
 
         private void MainForm_Shown(object sender, EventArgs e)
         {
+            id_espace = 0;
             notifyIcon1.Icon = Properties.Resources.logo_256;
             notifyIcon1.Text = "LGBConnect";
             notifyIcon1.Visible = true;
             notifyIcon1.ShowBalloonTip(5000, "LGB Connect", "Chargé !", ToolTipIcon.Info);
+            groupBox_inscription.Hide();
             this.Hide();
             MySqlConnection cnn = new MySqlConnection(connectionString);
             try
@@ -121,6 +137,7 @@ namespace LGBConnect
                     while (rdr.Read())
                     {
                         lbl_Espace.Text = (String)rdr["nom_espace"] + "\n" + (String)rdr["nom_salle"];
+                        id_espace = (int)rdr["id_espace"];
                     }
                 }
                 else
@@ -128,6 +145,30 @@ namespace LGBConnect
                     MessageBox.Show("Pas de salle trouvée pour ce poste !");
                 }
                 rdr.Close();
+
+                sql = "SELECT page_inscription_logiciel FROM tab_config_logiciel WHERE id_espace = " + id_espace + "";
+                cmd = new MySqlCommand(sql, cnn);
+                rdr = cmd.ExecuteReader();
+                if (rdr.HasRows)
+                {
+                    while (rdr.Read())
+                    {
+                        //MessageBox.Show("config epn trouvée !");
+                        if ( (int)rdr["page_inscription_logiciel"] == 0)
+                        {
+                            groupBox_inscription.Hide();
+                            //MessageBox.Show("inscription cachée !");
+                        } else
+                        {
+                            groupBox_inscription.Show();
+                            //MessageBox.Show("inscription ok !");
+                        }
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Pas de config epnConnect trouvée pour ce poste !");
+                }
             }
             catch (Exception ex)
             {
