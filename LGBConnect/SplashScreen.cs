@@ -35,10 +35,28 @@ namespace LGBConnect
             progressBar_Splash.Step = 50;
 
             if (verification_Config() == 0 ) {
+                if (parentForm.debug == "all")
+                {
+                    parentForm.writeLog("SplashScreen.cs->chargement() : Config ok -----------------");
+                    parentForm.writeLog("mysql - hote :" + parentForm.db_hote);
+                    parentForm.writeLog("mysql - base :" + parentForm.db_base);
+                    parentForm.writeLog("mysql - utilisateur :" + parentForm.db_utilisateur);
+                    parentForm.writeLog("mysql - mot de passe :" + parentForm.db_motdepasse);
+                    parentForm.writeLog("poste - nom :" + parentForm.poste_nom);
+                    parentForm.writeLog("poste - id :" + parentForm.poste_id);
+                    parentForm.writeLog("poste - MAC :" + parentForm.poste_MAC);
+                    parentForm.writeLog("poste - type :" + parentForm.poste_type);
+                    parentForm.writeLog("poste - debug :" + parentForm.debug);
+                    parentForm.writeLog("SplashScreen.cs->chargement() : Config ok -----------------");
 
+                }
                 progressBar_Splash.PerformStep();
                 if (verification_Connexion_Base() == 0)
                 {
+                    if (parentForm.debug == "all")
+                    {
+                        parentForm.writeLog("SplashScreen.cs-> chargement() : connexion à la base ok ");
+                    }
                     progressBar_Splash.PerformStep();
                     this.Hide();
                     return 0;
@@ -75,9 +93,11 @@ namespace LGBConnect
                 parentForm.db_base = config["mysql_base"];
                 parentForm.db_utilisateur = config["mysql_utilisateur"];
                 parentForm.db_motdepasse = config["mysql_mot_de_passe"];
-                parentForm.nom_poste = config["poste_nom"];
-                parentForm.id_poste = config["poste_id"];
-                parentForm.type_poste = config["poste_type"];
+                parentForm.poste_nom = config["poste_nom"];
+                parentForm.poste_id = config["poste_id"];
+                parentForm.poste_MAC = config["poste_adresse_MAC"];
+                parentForm.poste_type = config["poste_type"];
+                parentForm.debug = config["debug"];
                 return 0;
             }
             else

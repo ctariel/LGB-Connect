@@ -54,9 +54,9 @@ namespace LGBConnect
                 parentForm.db_base = config["mysql_base"];
                 parentForm.db_utilisateur = config["mysql_utilisateur"];
                 parentForm.db_motdepasse = config["mysql_mot_de_passe"];
-                parentForm.nom_poste = config["poste_nom"];
-                parentForm.id_poste = config["poste_id"];
-                parentForm.type_poste = config["poste_type"];
+                parentForm.poste_nom = config["poste_nom"];
+                parentForm.poste_id = config["poste_id"];
+                parentForm.poste_type = config["poste_type"];
                 textBox_Hote.Text = parentForm.db_hote;
                 textBox_Base.Text = parentForm.db_base;
                 textBox_Utilisateur.Text = parentForm.db_utilisateur;
@@ -184,12 +184,12 @@ namespace LGBConnect
             MySqlConnection cnn = new MySqlConnection(parentForm.connectionString);
             try
             {
-                if (parentForm.nom_poste == "") { 
+                if (parentForm.poste_nom == "") { 
                     sql = "SELECT  `id_computer`,`nom_computer` FROM `tab_computer` WHERE `configurer_epnconnect_computer`!='1'";
                 }
                 else
                 {
-                    sql = "SELECT `id_computer`,`nom_computer` FROM `tab_computer` WHERE `configurer_epnconnect_computer`!='1' or nom_computer='" + parentForm.nom_poste + "'";
+                    sql = "SELECT `id_computer`,`nom_computer` FROM `tab_computer` WHERE `configurer_epnconnect_computer`!='1' or nom_computer='" + parentForm.poste_nom + "'";
 
                 }
                 MySqlDataAdapter da_Postes = new MySqlDataAdapter(sql, cnn);
@@ -204,9 +204,9 @@ namespace LGBConnect
 
                 comboBox_Poste.DataSource = ds_Postes.Tables[0];
 
-                if (parentForm.nom_poste != "")
+                if (parentForm.poste_nom != "")
                 {
-                    comboBox_Poste.SelectedIndex = comboBox_Poste.FindStringExact(parentForm.nom_poste);
+                    comboBox_Poste.SelectedIndex = comboBox_Poste.FindStringExact(parentForm.poste_nom);
                 }
             }
             catch (Exception ex)
@@ -308,7 +308,7 @@ namespace LGBConnect
 
         private void configureTypePoste()
         {
-            if (parentForm.type_poste == "animateur")
+            if (parentForm.poste_type == "animateur")
             {
                 radioButton_PosteAnimateur.Checked = true;
             }
@@ -330,19 +330,19 @@ namespace LGBConnect
             String usage = "";
             Dictionary<string, string> config = new Dictionary<string, string>();
 
-            parentForm.nom_poste = comboBox_Poste.Text;
-            parentForm.id_poste = comboBox_Poste.SelectedValue.ToString();
+            parentForm.poste_nom = comboBox_Poste.Text;
+            parentForm.poste_id = comboBox_Poste.SelectedValue.ToString();
 
             if (radioButton_PosteAnimateur.Checked)
             {
-                parentForm.type_poste = "animateur";
+                parentForm.poste_type = "animateur";
                 usage = "2";
             }
             else
             {
                 if (radioButton_PosteUsager.Checked)
                 {
-                    parentForm.type_poste = "usager";
+                    parentForm.poste_type = "usager";
                     usage = "1";
                 }
             }
@@ -356,8 +356,8 @@ namespace LGBConnect
                 config["mysql_base"] = parentForm.db_base;
                 config["mysql_utilisateur"] = parentForm.db_utilisateur;
                 config["mysql_mot_de_passe"] = parentForm.db_motdepasse;
-                config["poste_nom"] = parentForm.nom_poste;
-                config["poste_id"] = parentForm.id_poste;
+                config["poste_nom"] = parentForm.poste_nom;
+                config["poste_id"] = parentForm.poste_id;
                 if (comboBox_MAC.Items.Count > 0)
                 {
                     config["poste_adresse_MAC"] = (comboBox_MAC.SelectedItem as ComboboxItem).Value.ToString();
@@ -366,7 +366,7 @@ namespace LGBConnect
                 {
                     config["poste_adresse_MAC"] = "";
                 }
-                config["poste_type"] = parentForm.type_poste;
+                config["poste_type"] = parentForm.poste_type;
                 //Fonction.Base64Encode("");
 
                 ServiceFonctionsAdmin.FonctionsAdminClient client = new ServiceFonctionsAdmin.FonctionsAdminClient();
@@ -388,9 +388,9 @@ namespace LGBConnect
                     "SET usage_computer='" + usage + "', " +
                     "adresse_mac_computer='" + config["poste_adresse_MAC"] + "', " +
                     "adresse_ip_computer='" + lbl_IP.Text + "', " +
-                    "nom_hote_computer='" + parentForm.nom_poste + "', " +
+                    "nom_hote_computer='" + parentForm.poste_nom + "', " +
                     "configurer_epnconnect_computer='1'" +
-                    " WHERE nom_computer='" + parentForm.nom_poste + "'";
+                    " WHERE nom_computer='" + parentForm.poste_nom + "'";
                 Debug.WriteLine("SQL : " + sql);
 
                 MySqlCommand cmd = new MySqlCommand(sql, cnn);

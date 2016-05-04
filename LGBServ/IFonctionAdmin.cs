@@ -25,6 +25,9 @@ namespace LGBServ
 
         [OperationContract]
         Dictionary<string, string> lireConfiguration();
+
+        [OperationContract]
+        void writeLog(string message);
     }
 
 }

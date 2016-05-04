@@ -25,7 +25,7 @@ namespace LGBConnect
 
         frm_MsgBox msgBox_deconnexion;
 
-        int temps_restant = 120;
+        int temps_restant = 0;
         int deconnexion_auto = 0;
 
         public frm_Temps(MainForm mainForm)
@@ -36,6 +36,10 @@ namespace LGBConnect
 
         private void frm_Temps_Load(object sender, EventArgs e)
         {
+            if (parentForm.debug == "all")
+            {
+                parentForm.writeLog("frm_Temps.cs->frm_Temps_Load");
+            }
 
             this.FormBorderStyle = FormBorderStyle.None;
             this.Left = Screen.PrimaryScreen.WorkingArea.Width - this.Width;
@@ -47,13 +51,23 @@ namespace LGBConnect
 
             // début de la session
             heureConnexion = DateTime.Now;
+            if (parentForm.debug == "all")
+            {
+                parentForm.writeLog("frm_Temps.cs->frm_Temps_Load : début de session à " + heureConnexion.ToString());
+            }
 
             t.Interval = 1000; // specify interval time as you want
             t.Tick += new EventHandler(timer_Tick);
             t.Start();
 
-            if (parentForm.statut_utilisateur == 1) //utilisateur
+            if (parentForm.statut_utilisateur == 1)
+            {//utilisateur
                 temps_restant = Fonction.get_temps_restant(parentForm.id_utilisateur, parentForm.connectionString);
+                if (parentForm.debug == "all")
+                {
+                    parentForm.writeLog("frm_Temps.cs->frm_Temps_Load : temps restant = " + temps_restant);
+                }
+            }
             else // admin ou animateur
                 temps_restant = 600; //arbitraire --> 10h00
 
@@ -71,17 +85,29 @@ namespace LGBConnect
                     if (!Convert.IsDBNull(rdr["deconnexion_auto_logiciel"]))
                     {
                         deconnexion_auto = System.Convert.ToInt32(rdr["deconnexion_auto_logiciel"]);
+                        if (parentForm.debug == "all")
+                        {
+                            parentForm.writeLog("frm_Temps.cs->frm_Temps_Load : deconnexion_auto =  " + deconnexion_auto);
+                        }
+
                     }
                 }
 
                 rdr.Close();
 
-                sql = "INSERT INTO `tab_resa` (`id_computer_resa`, `id_user_resa`, `dateresa_resa`, `debut_resa`, `duree_resa`, `date_resa`, `status_resa`) VALUES ('" + parentForm.id_poste + "',   '" + parentForm.id_utilisateur + "', '" + heureConnexion.ToString("yyyy-MM-dd") + "', '" + (heureConnexion.Minute + heureConnexion.Hour * 60).ToString() + "', " + temps_restant.ToString() +", '" + heureConnexion.ToString("yyyy-MM-dd") + "','0')";
-                System.Diagnostics.Debug.WriteLine("SQL : " + sql);
-
+                sql = "INSERT INTO `tab_resa` (`id_computer_resa`, `id_user_resa`, `dateresa_resa`, `debut_resa`, `duree_resa`, `date_resa`, `status_resa`) VALUES ('" + parentForm.poste_id + "',   '" + parentForm.id_utilisateur + "', '" + heureConnexion.ToString("yyyy-MM-dd") + "', '" + (heureConnexion.Minute + heureConnexion.Hour * 60).ToString() + "', " + temps_restant.ToString() +", '" + heureConnexion.ToString("yyyy-MM-dd") + "','0')";
+                if (parentForm.debug == "all")
+                {
+                    parentForm.writeLog("frm_Temps.cs->frm_Temps_Load : inscription du début de la résa sql =  " + sql);
+                }
+                
                 cmd = new MySqlCommand(sql, cnn);
                 rdr = cmd.ExecuteReader();
                 parentForm.id_resa = cmd.LastInsertedId;
+                if (parentForm.debug == "all")
+                {
+                    parentForm.writeLog("frm_Temps.cs->frm_Temps_Load : id resa en cours =  " + parentForm.id_resa);
+                }
                 rdr.Close();
             }
             catch (Exception ex)
@@ -94,9 +120,12 @@ namespace LGBConnect
 
         void timer_Tick(object sender, EventArgs e)
         {
-
             System.TimeSpan diff = DateTime.Now - heureConnexion;
             lbl_Chrono.Text = new DateTime(diff.Ticks).ToString("HH:mm:ss");
+            if (parentForm.debug == "all")
+            {
+                //parentForm.writeLog("frm_Temps.cs->timer_Tick : " + lbl_Chrono.Text);
+            }
 
             /// vérification du statut. Si le poste a été libéré depuis la console, status_resa est différent de zéro
             MySqlConnection cnn = new MySqlConnection(parentForm.connectionString);
@@ -104,6 +133,7 @@ namespace LGBConnect
             {
                 cnn.Open();
                 String sql = "SELECT `status_resa` FROM `tab_resa` WHERE `id_user_resa`= '"+ parentForm.id_utilisateur + "' AND `id_resa`= '" + parentForm.id_resa +"'";
+
                 MySqlCommand cmd = new MySqlCommand(sql, cnn);
                 MySqlDataReader rdr = cmd.ExecuteReader();
                 while (rdr.Read())
@@ -117,6 +147,12 @@ namespace LGBConnect
                     }
                     if (statut != 0)
                     {
+                        if (parentForm.debug == "all")
+                        {
+                            parentForm.writeLog("frm_Temps.cs->timer_Tick : déconnexion forcée depuis la console");
+                        }
+                        msgBox_deconnexion = new frm_MsgBox();
+                        msgBox_deconnexion.Show("Déconnexion forcé depuis la console !", "Avertissement", 10000);
                         // deconnexion forcée
                         this.Close();
                     }
@@ -135,10 +171,16 @@ namespace LGBConnect
             // si la déconnexion automatique est activée
             if (deconnexion_auto == 1)
             {
-                msgBox_deconnexion = new frm_MsgBox();
                 if ((temps_restant - diff.Minutes) == 2 && diff.Seconds == 0)
                 {
-                    msgBox_deconnexion.Show("Déconnexion automatique dans 2 minutes ! Pensez à sauvegarder vos documents !", "Avertissement");
+                    if (parentForm.debug == "all")
+                    {
+                        parentForm.writeLog("frm_Temps.cs->timer_Tick : déconnexion programmée dans 2 minutes.");
+                    }
+
+                    msgBox_deconnexion = new frm_MsgBox();
+                    msgBox_deconnexion.Show("Déconnexion automatique dans 2 minutes ! Pensez à sauvegarder vos documents !", "Avertissement", 119000);
+                    msgBox_deconnexion.TopMost = true;
                     lbl_Chrono.ForeColor = System.Drawing.Color.Red;
                 }
                 if ((temps_restant - diff.Minutes) == 0 && diff.Seconds == 0)
@@ -148,17 +190,26 @@ namespace LGBConnect
                     t2.Start();
                     Thread.Sleep(5000);
                     t2.Abort();*/
+                    if (parentForm.debug == "all")
+                    {
+                        parentForm.writeLog("frm_Temps.cs->timer_Tick : message de déconnexion");
+                    }
+
                     if (msgBox_deconnexion.IsDisposed)
                     {
                         msgBox_deconnexion = new frm_MsgBox();
                     }
-                    msgBox_deconnexion.Show("Déconnexion automatique !! Au revoir !", "Avertissement");
+                    msgBox_deconnexion.Show("Déconnexion automatique !! Au revoir !", "Avertissement", 10000);
 
                 }
-                if ((temps_restant-diff.Minutes) <= 0 && diff.Seconds >= 5)
+                if ((temps_restant-diff.Minutes) <= 0 && diff.Seconds >= 10)
                 {
                     if (!msgBox_deconnexion.IsDisposed)
                         msgBox_deconnexion.Close();
+                    if (parentForm.debug == "all")
+                    {
+                        parentForm.writeLog("frm_Temps.cs->timer_Tick : déconnexion réelle");
+                    }
                     this.Close();
                 }
             }
@@ -175,6 +226,11 @@ namespace LGBConnect
             heureDeconnexion = DateTime.Now;
             System.TimeSpan diff = heureDeconnexion - heureConnexion;
             //MessageBox.Show("diff " + diff.ToString());
+            if (parentForm.debug == "all")
+            {
+                parentForm.writeLog("frm_Temps.cs->frm_Temps_FormClosed : heure de déconnexion : " + heureDeconnexion.ToString());
+                parentForm.writeLog("frm_Temps.cs->frm_Temps_FormClosed : temps passé : " + new DateTime(diff.Ticks).Minute.ToString());
+            }
 
             MySqlConnection cnn = new MySqlConnection(parentForm.connectionString);
             try
@@ -188,7 +244,10 @@ namespace LGBConnect
 
                 String sql = "UPDATE tab_resa SET `duree_resa`='" + new DateTime(diff.Ticks).Minute.ToString() + "', `status_resa`='" + statut_resa.ToString() + "' WHERE `id_resa`='" + parentForm.id_resa + "'";
                 //sprintf(chainesql, "UPDATE tab_resa SET `duree_resa`='%d', `status_resa`='%d' WHERE `id_resa`='%d' ", *temps_passer, *status_resa, *id_resa);
-                System.Diagnostics.Debug.WriteLine("SQL : " + sql);
+                if (parentForm.debug == "all")
+                {
+                    parentForm.writeLog("frm_Temps.cs->frm_Temps_FormClosed : inscription de la fin de la résa sql =  " + sql);
+                }
 
                 MySqlCommand cmd = new MySqlCommand(sql, cnn);
                 MySqlDataReader rdr = cmd.ExecuteReader();
@@ -208,7 +267,7 @@ namespace LGBConnect
         }
         /// <summary>
         /// méthode un peu bourrin pour fermer les fenêtres onveres par l'utilisateur.
-        /// Donne des résultats mitigés
+        /// Donne des résultats mitigés, désactivée pour le moment
         /// </summary>
         private void tuerLesProcess()
         {

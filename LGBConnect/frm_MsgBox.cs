@@ -23,10 +23,7 @@ namespace LGBConnect
 
         private void frm_MsgBox_Load(object sender, EventArgs e)
         {
-            t.Interval = 15000; // specify interval time as you want
-            t.Tick += new EventHandler(timer_Tick);
-            t.Start();
-
+  
         }
 
         private void btn_Ok_Click(object sender, EventArgs e)
@@ -34,10 +31,13 @@ namespace LGBConnect
             this.Close();
         }
 
-        public void Show(String text, String title)
+        public void Show(String text, String title, int timeout)
         {
             this.Text = title;
             lbl_Text.Text = text;
+            t.Interval = timeout;
+            t.Tick += new EventHandler(timer_Tick);
+            t.Start();
             this.Show();
             this.TopMost = true;
         }

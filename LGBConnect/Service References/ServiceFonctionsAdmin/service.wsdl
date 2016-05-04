@@ -37,6 +37,12 @@
   <wsdl:message name="IFonctionsAdmin_lireConfiguration_OutputMessage">
     <wsdl:part name="parameters" element="tns:lireConfigurationResponse" />
   </wsdl:message>
+  <wsdl:message name="IFonctionsAdmin_writeLog_InputMessage">
+    <wsdl:part name="parameters" element="tns:writeLog" />
+  </wsdl:message>
+  <wsdl:message name="IFonctionsAdmin_writeLog_OutputMessage">
+    <wsdl:part name="parameters" element="tns:writeLogResponse" />
+  </wsdl:message>
   <wsdl:portType name="IFonctionsAdmin">
     <wsdl:operation name="desactiverGestionnaireDesTaches">
       <wsdl:input wsaw:Action="http://tempuri.org/IFonctionsAdmin/desactiverGestionnaireDesTaches" message="tns:IFonctionsAdmin_desactiverGestionnaireDesTaches_InputMessage" />
@@ -57,6 +63,10 @@
     <wsdl:operation name="lireConfiguration">
       <wsdl:input wsaw:Action="http://tempuri.org/IFonctionsAdmin/lireConfiguration" message="tns:IFonctionsAdmin_lireConfiguration_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IFonctionsAdmin/lireConfigurationResponse" message="tns:IFonctionsAdmin_lireConfiguration_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="writeLog">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFonctionsAdmin/writeLog" message="tns:IFonctionsAdmin_writeLog_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IFonctionsAdmin/writeLogResponse" message="tns:IFonctionsAdmin_writeLog_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="BasicHttpBinding_IFonctionsAdmin" type="tns:IFonctionsAdmin">
@@ -99,6 +109,15 @@
     </wsdl:operation>
     <wsdl:operation name="lireConfiguration">
       <soap:operation soapAction="http://tempuri.org/IFonctionsAdmin/lireConfiguration" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="writeLog">
+      <soap:operation soapAction="http://tempuri.org/IFonctionsAdmin/writeLog" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>

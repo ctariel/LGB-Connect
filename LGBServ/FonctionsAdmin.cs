@@ -184,7 +184,14 @@ namespace LGBServ
                 config["mysql_mot_de_passe"] = ini.IniReadValue("mysql", "mot_de_passe").Trim('\0');
                 config["poste_nom"] = ini.IniReadValue("poste", "nom").Trim('\0');
                 config["poste_id"] = ini.IniReadValue("poste", "id").Trim('\0');
+                config["poste_adresse_MAC"] = ini.IniReadValue("poste", "adresse_MAC").Trim('\0');
                 config["poste_type"] = ini.IniReadValue("poste", "type").Trim('\0');
+                config["debug"] = "no";
+                if (ini.IniReadValue("poste", "debug") == "all")
+                {
+                    Service_LGB.WriteLog("activation du debug");
+                    config["debug"] = "all";
+                }
                 return config;
             }
             else
@@ -192,6 +199,11 @@ namespace LGBServ
                 return null;
             }
 
+        }
+
+        public void writeLog(string message)
+        {
+            Service_LGB.WriteLog("client : " + message);
         }
     }
 }

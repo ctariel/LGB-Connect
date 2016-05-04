@@ -522,6 +522,8 @@ namespace LGBConnect
 
                     cmd.ExecuteNonQuery();
 
+                    MessageBox.Show("Votre pré-inscription est enregistrée. Veuillez vous adresser au responsable de l'espace pour sa validation.");
+
                     this.Close();
                 }
                 catch (Exception ex)

@@ -44,6 +44,12 @@ namespace LGBConnect.ServiceFonctionsAdmin {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IFonctionsAdmin/lireConfiguration", ReplyAction="http://tempuri.org/IFonctionsAdmin/lireConfigurationResponse")]
         System.Threading.Tasks.Task<System.Collections.Generic.Dictionary<string, string>> lireConfigurationAsync();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IFonctionsAdmin/writeLog", ReplyAction="http://tempuri.org/IFonctionsAdmin/writeLogResponse")]
+        void writeLog(string message);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IFonctionsAdmin/writeLog", ReplyAction="http://tempuri.org/IFonctionsAdmin/writeLogResponse")]
+        System.Threading.Tasks.Task writeLogAsync(string message);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -111,6 +117,14 @@ namespace LGBConnect.ServiceFonctionsAdmin {
         
         public System.Threading.Tasks.Task<System.Collections.Generic.Dictionary<string, string>> lireConfigurationAsync() {
             return base.Channel.lireConfigurationAsync();
+        }
+        
+        public void writeLog(string message) {
+            base.Channel.writeLog(message);
+        }
+        
+        public System.Threading.Tasks.Task writeLogAsync(string message) {
+            return base.Channel.writeLogAsync(message);
         }
     }
 }
