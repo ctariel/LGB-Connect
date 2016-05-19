@@ -111,15 +111,15 @@ namespace LGBServ
             try {
                 foreach (string Keyname in OurKey.GetSubKeyNames())
                 {
-                    //Service_LGB.WriteLog("Clé en cours : " + Keyname);
+                    Service_LGB.WriteLog("Clé en cours : " + Keyname);
                     if (Keyname.StartsWith("S-1-5-21"))
                     {
-                        //Service_LGB.WriteLog("Clé trouvé : " + Keyname);
+                        Service_LGB.WriteLog("Clé trouvé : " + Keyname);
                         RegistryKey key = Registry.Users.OpenSubKey(Keyname);
                         if (key != null)
                         {
                             key = key.OpenSubKey("Volatile Environment");
-                            //Service_LGB.WriteLog("Ouverture de Volatile");
+                            Service_LGB.WriteLog("Ouverture de Volatile");
                             if (key.GetValue("USERNAME") != null)
                             {
                                 Service_LGB.WriteLog("Profil trouvé : name  = " + key.GetValue("USERNAME").ToString() + " / SSID = " + Keyname);

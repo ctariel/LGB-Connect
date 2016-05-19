@@ -120,11 +120,26 @@ namespace LGBConnect
 
         void timer_Tick(object sender, EventArgs e)
         {
-            System.TimeSpan diff = DateTime.Now - heureConnexion;
-            lbl_Chrono.Text = new DateTime(diff.Ticks).ToString("HH:mm:ss");
+
+            DateTime heureDeconnexion = heureConnexion.AddMinutes(this.temps_restant);
+
+            System.TimeSpan diff = heureDeconnexion - DateTime.Now;
+            System.TimeSpan diff1 = DateTime.Now - heureConnexion;
+
+            if (diff.Ticks >= DateTime.MinValue.Ticks)
+            {
+                lbl_temps_restant.Text = new DateTime(diff.Ticks).ToString("HH:mm:ss");
+            }
+            else
+            {
+                lbl_temps_restant.Text = "00:00:00";
+            }
+
+            lbl_temps_utilise.Text = new DateTime(diff1.Ticks).ToString("HH:mm:ss");
+
             if (parentForm.debug == "all")
             {
-                //parentForm.writeLog("frm_Temps.cs->timer_Tick : " + lbl_Chrono.Text);
+                //parentForm.writeLog("frm_Temps.cs->timer_Tick : " + lbl_temps_restant.Text);
             }
 
             /// vérification du statut. Si le poste a été libéré depuis la console, status_resa est différent de zéro
@@ -152,7 +167,7 @@ namespace LGBConnect
                             parentForm.writeLog("frm_Temps.cs->timer_Tick : déconnexion forcée depuis la console");
                         }
                         msgBox_deconnexion = new frm_MsgBox();
-                        msgBox_deconnexion.Show("Déconnexion forcé depuis la console !", "Avertissement", 10000);
+                        msgBox_deconnexion.Show("Déconnexion forcée depuis la console !", "Avertissement", 10000);
                         // deconnexion forcée
                         this.Close();
                     }
@@ -171,7 +186,7 @@ namespace LGBConnect
             // si la déconnexion automatique est activée
             if (deconnexion_auto == 1)
             {
-                if ((temps_restant - diff.Minutes) == 2 && diff.Seconds == 0)
+                if ((Math.Floor(diff.TotalMinutes)) == 2 && diff.Seconds == 0)
                 {
                     if (parentForm.debug == "all")
                     {
@@ -181,9 +196,9 @@ namespace LGBConnect
                     msgBox_deconnexion = new frm_MsgBox();
                     msgBox_deconnexion.Show("Déconnexion automatique dans 2 minutes ! Pensez à sauvegarder vos documents !", "Avertissement", 119000);
                     msgBox_deconnexion.TopMost = true;
-                    lbl_Chrono.ForeColor = System.Drawing.Color.Red;
+                    lbl_temps_restant.ForeColor = System.Drawing.Color.Red;
                 }
-                if ((temps_restant - diff.Minutes) == 0 && diff.Seconds == 0)
+                if ((Math.Floor(diff.TotalMinutes)) < 0)
                 {
                     //MessageBox.Show("Déconnexion automatique !! Au revoir !", "Fin de session", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     /*Thread t2 = new Thread(() => MessageBox.Show("", "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation));
@@ -202,7 +217,7 @@ namespace LGBConnect
                     msgBox_deconnexion.Show("Déconnexion automatique !! Au revoir !", "Avertissement", 10000);
 
                 }
-                if ((temps_restant-diff.Minutes) <= 0 && diff.Seconds >= 10)
+                if (diff.TotalMinutes < -0.16) // environ 10 secondes
                 {
                     if (!msgBox_deconnexion.IsDisposed)
                         msgBox_deconnexion.Close();
@@ -225,11 +240,12 @@ namespace LGBConnect
 
             heureDeconnexion = DateTime.Now;
             System.TimeSpan diff = heureDeconnexion - heureConnexion;
+            Double temp_passe = Math.Floor(diff.TotalMinutes);
             //MessageBox.Show("diff " + diff.ToString());
             if (parentForm.debug == "all")
             {
                 parentForm.writeLog("frm_Temps.cs->frm_Temps_FormClosed : heure de déconnexion : " + heureDeconnexion.ToString());
-                parentForm.writeLog("frm_Temps.cs->frm_Temps_FormClosed : temps passé : " + new DateTime(diff.Ticks).Minute.ToString());
+                parentForm.writeLog("frm_Temps.cs->frm_Temps_FormClosed : temps passé : " + temp_passe);
             }
 
             MySqlConnection cnn = new MySqlConnection(parentForm.connectionString);
@@ -242,7 +258,7 @@ namespace LGBConnect
                 else
                     statut_resa = 2;
 
-                String sql = "UPDATE tab_resa SET `duree_resa`='" + new DateTime(diff.Ticks).Minute.ToString() + "', `status_resa`='" + statut_resa.ToString() + "' WHERE `id_resa`='" + parentForm.id_resa + "'";
+                String sql = "UPDATE tab_resa SET `duree_resa`='" + temp_passe + "', `status_resa`='" + statut_resa.ToString() + "' WHERE `id_resa`='" + parentForm.id_resa + "'";
                 //sprintf(chainesql, "UPDATE tab_resa SET `duree_resa`='%d', `status_resa`='%d' WHERE `id_resa`='%d' ", *temps_passer, *status_resa, *id_resa);
                 if (parentForm.debug == "all")
                 {

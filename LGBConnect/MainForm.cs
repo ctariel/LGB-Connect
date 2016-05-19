@@ -160,7 +160,7 @@ namespace LGBConnect
                     while (rdr.Read())
                     {
                         //MessageBox.Show("config epn trouvée !");
-                        if ( (int)rdr["page_inscription_logiciel"] == 0)
+                        if ((int)rdr["page_inscription_logiciel"] == 0)
                         {
                             groupBox_inscription.Hide();
                             if (this.debug == "all")
@@ -168,7 +168,8 @@ namespace LGBConnect
                                 this.writeLog("mainForm.cs->MainForm_Shown : préinscription désactivée");
                             }
                             //MessageBox.Show("inscription cachée !");
-                        } else
+                        }
+                        else
                         {
                             groupBox_inscription.Show();
                             if (this.debug == "all")
@@ -183,12 +184,37 @@ namespace LGBConnect
                 {
                     MessageBox.Show("Pas de config epnConnect trouvée pour ce poste ! Veuillez revoir la configuration du poste et de CyberGestionnaire !");
                 }
+                rdr.Close();
+
+                // verification en base si une reservation est deja active sur le poste
+                // si c'est le cas, il y a eu un problème avec le logiciel...
+                // 2 solutions possibles :
+                // - on clot de force la réservation. On pourrait analyser le temps passé en fonction des données de la résa,
+                //   mais si on considère qu'il y a eu un probleme, ce n'est sans doute pas la bonne approche.
+                //   Il est sans doute préférable de clore la résa avec une durée = 0 pour ne pas pénaliser l'usager
+                // - on rouvre le poste avec l'identifiant trouvé dans la résa. Charge ensuite à frm_temps de se dépatouiller avec ca.
+                //   Ce n'est pas l'approche que je retiens
+                sql = "SELECT * FROM tab_resa WHERE id_computer_resa = " + this.poste_id + " AND status_resa = '0'";
+                cmd = new MySqlCommand(sql, cnn);
+                rdr = cmd.ExecuteReader();
+                if (rdr.HasRows) // une resa en cours a ete trouvée !
+                {
+                    if (this.debug == "all")
+                    {
+                        this.writeLog("mainForm.cs->MainForm_Shown : resa en cours trouvée");
+                    }
+                    rdr.Close();
+                    // on met la durée à 0, et on lcot la resa
+                    sql = "UPDATE tab_resa SET duree_resa = '0', status_resa = '1' where id_computer_resa = " + this.poste_id + " AND status_resa = '0'";
+                    cmd = new MySqlCommand(sql, cnn);
+                    cmd.ExecuteReader();
+                }
+
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Connexion echouée !!" + ex.ToString());
             }
-            cnn.Close();
 
             if (poste_type == "usager")
             {
@@ -211,7 +237,10 @@ namespace LGBConnect
                 }
                 this.Show();
             }
+
+
         }
+
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
@@ -225,11 +254,11 @@ namespace LGBConnect
             Fonction.blocageChangementMotDePasse(false);
             timer_MAJEtat.Stop();
             //exit application when form is closed
-            Application.Exit();
             if (this.debug == "all")
             {
                 this.writeLog("mainForm.cs->MainForm_FormClosed : fin du nettoyage");
             }
+            Application.Exit();
         }
 
         private void btn_inscription_Click(object sender, EventArgs e)
@@ -280,8 +309,6 @@ namespace LGBConnect
                         query = query.Replace(p.ParameterName, p.Value.ToString());
                     }
                     this.writeLog(query);
-
-                    this.writeLog("mainForm.cs->btn_Connexion_Click : requete sql -------------------");
                 }
 
                 MySqlDataReader rdr = cmd.ExecuteReader();
@@ -305,10 +332,14 @@ namespace LGBConnect
                             this.writeLog("statut utilisateur : " + statut_utilisateur);
                         }
 
-                        // il y a un grand ménage à faire dans cette fonction !!!
+                        // il y a un grand ménage à faire dans cette fonction !!! beaucoup de trop de redondances !!
 
                         if (statut_utilisateur != 1) // admin ou animateur
                         {
+                            if (this.debug == "all")
+                            {
+                                this.writeLog("mainForm.cs->btn_Connexion_Click : connexion animateur");
+                            }
                             goFullscreen(false);
                             blocageMenu(false);
                             Fonction.blocageGestionnaireDesTaches(false);
@@ -317,10 +348,14 @@ namespace LGBConnect
                             frmTemps = new frm_Temps(this);
                             frmTemps.ShowInTaskbar = false;
                             frmTemps.ShowDialog();
-                            resetFormLogin();
                             if (poste_type == "usager")
                             {
+                                if (this.debug == "all")
+                                {
+                                    this.writeLog("mainForm.cs->btn_Connexion_Click : remise en place des blocages après connexion animateur");
+                                }
                                 goFullscreen(true);
+                                blocageMenu(true);
                                 Fonction.blocageGestionnaireDesTaches(true);
                                 Fonction.blocageChangementMotDePasse(true);
                             }
@@ -438,6 +473,7 @@ namespace LGBConnect
             {
                 Fonction.blocageGestionnaireDesTaches(false);
                 Fonction.blocageChangementMotDePasse(false);
+                this.Close();
                 Application.Exit();
             }
         }

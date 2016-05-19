@@ -169,7 +169,7 @@ namespace LGBConnect
         /// <returns>temps restant en minutes</returns>
         public static int get_temps_restant(int id_utilisateur, String connectionString)
         {
-            int temps_restant = 120;
+            int temps_restant = 120; // au cas ou la requete échoue, on donne 2 heures par défaut
             MySqlConnection cnn = new MySqlConnection(connectionString);
             try
             {
@@ -193,7 +193,7 @@ namespace LGBConnect
 
                 rdr.Close();
 
-                sql = "SELECT sum(duree_resa) as dureedujour FROM `tab_resa` WHERE id_user_resa = "+ id_utilisateur + " AND date_resa = '" + DateTime.Today.ToString("yyyy-MM-dd") + "'";
+                sql = "SELECT sum(duree_resa) as dureedujour FROM `tab_resa` WHERE id_user_resa = "+ id_utilisateur + " AND date_resa = '" + DateTime.Today.ToString("yyyy-MM-dd") + "'AND status_resa = '1'";
                 cmd = new MySqlCommand(sql, cnn);
                 rdr = cmd.ExecuteReader();
                 while (rdr.Read())

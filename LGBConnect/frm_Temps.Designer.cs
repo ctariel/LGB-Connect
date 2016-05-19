@@ -29,35 +29,38 @@
         private void InitializeComponent()
         {
             this.lbl_utilisateur = new System.Windows.Forms.Label();
-            this.lbl_Chrono = new System.Windows.Forms.Label();
+            this.lbl_temps_restant = new System.Windows.Forms.Label();
             this.btn_deconnexion = new System.Windows.Forms.Button();
+            this.lbl_temps_utilise = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // lbl_utilisateur
             // 
             this.lbl_utilisateur.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbl_utilisateur.ForeColor = System.Drawing.Color.LightSeaGreen;
-            this.lbl_utilisateur.Location = new System.Drawing.Point(3, 9);
+            this.lbl_utilisateur.Location = new System.Drawing.Point(3, -2);
             this.lbl_utilisateur.Name = "lbl_utilisateur";
             this.lbl_utilisateur.Size = new System.Drawing.Size(179, 26);
             this.lbl_utilisateur.TabIndex = 0;
             this.lbl_utilisateur.Text = "utilisateur";
             this.lbl_utilisateur.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // lbl_Chrono
+            // lbl_temps_restant
             // 
-            this.lbl_Chrono.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_Chrono.ForeColor = System.Drawing.Color.LightSeaGreen;
-            this.lbl_Chrono.Location = new System.Drawing.Point(3, 43);
-            this.lbl_Chrono.Name = "lbl_Chrono";
-            this.lbl_Chrono.Size = new System.Drawing.Size(179, 26);
-            this.lbl_Chrono.TabIndex = 1;
-            this.lbl_Chrono.Text = "00:00:00";
-            this.lbl_Chrono.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lbl_temps_restant.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_temps_restant.ForeColor = System.Drawing.Color.LightSeaGreen;
+            this.lbl_temps_restant.Location = new System.Drawing.Point(82, 52);
+            this.lbl_temps_restant.Name = "lbl_temps_restant";
+            this.lbl_temps_restant.Size = new System.Drawing.Size(91, 26);
+            this.lbl_temps_restant.TabIndex = 1;
+            this.lbl_temps_restant.Text = "00:00:00";
+            this.lbl_temps_restant.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // btn_deconnexion
             // 
-            this.btn_deconnexion.Location = new System.Drawing.Point(30, 72);
+            this.btn_deconnexion.Location = new System.Drawing.Point(31, 81);
             this.btn_deconnexion.Name = "btn_deconnexion";
             this.btn_deconnexion.Size = new System.Drawing.Size(123, 28);
             this.btn_deconnexion.TabIndex = 2;
@@ -65,14 +68,48 @@
             this.btn_deconnexion.UseVisualStyleBackColor = true;
             this.btn_deconnexion.Click += new System.EventHandler(this.btn_deconnexion_Click);
             // 
+            // lbl_temps_utilise
+            // 
+            this.lbl_temps_utilise.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_temps_utilise.ForeColor = System.Drawing.Color.LightSeaGreen;
+            this.lbl_temps_utilise.Location = new System.Drawing.Point(82, 26);
+            this.lbl_temps_utilise.Name = "lbl_temps_utilise";
+            this.lbl_temps_utilise.Size = new System.Drawing.Size(91, 26);
+            this.lbl_temps_utilise.TabIndex = 3;
+            this.lbl_temps_utilise.Text = "00:00:00";
+            this.lbl_temps_utilise.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // label2
+            // 
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(3, 26);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(82, 26);
+            this.label2.TabIndex = 4;
+            this.label2.Text = "Utilisé :";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // label3
+            // 
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(3, 52);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(82, 26);
+            this.label3.TabIndex = 5;
+            this.label3.Text = "Restant :";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
             // frm_Temps
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(184, 112);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.lbl_temps_utilise);
             this.Controls.Add(this.btn_deconnexion);
-            this.Controls.Add(this.lbl_Chrono);
+            this.Controls.Add(this.lbl_temps_restant);
             this.Controls.Add(this.lbl_utilisateur);
             this.Name = "frm_Temps";
             this.Text = "frm_Temps";
@@ -85,7 +122,10 @@
         #endregion
 
         private System.Windows.Forms.Label lbl_utilisateur;
-        private System.Windows.Forms.Label lbl_Chrono;
+        private System.Windows.Forms.Label lbl_temps_restant;
         private System.Windows.Forms.Button btn_deconnexion;
+        private System.Windows.Forms.Label lbl_temps_utilise;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
     }
 }
