@@ -514,13 +514,13 @@
             // comboBox_EPN
             // 
             this.comboBox_EPN.BackColor = System.Drawing.Color.White;
-            this.comboBox_EPN.Dock = System.Windows.Forms.DockStyle.Left;
+            this.comboBox_EPN.Dock = System.Windows.Forms.DockStyle.Fill;
             this.comboBox_EPN.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_EPN.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.comboBox_EPN.FormattingEnabled = true;
             this.comboBox_EPN.Location = new System.Drawing.Point(169, 307);
             this.comboBox_EPN.Name = "comboBox_EPN";
-            this.comboBox_EPN.Size = new System.Drawing.Size(121, 24);
+            this.comboBox_EPN.Size = new System.Drawing.Size(380, 24);
             this.comboBox_EPN.TabIndex = 10;
             // 
             // lbl_champsObligatoires

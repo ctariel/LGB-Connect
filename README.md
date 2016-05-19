@@ -2,7 +2,17 @@
 Logiciel pour les postes clients de cybergestionnaire :
 http://sourceforge.net/projects/cybergestionnaire/ ou http://maxletesteur.jimdo.com/ateliers/supports-animateurs/cyber-gestionnaire/
 
-# LGB Connect version 0.1.1
+# LGB Connect version 0.2.1
+
+Cette version apporte plusieurs améliorations :
+- *Ajout d'un système de log :* en joutant manuellement une directive "debug = all" dans le fichier de configuration sous la section "[poste]", un fichier de log (logfile.txt) est créé dans le répertoir du programme. Ce fichier contient la grande majorité des actions effectué par le programme, particulièrement les requete SQL importantes. Néanmoins,; kle travail est à finir, tout n'est pas encore loggué.
+- *Ajout d'un formulaire de préinscription :* calqué sur cybergestionnaire, ce formulaire nécessite encore quelques tests (je viens tout juste de le mettre en production cdans notre espace...), mais il devrait fonctionner. Pour activer cette pré-inscription, il faut activer la page d'inscription dans la configuration de EPN Connect dans CyberGestionnaire. Cette configuration est indépendante de l'onglet "inscriptions" de CyberGestaionnaire qui lui, sert au Captcha et à la préinscription via CyberGestionnaire. **ATTENTION !!** ça ne corrige pas les bugs de l'interface d'administration de CyberGestionnaire, qui ne vérifie aucun champ de saisie. Attention aux apostrophes !!!
+- *Ajout dun décompte du temps restant :* sur une demande de mes utilisateurs, il savent désormais combien de temps ils ont passé sur le poste, et combien de temps il leur reste.
+- *correction de plusieurs bug*, dont un important sur le décompte du temps : seules les mintes étaient enregistrées, ce qui fait que si quelqu'un restait 1h05, seules 5 minutes lui étaient comptées...
+- *premières verifications de cohérences sur les sessions* : sur la première version, en cas de plantage, la session ouverte le restait dans cybergestionnaire, ce qui entrainait des temps de connexions délirants. Désormais, au lancement du logiciel, toute session ouverte (et donc "fantome") est refermée de force, et son temps est mis à zéro.
+
+
+## LGB Connect version 0.1.1
 
 Cette version devrait normalement fonctionner avec un utilisateur restreint sous Windows 10.
 
