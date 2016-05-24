@@ -157,6 +157,7 @@ namespace LGBServ
                 ini.IniWriteValue("poste", "id", config["poste_id"]);
                 ini.IniWriteValue("poste", "adresse_MAC", config["poste_adresse_MAC"]);
                 ini.IniWriteValue("poste", "type", config["poste_type"]);
+                //ini.IniWriteValue("poste", "chrono", config["poste_chrono"]);
                 return true;
             }
             catch (Exception ex)
@@ -186,6 +187,11 @@ namespace LGBServ
                 config["poste_id"] = ini.IniReadValue("poste", "id").Trim('\0');
                 config["poste_adresse_MAC"] = ini.IniReadValue("poste", "adresse_MAC").Trim('\0');
                 config["poste_type"] = ini.IniReadValue("poste", "type").Trim('\0');
+                config["poste_chrono"] = ini.IniReadValue("poste", "chrono").Trim('\0');
+                if (config["poste_chrono"] != "complet" && config["poste_chrono"] != "restant" && config["poste_chrono"] != "utilise" && config["poste_chrono"] != "aucun")
+                {
+                    config["poste_chrono"] = "complet";
+                }
                 config["debug"] = "no";
                 if (ini.IniReadValue("poste", "debug") == "all")
                 {

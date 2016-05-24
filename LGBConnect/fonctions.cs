@@ -169,7 +169,7 @@ namespace LGBConnect
         /// <returns>temps restant en minutes</returns>
         public static int get_temps_restant(int id_utilisateur, String connectionString)
         {
-            int temps_restant = 120; // au cas ou la requete échoue, on donne 2 heures par défaut
+            int temps_restant = 1440; // au cas ou la requete échoue, on donne 24 heures par défaut
             MySqlConnection cnn = new MySqlConnection(connectionString);
             try
             {
@@ -190,22 +190,29 @@ namespace LGBConnect
                         temps_restant = temps * 60;
                     }
                 }
-
-                rdr.Close();
-
-                sql = "SELECT sum(duree_resa) as dureedujour FROM `tab_resa` WHERE id_user_resa = "+ id_utilisateur + " AND date_resa = '" + DateTime.Today.ToString("yyyy-MM-dd") + "'AND status_resa = '1'";
-                cmd = new MySqlCommand(sql, cnn);
-                rdr = cmd.ExecuteReader();
-                while (rdr.Read())
+                if (temps_restant > 0) // si le temps restant = 0, ca veut dire temps infini dans cybergestionnaire !!
                 {
-                    if (!Convert.IsDBNull(rdr["dureedujour"]))
+                    rdr.Close();
+
+                    sql = "SELECT sum(duree_resa) as dureedujour FROM `tab_resa` WHERE id_user_resa = " + id_utilisateur + " AND date_resa = '" + DateTime.Today.ToString("yyyy-MM-dd") + "'AND status_resa = '1'";
+                    cmd = new MySqlCommand(sql, cnn);
+                    rdr = cmd.ExecuteReader();
+                    while (rdr.Read())
                     {
-                        int dureedujour = System.Convert.ToInt32(rdr["dureedujour"]);
-                        temps_restant = temps_restant - dureedujour;
+                        if (!Convert.IsDBNull(rdr["dureedujour"]))
+                        {
+                            int dureedujour = System.Convert.ToInt32(rdr["dureedujour"]);
+                            temps_restant = temps_restant - dureedujour;
+                        }
                     }
+
+                    rdr.Close();
+
+                } else
+                {
+                    temps_restant = 1440; // si le temps n'est pas configuré, on donne 24h00
                 }
 
-                rdr.Close();
 
             }
             catch (Exception ex)

@@ -32,8 +32,8 @@
             this.lbl_temps_restant = new System.Windows.Forms.Label();
             this.btn_deconnexion = new System.Windows.Forms.Button();
             this.lbl_temps_utilise = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.lbl_text_utilise = new System.Windows.Forms.Label();
+            this.lbl_text_restant = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // lbl_utilisateur
@@ -79,25 +79,25 @@
             this.lbl_temps_utilise.Text = "00:00:00";
             this.lbl_temps_utilise.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // label2
+            // lbl_text_utilise
             // 
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(3, 26);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(82, 26);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "Utilisé :";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lbl_text_utilise.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_text_utilise.Location = new System.Drawing.Point(3, 26);
+            this.lbl_text_utilise.Name = "lbl_text_utilise";
+            this.lbl_text_utilise.Size = new System.Drawing.Size(82, 26);
+            this.lbl_text_utilise.TabIndex = 4;
+            this.lbl_text_utilise.Text = "Utilisé :";
+            this.lbl_text_utilise.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // label3
+            // lbl_text_restant
             // 
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(3, 52);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(82, 26);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "Restant :";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lbl_text_restant.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_text_restant.Location = new System.Drawing.Point(3, 52);
+            this.lbl_text_restant.Name = "lbl_text_restant";
+            this.lbl_text_restant.Size = new System.Drawing.Size(82, 26);
+            this.lbl_text_restant.TabIndex = 5;
+            this.lbl_text_restant.Text = "Restant :";
+            this.lbl_text_restant.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // frm_Temps
             // 
@@ -105,8 +105,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(184, 112);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(this.lbl_text_restant);
+            this.Controls.Add(this.lbl_text_utilise);
             this.Controls.Add(this.lbl_temps_utilise);
             this.Controls.Add(this.btn_deconnexion);
             this.Controls.Add(this.lbl_temps_restant);
@@ -125,7 +125,7 @@
         private System.Windows.Forms.Label lbl_temps_restant;
         private System.Windows.Forms.Button btn_deconnexion;
         private System.Windows.Forms.Label lbl_temps_utilise;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label lbl_text_utilise;
+        private System.Windows.Forms.Label lbl_text_restant;
     }
 }

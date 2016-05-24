@@ -15,5 +15,10 @@ namespace LGBServ
         {
             InitializeComponent();
         }
+
+        private void serviceProcessInstaller_LGB_AfterInstall(object sender, InstallEventArgs e)
+        {
+
+        }
     }
 }

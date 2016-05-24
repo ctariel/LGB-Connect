@@ -36,6 +36,7 @@
             this.serviceProcessInstaller_LGB.Account = System.ServiceProcess.ServiceAccount.LocalSystem;
             this.serviceProcessInstaller_LGB.Password = null;
             this.serviceProcessInstaller_LGB.Username = null;
+            this.serviceProcessInstaller_LGB.AfterInstall += new System.Configuration.Install.InstallEventHandler(this.serviceProcessInstaller_LGB_AfterInstall);
             // 
             // serviceInstaller_LGB
             // 

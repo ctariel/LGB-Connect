@@ -69,7 +69,7 @@ namespace LGBConnect
                 }
             }
             else // admin ou animateur
-                temps_restant = 600; //arbitraire --> 10h00
+                temps_restant = 1440; //arbitraire --> 24h00
 
             // inscription de la réservation dans la base
             MySqlConnection cnn = new MySqlConnection(parentForm.connectionString);
@@ -121,26 +121,64 @@ namespace LGBConnect
         void timer_Tick(object sender, EventArgs e)
         {
 
+            String affichage_restant, affichage_utilise;
+
             DateTime heureDeconnexion = heureConnexion.AddMinutes(this.temps_restant);
 
             System.TimeSpan diff = heureDeconnexion - DateTime.Now;
             System.TimeSpan diff1 = DateTime.Now - heureConnexion;
 
-            if (diff.Ticks >= DateTime.MinValue.Ticks)
+
+            if (this.temps_restant == 1440)  // le temps affecté est de 24h00, donc infini dans la pratique
             {
-                lbl_temps_restant.Text = new DateTime(diff.Ticks).ToString("HH:mm:ss");
+                affichage_restant = "";
+                lbl_text_restant.Text = "";
             }
             else
             {
-                lbl_temps_restant.Text = "00:00:00";
+                if (diff.Ticks >= DateTime.MinValue.Ticks)
+                {
+                    affichage_restant = new DateTime(diff.Ticks).ToString("HH:mm:ss");
+                }
+                else
+                {
+                    affichage_restant = "00:00:00";
+                }
             }
 
-            lbl_temps_utilise.Text = new DateTime(diff1.Ticks).ToString("HH:mm:ss");
+            affichage_utilise = new DateTime(diff1.Ticks).ToString("HH:mm:ss");
 
-            if (parentForm.debug == "all")
+            if (parentForm.poste_chrono == "complet")
             {
-                //parentForm.writeLog("frm_Temps.cs->timer_Tick : " + lbl_temps_restant.Text);
+                lbl_temps_restant.Text = affichage_restant;
+                lbl_temps_utilise.Text = affichage_utilise;
             }
+
+            if (parentForm.poste_chrono == "restant")
+            {
+                lbl_temps_restant.Text = affichage_restant;
+                lbl_temps_utilise.Text = "";
+                lbl_text_utilise.Text = "";
+            }
+            if (parentForm.poste_chrono == "utilise")
+            {
+                lbl_temps_restant.Text = "";
+                lbl_text_restant.Text = "";
+                lbl_temps_utilise.Text = affichage_utilise;
+            }
+            if (parentForm.poste_chrono == "aucun")
+            {
+                lbl_temps_restant.Text = "";
+                lbl_text_restant.Text = "";
+                lbl_temps_utilise.Text = "";
+                lbl_text_utilise.Text = "";
+            }
+
+
+            /*if (parentForm.debug == "all")
+            {
+                parentForm.writeLog("frm_Temps.cs->timer_Tick : " + lbl_temps_restant.Text);
+            }*/
 
             /// vérification du statut. Si le poste a été libéré depuis la console, status_resa est différent de zéro
             MySqlConnection cnn = new MySqlConnection(parentForm.connectionString);

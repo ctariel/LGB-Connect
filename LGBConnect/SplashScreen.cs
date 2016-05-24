@@ -46,6 +46,7 @@ namespace LGBConnect
                     parentForm.writeLog("poste - id :" + parentForm.poste_id);
                     parentForm.writeLog("poste - MAC :" + parentForm.poste_MAC);
                     parentForm.writeLog("poste - type :" + parentForm.poste_type);
+                    parentForm.writeLog("poste - chrono :" + parentForm.poste_chrono);
                     parentForm.writeLog("poste - debug :" + parentForm.debug);
                     parentForm.writeLog("SplashScreen.cs->chargement() : Config ok -----------------");
 
@@ -97,6 +98,7 @@ namespace LGBConnect
                 parentForm.poste_id = config["poste_id"];
                 parentForm.poste_MAC = config["poste_adresse_MAC"];
                 parentForm.poste_type = config["poste_type"];
+                parentForm.poste_chrono = config["poste_chrono"];
                 parentForm.debug = config["debug"];
                 return 0;
             }

@@ -23,7 +23,7 @@ namespace LGBConnect
     public partial class MainForm : Form
     {
 
-        public string db_hote, db_base, db_utilisateur, db_motdepasse, connectionString, poste_nom, poste_id, poste_MAC, poste_type, debug;
+        public string db_hote, db_base, db_utilisateur, db_motdepasse, connectionString, poste_nom, poste_id, poste_MAC, poste_type, poste_chrono, debug;
         public string login_utilisateur, login_motdepasse;
         public string nom_utilisateur, prenom_utilisateur;
         public int id_utilisateur, statut_utilisateur, id_espace;
