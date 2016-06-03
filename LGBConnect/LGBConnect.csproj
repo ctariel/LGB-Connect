@@ -113,6 +113,13 @@
     <Compile Include="assistantConfig.Designer.cs">
       <DependentUpon>assistantConfig.cs</DependentUpon>
     </Compile>
+    <Compile Include="classes\AutoClosingMessageBox.cs" />
+    <Compile Include="classes\ComboBoxItem.cs" />
+    <Compile Include="classes\ConfigLogiciel.cs" />
+    <Compile Include="classes\Espace.cs" />
+    <Compile Include="classes\Parametres.cs" />
+    <Compile Include="classes\Resa.cs" />
+    <Compile Include="classes\Salle.cs" />
     <Compile Include="frm_MsgBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -151,6 +158,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="classes\Utilisateur.cs" />
     <EmbeddedResource Include="assistantConfig.resx">
       <DependentUpon>assistantConfig.cs</DependentUpon>
     </EmbeddedResource>

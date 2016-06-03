@@ -12,6 +12,7 @@ using System.Net.NetworkInformation;
 using System.Diagnostics;
 using MySql.Data;
 using MySql.Data.MySqlClient;
+using LGBConnect.classes;
 
 namespace LGBConnect
 {
@@ -23,17 +24,13 @@ namespace LGBConnect
     public partial class assistantConfig : Form
     {
         DataSet ds_Postes;
-        MainForm parentForm;
 
-        public assistantConfig(MainForm mainForm)
+        public assistantConfig()
         {
             InitializeComponent();
-            parentForm = mainForm;
         }
 
         /// <summary>
-        /// Toutes les fenêtres sont liées à MainForm pour éviter des passages de parametres à tous bouts de champ...
-        /// 
         /// Si la configuration existe déjà, on pré rempli les champs.
         /// </summary>
         /// <param name="sender"></param>
@@ -42,27 +39,13 @@ namespace LGBConnect
         {
             panel_Page1.Parent = panel_principal;
 
-
-            Dictionary<string, string> config = new Dictionary<string, string>();
-
-            ServiceFonctionsAdmin.FonctionsAdminClient client = new ServiceFonctionsAdmin.FonctionsAdminClient();
-            config = client.lireConfiguration();
-
-            if (config != null)
+            if (Parametres.lireConfiguration() == 0)
             {
-                parentForm.db_hote = config["mysql_hote"];
-                parentForm.db_base = config["mysql_base"];
-                parentForm.db_utilisateur = config["mysql_utilisateur"];
-                parentForm.db_motdepasse = config["mysql_mot_de_passe"];
-                parentForm.poste_nom = config["poste_nom"];
-                parentForm.poste_id = config["poste_id"];
-                parentForm.poste_type = config["poste_type"];
-                textBox_Hote.Text = parentForm.db_hote;
-                textBox_Base.Text = parentForm.db_base;
-                textBox_Utilisateur.Text = parentForm.db_utilisateur;
-                textBox_MotDePasse.Text = parentForm.db_motdepasse;
+                textBox_Hote.Text = Parametres.db_hote;
+                textBox_Base.Text = Parametres.db_base;
+                textBox_Utilisateur.Text = Parametres.db_utilisateur;
+                textBox_MotDePasse.Text = Parametres.db_motdepasse;
             }
-
         }
 
         private void btn_Suivant1_Click(object sender, EventArgs e)
@@ -95,15 +78,14 @@ namespace LGBConnect
         /// <param name="e"></param>
         private void btn_TestConnexion_Click(object sender, EventArgs e)
         {
-            parentForm.db_hote = textBox_Hote.Text;
-            parentForm.db_base = textBox_Base.Text;
-            parentForm.db_utilisateur = textBox_Utilisateur.Text;
-            parentForm.db_motdepasse = textBox_MotDePasse.Text;
+            Parametres.db_hote = textBox_Hote.Text;
+            Parametres.db_base = textBox_Base.Text;
+            Parametres.db_utilisateur = textBox_Utilisateur.Text;
+            Parametres.db_motdepasse = textBox_MotDePasse.Text;
 
-            parentForm.connectionString = "server=" + parentForm.db_hote + ";database=" + parentForm.db_base + ";uid=" + parentForm.db_utilisateur + ";pwd=" + parentForm.db_motdepasse + ";"; ;
             MySqlConnection cnn;
 
-            cnn = new MySqlConnection(parentForm.connectionString);
+            cnn = new MySqlConnection(Parametres.connectionString);
             try
             {
                 cnn.Open();
@@ -181,15 +163,15 @@ namespace LGBConnect
         {
             string sql = string.Empty;
 
-            MySqlConnection cnn = new MySqlConnection(parentForm.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
             try
             {
-                if (parentForm.poste_nom == "") { 
+                if (Parametres.poste_nom == "") { 
                     sql = "SELECT  `id_computer`,`nom_computer` FROM `tab_computer` WHERE `configurer_epnconnect_computer`!='1'";
                 }
                 else
                 {
-                    sql = "SELECT `id_computer`,`nom_computer` FROM `tab_computer` WHERE `configurer_epnconnect_computer`!='1' or nom_computer='" + parentForm.poste_nom + "'";
+                    sql = "SELECT `id_computer`,`nom_computer` FROM `tab_computer` WHERE `configurer_epnconnect_computer`!='1' or nom_computer='" + Parametres.poste_nom + "'";
 
                 }
                 MySqlDataAdapter da_Postes = new MySqlDataAdapter(sql, cnn);
@@ -204,9 +186,9 @@ namespace LGBConnect
 
                 comboBox_Poste.DataSource = ds_Postes.Tables[0];
 
-                if (parentForm.poste_nom != "")
+                if (Parametres.poste_nom != "")
                 {
-                    comboBox_Poste.SelectedIndex = comboBox_Poste.FindStringExact(parentForm.poste_nom);
+                    comboBox_Poste.SelectedIndex = comboBox_Poste.FindStringExact(Parametres.poste_nom);
                 }
             }
             catch (Exception ex)
@@ -218,7 +200,7 @@ namespace LGBConnect
 
         private void configureLabelEspace()
         {
-            MySqlConnection cnn = new MySqlConnection(parentForm.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
             try
             {
                 cnn.Open();
@@ -308,7 +290,7 @@ namespace LGBConnect
 
         private void configureTypePoste()
         {
-            if (parentForm.poste_type == "animateur")
+            if (Parametres.poste_type == "animateur")
             {
                 radioButton_PosteAnimateur.Checked = true;
             }
@@ -326,71 +308,51 @@ namespace LGBConnect
 
         private void ecrireConfiguration()
         {
-            // mise à jour des variables principales
             String usage = "";
-            Dictionary<string, string> config = new Dictionary<string, string>();
 
-            parentForm.poste_nom = comboBox_Poste.Text;
-            parentForm.poste_id = comboBox_Poste.SelectedValue.ToString();
+            Parametres.poste_nom = comboBox_Poste.Text;
+            Parametres.poste_id = (int)comboBox_Poste.SelectedValue;
 
             if (radioButton_PosteAnimateur.Checked)
             {
-                parentForm.poste_type = "animateur";
+                Parametres.poste_type = "animateur";
                 usage = "2";
             }
             else
             {
                 if (radioButton_PosteUsager.Checked)
                 {
-                    parentForm.poste_type = "usager";
+                    Parametres.poste_type = "usager";
                     usage = "1";
                 }
             }
 
-            try {
-                // ecriture du fichier de configuration
 
-
-
-                config["mysql_hote"] = parentForm.db_hote;
-                config["mysql_base"] = parentForm.db_base;
-                config["mysql_utilisateur"] = parentForm.db_utilisateur;
-                config["mysql_mot_de_passe"] = parentForm.db_motdepasse;
-                config["poste_nom"] = parentForm.poste_nom;
-                config["poste_id"] = parentForm.poste_id;
-                if (comboBox_MAC.Items.Count > 0)
-                {
-                    config["poste_adresse_MAC"] = (comboBox_MAC.SelectedItem as ComboboxItem).Value.ToString();
-                }
-                else
-                {
-                    config["poste_adresse_MAC"] = "";
-                }
-                config["poste_type"] = parentForm.poste_type;
-                //Fonction.Base64Encode("");
-
-                ServiceFonctionsAdmin.FonctionsAdminClient client = new ServiceFonctionsAdmin.FonctionsAdminClient();
-                client.ecrireConfiguration(config);
-
-            }
-            catch (Exception ex)
+            if (comboBox_MAC.Items.Count > 0)
             {
-                MessageBox.Show("Erreur d'écriture du fichier Ini : " + ex.ToString());
+                Parametres.poste_adresse_MAC = (comboBox_MAC.SelectedItem as ComboboxItem).Value.ToString();
             }
+            else
+            {
+                Parametres.poste_adresse_MAC = "";
+            }
+
+            Parametres.ecrireConfiguration();
+
             // mise à jour de la base de donnnées
 
-            MySqlConnection cnn = new MySqlConnection(parentForm.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
             try
             {
                 cnn.Open();
 
                 string sql = "UPDATE tab_computer " +
                     "SET usage_computer='" + usage + "', " +
-                    "adresse_mac_computer='" + config["poste_adresse_MAC"] + "', " +
+                    "adresse_mac_computer='" + Parametres.poste_adresse_MAC + "', " +
                     "adresse_ip_computer='" + lbl_IP.Text + "', " +
-                    "nom_hote_computer='" + parentForm.poste_nom + "', " +
+                    "nom_hote_computer='" + Parametres.poste_nom + "', " +
                     "configurer_epnconnect_computer='1'" +
-                    " WHERE nom_computer='" + parentForm.poste_nom + "'";
+                    " WHERE nom_computer='" + Parametres.poste_nom + "'";
                 Debug.WriteLine("SQL : " + sql);
 
                 MySqlCommand cmd = new MySqlCommand(sql, cnn);
@@ -407,7 +369,5 @@ namespace LGBConnect
             }
             cnn.Close();
         }
-
     }
-
 }

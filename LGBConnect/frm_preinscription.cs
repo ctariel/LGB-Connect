@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using MySql.Data;
 using MySql.Data.MySqlClient;
+using LGBConnect.classes;
 
 namespace LGBConnect
 {
@@ -123,7 +124,7 @@ namespace LGBConnect
         private void remplirComboCodePostal()
         {
 
-            MySqlConnection cnn = new MySqlConnection(parentForm.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
             DataSet ds_codesPostaux;
             string sql = string.Empty;
 
@@ -155,7 +156,7 @@ namespace LGBConnect
 
         private void remplirComboVille()
         {
-            MySqlConnection cnn = new MySqlConnection(parentForm.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
             DataSet ds_Villes;
             string sql = string.Empty;
 
@@ -197,7 +198,7 @@ namespace LGBConnect
         }
         private void remplirComboPays()
         {
-            MySqlConnection cnn = new MySqlConnection(parentForm.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
             DataSet ds_Pays;
             string sql = string.Empty;
 
@@ -239,13 +240,16 @@ namespace LGBConnect
 
         private void remplirComboEPN()
         {
-            MySqlConnection cnn = new MySqlConnection(parentForm.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
             DataSet ds_EPN;
             string sql = string.Empty;
+            
+            // récupération de l'id et du nom de la salle
+            Salle salle = new Salle(Parametres.poste_nom);
 
             try
             {
-                sql = "SELECT tab_espace.* FROM tab_espace WHERE tab_espace.id_espace ='" + parentForm.id_espace + "'";
+                sql = "SELECT tab_espace.* FROM tab_espace WHERE tab_espace.id_espace ='" + salle.idEspace + "'";
 
                 MySqlDataAdapter da_EPN = new MySqlDataAdapter(sql, cnn);
                 MySqlCommandBuilder cb = new MySqlCommandBuilder(da_EPN);
@@ -272,7 +276,7 @@ namespace LGBConnect
 
         private void remplirComboMetier()
         {
-            MySqlConnection cnn = new MySqlConnection(parentForm.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
             DataSet ds_Metier;
             string sql = string.Empty;
 
@@ -480,7 +484,7 @@ namespace LGBConnect
 
             if (form_valide)
             {
-                MySqlConnection cnn = new MySqlConnection(parentForm.connectionString);
+                MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
                 cnn.Open();
                 try
                 {

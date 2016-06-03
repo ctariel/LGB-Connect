@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 using Microsoft.Win32;
 using MySql.Data;
 using MySql.Data.MySqlClient;
+using LGBConnect.classes;
 
 namespace LGBConnect
 {
@@ -23,10 +24,9 @@ namespace LGBConnect
     public partial class MainForm : Form
     {
 
-        public string db_hote, db_base, db_utilisateur, db_motdepasse, connectionString, poste_nom, poste_id, poste_MAC, poste_type, poste_chrono, debug;
         public string login_utilisateur, login_motdepasse;
         public string nom_utilisateur, prenom_utilisateur;
-        public int id_utilisateur, statut_utilisateur, id_espace;
+        public int id_utilisateur, statut_utilisateur;
         public long id_resa;
 
         Timer timer_MAJEtat = new Timer();
@@ -73,19 +73,19 @@ namespace LGBConnect
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            this.debug = "no"; // par défaut
+            Parametres.debug = "no"; // par défaut
 
             int retour = 0;
 
-            frm_Splash splash = new frm_Splash(this);
+            frm_Splash splash = new frm_Splash();
             retour = splash.chargement(); // si retour == 0, alors les données de connexions sont ok
             splash.Close();
             if (retour != 0)
             {
-                assistantConfig assistant = new assistantConfig(this);
+                assistantConfig assistant = new assistantConfig();
                 assistant.ShowDialog();
                 // on relance une fois le splash, et en cas d'échec, on quitte
-                splash = new frm_Splash(this);
+                splash = new frm_Splash();
                 retour = splash.chargement();
                 splash.Close();
                 if (retour != 0)
@@ -95,9 +95,9 @@ namespace LGBConnect
 
             }
 
-            if (this.debug == "all")
+            if (Parametres.debug == "all")
             {
-                this.writeLog("mainForm.cs->load : chargement de la configuration terminé");
+                MainForm.writeLog("mainForm.cs->load : chargement de la configuration terminé");
             }
 
             // timer pour mettre à jour la base de données quand le logiciel est actif (tab_computer.lastetat)
@@ -109,167 +109,123 @@ namespace LGBConnect
 
         private void MainForm_Shown(object sender, EventArgs e)
         {
-            if (this.debug == "all")
+            if (Parametres.debug == "all")
             {
-                this.writeLog("mainForm.cs->MainForm_Shown");
+                MainForm.writeLog("mainForm.cs->MainForm_Shown");
             }
-            this.id_espace = 0;
+
+
             notifyIcon1.Icon = Properties.Resources.logo_256;
             notifyIcon1.Text = "LGBConnect";
             notifyIcon1.Visible = true;
             notifyIcon1.ShowBalloonTip(5000, "LGB Connect", "Chargé !", ToolTipIcon.Info);
             groupBox_inscription.Hide();
             this.Hide();
-            MySqlConnection cnn = new MySqlConnection(connectionString);
-            try
+
+            // récupération de l'id et du nom de la salle
+            Salle salle = new Salle(Parametres.poste_nom);
+            Espace espace = new Espace(salle.idEspace);
+
+            lbl_Espace.Text = espace.nom + "\n" + salle.nom;
+
+            // on vérifie que pour l'espace sélectionné, il y a une config logiciel dans cyberGestionnaire.
+            // Pour le moment, cette configuration ne sert qu'à déterminer s'il faut afficher la page de préinscription
+            ConfigLogiciel configLogiciel = new ConfigLogiciel(salle.idEspace);
+
+            if (configLogiciel.exists() && configLogiciel.pageInscription)
             {
-                // on cherche l'espace associé au poste
-                string sql = "SELECT tab_espace.*, tab_salle.* FROM `tab_salle`, tab_computer, tab_espace WHERE tab_salle.id_espace = tab_espace.id_espace AND tab_computer.id_salle = tab_salle.id_salle AND tab_computer.nom_computer ='" + poste_nom + "'";
-                cnn.Open();
-                MySqlCommand cmd = new MySqlCommand(sql, cnn);
-                MySqlDataReader rdr = cmd.ExecuteReader();
-
-                if (rdr.HasRows)
+                groupBox_inscription.Show();
+                if (Parametres.debug == "all")
                 {
-                    while (rdr.Read())
-                    {
-                        lbl_Espace.Text = (String)rdr["nom_espace"] + "\n" + (String)rdr["nom_salle"];
-                        this.id_espace = (int)rdr["id_espace"];
-                        if (this.debug == "all")
-                        {
-                            this.writeLog("mainForm.cs->MainForm_Shown : espace trouvé : id = " + this.id_espace);
-                        }
-                    }
+                    MainForm.writeLog("mainForm.cs->MainForm_Shown : préinscription activée !");
                 }
-                else
-                {
-                    // pas normal, il n'y a pas d'espace associé au poste. on quitte.
-                    MessageBox.Show("Pas de salle trouvée pour ce poste ! Veuillez revoir la configuration du logiciel !");
-                    Application.Exit();
-                }
-                rdr.Close();
-
-
-                // on vérifie que pour l'espace sélectionné, il y a une config logiciel dans cyberGestionnaire.
-                // Pour le moment, cette configuration ne sert qu'à déterminer s'il faut afficher la page de préinscription
-                sql = "SELECT page_inscription_logiciel FROM tab_config_logiciel WHERE id_espace = " + this.id_espace + "";
-                cmd = new MySqlCommand(sql, cnn);
-                rdr = cmd.ExecuteReader();
-                if (rdr.HasRows)
-                {
-                    while (rdr.Read())
-                    {
-                        //MessageBox.Show("config epn trouvée !");
-                        if ((int)rdr["page_inscription_logiciel"] == 0)
-                        {
-                            groupBox_inscription.Hide();
-                            if (this.debug == "all")
-                            {
-                                this.writeLog("mainForm.cs->MainForm_Shown : préinscription désactivée");
-                            }
-                            //MessageBox.Show("inscription cachée !");
-                        }
-                        else
-                        {
-                            groupBox_inscription.Show();
-                            if (this.debug == "all")
-                            {
-                                this.writeLog("mainForm.cs->MainForm_Shown : préinscription activée !");
-                            }
-                            //MessageBox.Show("inscription ok !");
-                        }
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Pas de config epnConnect trouvée pour ce poste ! Veuillez revoir la configuration du poste et de CyberGestionnaire !");
-                }
-                rdr.Close();
-
-                // verification en base si une reservation est deja active sur le poste
-                // si c'est le cas, il y a eu un problème avec le logiciel...
-                // 2 solutions possibles :
-                // - on clot de force la réservation. On pourrait analyser le temps passé en fonction des données de la résa,
-                //   mais si on considère qu'il y a eu un probleme, ce n'est sans doute pas la bonne approche.
-                //   Il est sans doute préférable de clore la résa avec une durée = 0 pour ne pas pénaliser l'usager
-                // - on rouvre le poste avec l'identifiant trouvé dans la résa. Charge ensuite à frm_temps de se dépatouiller avec ca.
-                //   Ce n'est pas l'approche que je retiens
-                sql = "SELECT * FROM tab_resa WHERE id_computer_resa = " + this.poste_id + " AND status_resa = '0'";
-                cmd = new MySqlCommand(sql, cnn);
-                rdr = cmd.ExecuteReader();
-                if (rdr.HasRows) // une resa en cours a ete trouvée !
-                {
-                    if (this.debug == "all")
-                    {
-                        this.writeLog("mainForm.cs->MainForm_Shown : resa en cours trouvée");
-                    }
-                    rdr.Close();
-                    // on met la durée à 0, et on lcot la resa
-                    sql = "UPDATE tab_resa SET duree_resa = '0', status_resa = '1' where id_computer_resa = " + this.poste_id + " AND status_resa = '0'";
-                    cmd = new MySqlCommand(sql, cnn);
-                    cmd.ExecuteReader();
-                }
-
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show("Connexion echouée !!" + ex.ToString());
+                groupBox_inscription.Hide();
+                if (Parametres.debug == "all")
+                {
+                    MainForm.writeLog("mainForm.cs->MainForm_Shown : préinscription désactivée");
+                }
             }
 
-            if (poste_type == "usager")
+            // verification en base si une reservation est deja active sur le poste
+            // si c'est le cas, il y a eu un problème avec le logiciel...
+            // 2 solutions possibles :
+            // - on clot de force la réservation. On pourrait analyser le temps passé en fonction des données de la résa,
+            //   mais si on considère qu'il y a eu un probleme, ce n'est sans doute pas la bonne approche.
+            //   Il est sans doute préférable de clore la résa avec une durée = 0 pour ne pas pénaliser l'usager
+            // - on rouvre le poste avec l'identifiant trouvé dans la résa. Charge ensuite à frm_temps de se dépatouiller avec ca.
+            //   Ce n'est pas l'approche que je retiens
+
+            int idResa = Resa.verifierResaEnCours(Parametres.poste_id);
+            while (idResa != 0)
             {
-                if (this.debug == "all")
+                Resa resa = new Resa(idResa);
+                resa.annuler();
+                idResa = Resa.verifierResaEnCours(Parametres.poste_id);
+            }
+
+
+            if (Parametres.poste_type == "usager")
+            {
+                if (Parametres.debug == "all")
                 {
-                    this.writeLog("mainForm.cs->MainForm_Shown : poste usager : blocage demandé");
+                    MainForm.writeLog("mainForm.cs->MainForm_Shown : poste usager : blocage demandé");
                 }
 
-                // MessageBox.Show("main : demande de blocage");
                 Fonction.blocageGestionnaireDesTaches(true);
                 Fonction.blocageChangementMotDePasse(true);
                 goFullscreen(true);
-                this.Show();
             }
-            if (poste_type == "animateur")
+            if (Parametres.poste_type == "animateur")
             {
-                if (this.debug == "all")
+                if (Parametres.debug == "all")
                 {
-                    this.writeLog("mainForm.cs->MainForm_Shown : poste animateur");
+                    MainForm.writeLog("mainForm.cs->MainForm_Shown : poste animateur");
                 }
-                this.Show();
             }
-
-
+            this.Show();
         }
 
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if (this.debug == "all")
+            if (Parametres.debug == "all")
             {
-                this.writeLog("mainForm.cs->MainForm_FormClosed : demande de déblocage et nettoyage");
+                MainForm.writeLog("mainForm.cs->MainForm_FormClosed : demande de déblocage et nettoyage");
             }
+
+            // TODO : la form temps se ferme après l'application, ce qui fait que les registre sont réécrits après 
+/*            if (frmTemps != null)
+            {
+                while (!frmTemps.IsDisposed)
+                {
+                    frmTemps.Close();
+                }
+            }*/
             // déblocage systématique
             blocageRaccourcisClavier(false);
             Fonction.blocageGestionnaireDesTaches(false);
             Fonction.blocageChangementMotDePasse(false);
             timer_MAJEtat.Stop();
             //exit application when form is closed
-            if (this.debug == "all")
+            if (Parametres.debug == "all")
             {
-                this.writeLog("mainForm.cs->MainForm_FormClosed : fin du nettoyage");
+                MainForm.writeLog("mainForm.cs->MainForm_FormClosed : fin du nettoyage");
             }
             Application.Exit();
         }
 
         private void btn_inscription_Click(object sender, EventArgs e)
         {
-            if (this.debug == "all")
+            if (Parametres.debug == "all")
             {
-                this.writeLog("mainForm.cs->btn_inscription_Click");
+                MainForm.writeLog("mainForm.cs->btn_inscription_Click");
             }
             frm_preinscription form_preinscription = new frm_preinscription(this);
             this.TopMost = false;
-            if (poste_type == "usager")
+            if (Parametres.poste_type == "usager")
             {
                 form_preinscription.TopMost = true;
                 form_preinscription.FormBorderStyle = FormBorderStyle.None;
@@ -281,15 +237,15 @@ namespace LGBConnect
 
         private void btn_Connexion_Click(object sender, EventArgs e)
         {
-            if (this.debug == "all")
+            if (Parametres.debug == "all")
             {
-                this.writeLog("mainForm.cs->btn_Connexion_Click");
+                MainForm.writeLog("mainForm.cs->btn_Connexion_Click");
             }
 
             this.login_utilisateur = textBox_Utilisateur.Text;
             this.login_motdepasse = textBox_MotDePasse.Text;
 
-            MySqlConnection cnn = new MySqlConnection(connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
             try
             {
                 //string sql = "SELECT `id_user`, `nom_user`, `prenom_user`, `status_user` FROM `tab_user` WHERE `login_user`= '" + this.login_utilisateur +"' AND `pass_user`='" + Fonction.MD5Hash(this.login_motdepasse) + "' LIMIT 0,1";
@@ -299,16 +255,16 @@ namespace LGBConnect
                 cmd.Parameters.AddWithValue("@login_user", this.login_utilisateur);
                 cmd.Parameters.AddWithValue("@pass_user", Fonction.MD5Hash(this.login_motdepasse));
 
-                if (this.debug == "all")
+                if (Parametres.debug == "all")
                 {
-                    this.writeLog("mainForm.cs->btn_Connexion_Click : requete sql -------------------");
+                    MainForm.writeLog("mainForm.cs->btn_Connexion_Click : requete sql -------------------");
 
                     string query = cmd.CommandText;
                     foreach (MySqlParameter p in cmd.Parameters)
                     {
                         query = query.Replace(p.ParameterName, p.Value.ToString());
                     }
-                    this.writeLog(query);
+                    MainForm.writeLog(query);
                 }
 
                 MySqlDataReader rdr = cmd.ExecuteReader();
@@ -323,22 +279,22 @@ namespace LGBConnect
                         id_utilisateur = (int)rdr["id_user"];
                         statut_utilisateur = (int)rdr["status_user"];
 
-                        if (this.debug == "all")
+                        if (Parametres.debug == "all")
                         {
-                            this.writeLog("mainForm.cs->btn_Connexion_Click : login ok");
-                            this.writeLog("nom utilisateur : " + nom_utilisateur);
-                            this.writeLog("prenom utilisateur : " + prenom_utilisateur);
-                            this.writeLog("id utilisateur : " + id_utilisateur);
-                            this.writeLog("statut utilisateur : " + statut_utilisateur);
+                            MainForm.writeLog("mainForm.cs->btn_Connexion_Click : login ok");
+                            MainForm.writeLog("nom utilisateur : " + nom_utilisateur);
+                            MainForm.writeLog("prenom utilisateur : " + prenom_utilisateur);
+                            MainForm.writeLog("id utilisateur : " + id_utilisateur);
+                            MainForm.writeLog("statut utilisateur : " + statut_utilisateur);
                         }
 
                         // il y a un grand ménage à faire dans cette fonction !!! beaucoup de trop de redondances !!
 
                         if (statut_utilisateur != 1) // admin ou animateur
                         {
-                            if (this.debug == "all")
+                            if (Parametres.debug == "all")
                             {
-                                this.writeLog("mainForm.cs->btn_Connexion_Click : connexion animateur");
+                                MainForm.writeLog("mainForm.cs->btn_Connexion_Click : connexion animateur");
                             }
                             goFullscreen(false);
                             blocageMenu(false);
@@ -348,18 +304,18 @@ namespace LGBConnect
                             frmTemps = new frm_Temps(this);
                             frmTemps.ShowInTaskbar = false;
                             frmTemps.ShowDialog();
-                            if (poste_type == "usager")
+                            if (Parametres.poste_type == "usager")
                             {
-                                if (this.debug == "all")
+                                if (Parametres.debug == "all")
                                 {
-                                    this.writeLog("mainForm.cs->btn_Connexion_Click : remise en place des blocages après connexion animateur");
+                                    MainForm.writeLog("mainForm.cs->btn_Connexion_Click : remise en place des blocages après connexion animateur");
                                 }
                                 goFullscreen(true);
                                 blocageMenu(true);
                                 Fonction.blocageGestionnaireDesTaches(true);
                                 Fonction.blocageChangementMotDePasse(true);
                             }
-                            if (poste_type == "animateur")
+                            if (Parametres.poste_type == "animateur")
                             {
                                 goFullscreen(false);
                             }
@@ -369,16 +325,16 @@ namespace LGBConnect
                         }
                         else // usager standard
                         {
-                            if (this.debug == "all")
+                            if (Parametres.debug == "all")
                             {
-                                this.writeLog("mainForm.cs->btn_Connexion_Click : usager standard");
-                                this.writeLog("temps restant : " + Fonction.get_temps_restant(id_utilisateur, connectionString));
+                                MainForm.writeLog("mainForm.cs->btn_Connexion_Click : usager standard");
+                                MainForm.writeLog("temps restant : " + Fonction.get_temps_restant(id_utilisateur, Parametres.connectionString));
                             }
-                            if (Fonction.get_temps_restant(id_utilisateur, connectionString) > 0)
+                            if (Fonction.get_temps_restant(id_utilisateur, Parametres.connectionString) > 0)
                             {
-                                if (this.debug == "all")
+                                if (Parametres.debug == "all")
                                 {
-                                    this.writeLog("mainForm.cs->btn_Connexion_Click : temps ok, demandes de blocages et affichage du temps");
+                                    MainForm.writeLog("mainForm.cs->btn_Connexion_Click : temps ok, demandes de blocages et affichage du temps");
                                 }
 
                                 blocageMenu(true);
@@ -388,9 +344,9 @@ namespace LGBConnect
                                 frmTemps = new frm_Temps(this);
                                 frmTemps.ShowInTaskbar = false;
                                 frmTemps.ShowDialog();
-                                if (this.debug == "all")
+                                if (Parametres.debug == "all")
                                 {
-                                    this.writeLog("mainForm.cs->btn_Connexion_Click : frmTemps fermée");
+                                    MainForm.writeLog("mainForm.cs->btn_Connexion_Click : frmTemps fermée");
                                 }
 
                                 this.Show();
@@ -443,13 +399,13 @@ namespace LGBConnect
             ToolStripItem menuItem = (ToolStripItem)sender;
             if (menuItem.Name == "Parametres")
             {
-                assistantConfig assistant = new assistantConfig(this);
+                assistantConfig assistant = new assistantConfig();
                 assistant.ShowDialog();
-                if (poste_type == "usager")
+                if (Parametres.poste_type == "usager")
                 {
                     goFullscreen(true);
                 }
-                if (poste_type == "animateur")
+                if (Parametres.poste_type == "animateur")
                 {
                     goFullscreen(false);
                 }
@@ -458,11 +414,11 @@ namespace LGBConnect
             if (menuItem.Name == "FinSession")
             {
                 if (frmTemps != null) {
-                    if (poste_type == "usager")
+                    if (Parametres.poste_type == "usager")
                     {
                         goFullscreen(true);
                     }
-                    if (poste_type == "animateur")
+                    if (Parametres.poste_type == "animateur")
                     {
                         goFullscreen(false);
                     }
@@ -474,7 +430,6 @@ namespace LGBConnect
                 Fonction.blocageGestionnaireDesTaches(false);
                 Fonction.blocageChangementMotDePasse(false);
                 this.Close();
-                Application.Exit();
             }
         }
 
@@ -586,12 +541,12 @@ namespace LGBConnect
         /// <param name="e"></param>
         private void timer_MAJEtat_Tick(object sender, EventArgs e)
         {
-            MySqlConnection cnn = new MySqlConnection(connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
             try
             {
                 cnn.Open();
 
-                String sql = "UPDATE `tab_computer` SET `date_lastetat_computer`= CURRENT_DATE(), `lastetat_computer`= " + ((DateTime.Now.Minute + DateTime.Now.Hour * 60) * 60 + DateTime.Now.Second).ToString() + " WHERE `id_computer`= '" + poste_id + "'";
+                String sql = "UPDATE `tab_computer` SET `date_lastetat_computer`= CURRENT_DATE(), `lastetat_computer`= " + ((DateTime.Now.Minute + DateTime.Now.Hour * 60) * 60 + DateTime.Now.Second).ToString() + " WHERE `id_computer`= '" + Parametres.poste_id + "'";
                 //sprintf(chainesql, "UPDATE tab_resa SET `duree_resa`='%d', `status_resa`='%d' WHERE `id_resa`='%d' ", *temps_passer, *status_resa, *id_resa);
                 
 
@@ -606,7 +561,7 @@ namespace LGBConnect
             cnn.Close();
         }
 
-        public void writeLog(string message)
+        public static void writeLog(string message)
         {
             ServiceFonctionsAdmin.FonctionsAdminClient client = new ServiceFonctionsAdmin.FonctionsAdminClient();
             client.writeLog(message);

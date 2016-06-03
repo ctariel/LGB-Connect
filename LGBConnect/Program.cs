@@ -18,6 +18,8 @@ namespace LGBConnect
             Application.SetCompatibleTextRenderingDefault(false);
             //Application.Run(new frm_Splash());
             Application.Run(new MainForm());
+            Fonction.blocageGestionnaireDesTaches(false);
+            Fonction.blocageChangementMotDePasse(false);
         }
     }
 }

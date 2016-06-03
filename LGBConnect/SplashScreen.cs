@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using MySql.Data;
 using MySql.Data.MySqlClient;
+using LGBConnect.classes;
 
 namespace LGBConnect
 {
@@ -21,12 +22,10 @@ namespace LGBConnect
     /// </summary>
     public partial class frm_Splash : Form
     {
-        MainForm parentForm;
 
-        public frm_Splash(MainForm mainForm)
+        public frm_Splash()
         {
             InitializeComponent();
-            parentForm = mainForm;
         }
 
         public int chargement()
@@ -35,28 +34,28 @@ namespace LGBConnect
             progressBar_Splash.Step = 50;
 
             if (verification_Config() == 0 ) {
-                if (parentForm.debug == "all")
+                if (Parametres.debug == "all")
                 {
-                    parentForm.writeLog("SplashScreen.cs->chargement() : Config ok -----------------");
-                    parentForm.writeLog("mysql - hote :" + parentForm.db_hote);
-                    parentForm.writeLog("mysql - base :" + parentForm.db_base);
-                    parentForm.writeLog("mysql - utilisateur :" + parentForm.db_utilisateur);
-                    parentForm.writeLog("mysql - mot de passe :" + parentForm.db_motdepasse);
-                    parentForm.writeLog("poste - nom :" + parentForm.poste_nom);
-                    parentForm.writeLog("poste - id :" + parentForm.poste_id);
-                    parentForm.writeLog("poste - MAC :" + parentForm.poste_MAC);
-                    parentForm.writeLog("poste - type :" + parentForm.poste_type);
-                    parentForm.writeLog("poste - chrono :" + parentForm.poste_chrono);
-                    parentForm.writeLog("poste - debug :" + parentForm.debug);
-                    parentForm.writeLog("SplashScreen.cs->chargement() : Config ok -----------------");
+                    MainForm.writeLog("SplashScreen.cs->chargement() : Config ok -----------------");
+                    MainForm.writeLog("mysql - hote :" + Parametres.db_hote);
+                    MainForm.writeLog("mysql - base :" + Parametres.db_base);
+                    MainForm.writeLog("mysql - utilisateur :" + Parametres.db_utilisateur);
+                    MainForm.writeLog("mysql - mot de passe :" + Parametres.db_motdepasse);
+                    MainForm.writeLog("poste - nom :" + Parametres.poste_nom);
+                    MainForm.writeLog("poste - id :" + Parametres.poste_id);
+                    MainForm.writeLog("poste - MAC :" + Parametres.poste_adresse_MAC);
+                    MainForm.writeLog("poste - type :" + Parametres.poste_type);
+                    MainForm.writeLog("poste - chrono :" + Parametres.poste_chrono);
+                    MainForm.writeLog("poste - debug :" + Parametres.debug);
+                    MainForm.writeLog("SplashScreen.cs->chargement() : Config ok -----------------");
 
                 }
                 progressBar_Splash.PerformStep();
                 if (verification_Connexion_Base() == 0)
                 {
-                    if (parentForm.debug == "all")
+                    if (Parametres.debug == "all")
                     {
-                        parentForm.writeLog("SplashScreen.cs-> chargement() : connexion à la base ok ");
+                        MainForm.writeLog("SplashScreen.cs-> chargement() : connexion à la base ok ");
                     }
                     progressBar_Splash.PerformStep();
                     this.Hide();
@@ -81,32 +80,7 @@ namespace LGBConnect
         /// <returns>0 en cas de succès, 1 en cas d'échec</returns>
         private int verification_Config()
         {
-            Dictionary<string, string> config = new Dictionary<string, string>();
-
-            //MessageBox.Show(RunningDir + "\\" + fileConfigName);
-
-            ServiceFonctionsAdmin.FonctionsAdminClient client = new ServiceFonctionsAdmin.FonctionsAdminClient();
-            config = client.lireConfiguration();
-
-            if (config != null)
-            {
-                parentForm.db_hote = config["mysql_hote"];
-                parentForm.db_base = config["mysql_base"];
-                parentForm.db_utilisateur = config["mysql_utilisateur"];
-                parentForm.db_motdepasse = config["mysql_mot_de_passe"];
-                parentForm.poste_nom = config["poste_nom"];
-                parentForm.poste_id = config["poste_id"];
-                parentForm.poste_MAC = config["poste_adresse_MAC"];
-                parentForm.poste_type = config["poste_type"];
-                parentForm.poste_chrono = config["poste_chrono"];
-                parentForm.debug = config["debug"];
-                return 0;
-            }
-            else
-            {
-                return 1;
-            }
-
+            return Parametres.lireConfiguration();
         }
 
         /// <summary>
@@ -115,12 +89,11 @@ namespace LGBConnect
         /// <returns>0 en cas de succès, 1 en cas d'échec</returns>
         private int verification_Connexion_Base()
         {
-            parentForm.connectionString = "server=" + parentForm.db_hote + ";database=" + parentForm.db_base + ";uid=" + parentForm.db_utilisateur + ";pwd=" + parentForm.db_motdepasse + ";"; ;
             MySqlConnection cnn;
             //System.Diagnostics.Debug.WriteLine("connection string = " + parentForm.connectionString);
             try
             {
-                cnn = new MySqlConnection(parentForm.connectionString);
+                cnn = new MySqlConnection(Parametres.connectionString);
                 cnn.Open();
                 // MessageBox.Show("connexion réussie !! ");
             }
