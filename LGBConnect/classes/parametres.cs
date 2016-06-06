@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LGBConnect.classes
 {
-    static class Parametres
+    public static class Parametres
     {
         public static String db_hote { get; set; }
         public static String db_base { get; set; }
@@ -94,7 +94,7 @@ namespace LGBConnect.classes
                 }
                 else
                 {
-                    return "server=" + db_hote + ";database=" + db_base + ";uid=" + db_utilisateur + ";pwd=" + db_motdepasse + ";";
+                    return "server=" + db_hote + ";database=" + db_base + ";uid=" + db_utilisateur + ";pwd=" + db_motdepasse + ";Convert Zero Datetime=True";
                 }
             }
         }

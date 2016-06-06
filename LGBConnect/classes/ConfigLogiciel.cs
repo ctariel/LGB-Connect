@@ -9,7 +9,7 @@ using LGBConnect.classes;
 
 namespace LGBConnect.classes
 {
-    class ConfigLogiciel
+    public class ConfigLogiciel
     {
         private int _id = 0;
         private int _idEspace;
@@ -34,6 +34,14 @@ namespace LGBConnect.classes
             return _id != 0;
         }
 
+        public Boolean deconnexionAuto
+        {
+            get
+            {
+                return (_deconnexionAuto != 0);
+            }
+        }
+
         public ConfigLogiciel(int idEspace)
         {
             MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
@@ -51,16 +59,16 @@ namespace LGBConnect.classes
                 {
                     while (rdr.Read())
                     {
-                        _id = (int)rdr["id_config_logiciel"];
-                        _idEspace = (int)rdr["id_espace"];
-                        _configMenu = (int)rdr["config_menu_logiciel"];
-                        _pageInscription = (int)rdr["page_inscription_logiciel"];
-                        _pageRenseignement = (int)rdr["page_renseignement_logiciel"];
-                        _connexionAnim = (int)rdr["connexion_anim_logiciel"];
-                        _bloquageTouche = (int)rdr["bloquage_touche_logiciel"];
-                        _affichageTemps = (int)rdr["affichage_temps_logiciel"];
-                        _deconnexionAuto = (int)rdr["deconnexion_auto_logiciel"];
-                        _fermetureSesssion = (int)rdr["fermeture_session_auto"];
+                        _id = rdr.GetInt32("id_config_logiciel");
+                        _idEspace = rdr.GetInt32("id_espace");
+                        _configMenu = rdr.GetInt32("config_menu_logiciel");
+                        _pageInscription = rdr.GetInt32("page_inscription_logiciel");
+                        _pageRenseignement = rdr.GetInt32("page_renseignement_logiciel");
+                        _connexionAnim = rdr.GetInt32("connexion_anim_logiciel");
+                        _bloquageTouche = rdr.GetInt32("bloquage_touche_logiciel");
+                        _affichageTemps = rdr.GetInt32("affichage_temps_logiciel");
+                        _deconnexionAuto = rdr.GetInt32("deconnexion_auto_logiciel");
+                        _fermetureSesssion = rdr.GetInt32("fermeture_session_auto");
 
                         if (Parametres.debug == "all")
                         {
