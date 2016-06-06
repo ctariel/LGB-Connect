@@ -53,7 +53,7 @@ namespace LGBConnect.classes
             get { return _statut; }
         }
 
-        public Utilisateur(int unId)
+        public Utilisateur(int idUtilisateur)
         {
             MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
             try
@@ -62,7 +62,7 @@ namespace LGBConnect.classes
 
                 string sql = "SELECT * FROM tab_user WHERE id_user = @idUser";
                 MySqlCommand cmd = new MySqlCommand(sql, cnn);
-                cmd.Parameters.AddWithValue("@idUser", unId);
+                cmd.Parameters.AddWithValue("@idUser", idUtilisateur);
 
                 if (Parametres.debug == "all")
                 {

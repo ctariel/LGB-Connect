@@ -10,8 +10,6 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
-using MySql.Data;
-using MySql.Data.MySqlClient;
 using LGBConnect.classes;
 
 namespace LGBConnect
@@ -98,7 +96,7 @@ namespace LGBConnect
             }
 
             // timer pour mettre à jour la base de données quand le logiciel est actif (tab_computer.lastetat)
-            timer_MAJEtat.Interval = 10000; 
+            timer_MAJEtat.Interval = 5000; 
             timer_MAJEtat.Tick += new EventHandler(timer_MAJEtat_Tick);
             timer_MAJEtat.Start();
 
@@ -483,24 +481,9 @@ namespace LGBConnect
         /// <param name="e"></param>
         private void timer_MAJEtat_Tick(object sender, EventArgs e)
         {
-            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
-            try
-            {
-                cnn.Open();
+            Poste poste = new Poste(Parametres.poste_id);
+            poste.MAJEtat();
 
-                String sql = "UPDATE `tab_computer` SET `date_lastetat_computer`= CURRENT_DATE(), `lastetat_computer`= " + ((DateTime.Now.Minute + DateTime.Now.Hour * 60) * 60 + DateTime.Now.Second).ToString() + " WHERE `id_computer`= '" + Parametres.poste_id + "'";
-                //sprintf(chainesql, "UPDATE tab_resa SET `duree_resa`='%d', `status_resa`='%d' WHERE `id_resa`='%d' ", *temps_passer, *status_resa, *id_resa);
-                
-
-                MySqlCommand cmd = new MySqlCommand(sql, cnn);
-                MySqlDataReader rdr = cmd.ExecuteReader();
-                rdr.Close();
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine("Connexion echouée !!" + ex.ToString());
-            }
-            cnn.Close();
         }
 
         public static void writeLog(string message)
