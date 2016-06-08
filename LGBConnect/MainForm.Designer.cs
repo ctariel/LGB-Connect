@@ -40,9 +40,13 @@
             this.lbl_Espace = new System.Windows.Forms.Label();
             this.groupBox_inscription = new System.Windows.Forms.GroupBox();
             this.btn_inscription = new System.Windows.Forms.Button();
+            this.lbl_resa_texte = new System.Windows.Forms.Label();
+            this.tableLayoutPanel_resa = new System.Windows.Forms.TableLayoutPanel();
+            this.lbl_resa = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox_inscription.SuspendLayout();
+            this.tableLayoutPanel_resa.SuspendLayout();
             this.SuspendLayout();
             // 
             // notifyIcon1
@@ -60,6 +64,7 @@
             this.tableLayoutPanel1.Controls.Add(this.groupBox1, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.lbl_Espace, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.groupBox_inscription, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel_resa, 1, 3);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -168,6 +173,48 @@
             this.btn_inscription.UseVisualStyleBackColor = true;
             this.btn_inscription.Click += new System.EventHandler(this.btn_inscription_Click);
             // 
+            // lbl_resa_texte
+            // 
+            this.lbl_resa_texte.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.lbl_resa_texte.AutoSize = true;
+            this.lbl_resa_texte.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_resa_texte.Location = new System.Drawing.Point(3, 0);
+            this.lbl_resa_texte.Name = "lbl_resa_texte";
+            this.lbl_resa_texte.Padding = new System.Windows.Forms.Padding(3);
+            this.lbl_resa_texte.Size = new System.Drawing.Size(189, 19);
+            this.lbl_resa_texte.TabIndex = 4;
+            this.lbl_resa_texte.Text = "prochaine réservation du poste";
+            this.lbl_resa_texte.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // tableLayoutPanel_resa
+            // 
+            this.tableLayoutPanel_resa.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.tableLayoutPanel_resa.AutoSize = true;
+            this.tableLayoutPanel_resa.ColumnCount = 1;
+            this.tableLayoutPanel_resa.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel_resa.Controls.Add(this.lbl_resa, 0, 1);
+            this.tableLayoutPanel_resa.Controls.Add(this.lbl_resa_texte, 0, 0);
+            this.tableLayoutPanel_resa.Location = new System.Drawing.Point(244, 383);
+            this.tableLayoutPanel_resa.Name = "tableLayoutPanel_resa";
+            this.tableLayoutPanel_resa.RowCount = 2;
+            this.tableLayoutPanel_resa.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel_resa.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel_resa.Size = new System.Drawing.Size(195, 38);
+            this.tableLayoutPanel_resa.TabIndex = 5;
+            // 
+            // lbl_resa
+            // 
+            this.lbl_resa.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.lbl_resa.AutoSize = true;
+            this.lbl_resa.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_resa.Location = new System.Drawing.Point(69, 19);
+            this.lbl_resa.Name = "lbl_resa";
+            this.lbl_resa.Padding = new System.Windows.Forms.Padding(3);
+            this.lbl_resa.Size = new System.Drawing.Size(56, 19);
+            this.lbl_resa.TabIndex = 5;
+            this.lbl_resa.Text = "Aucune";
+            this.lbl_resa.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // MainForm
             // 
             this.AcceptButton = this.btn_Connexion;
@@ -187,6 +234,8 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox_inscription.ResumeLayout(false);
+            this.tableLayoutPanel_resa.ResumeLayout(false);
+            this.tableLayoutPanel_resa.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -205,6 +254,9 @@
         private System.Windows.Forms.Label lbl_Espace;
         private System.Windows.Forms.GroupBox groupBox_inscription;
         private System.Windows.Forms.Button btn_inscription;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel_resa;
+        private System.Windows.Forms.Label lbl_resa;
+        private System.Windows.Forms.Label lbl_resa_texte;
     }
 }
 

@@ -29,6 +29,10 @@ namespace LGBConnect
 
         ConfigLogiciel configLogiciel;
 
+        Poste poste;
+        Resa prochaineResa;
+        Utilisateur prochainUtilisateur;
+
         /* --- déclaration pour  le blocage des raccourcis claviers ---- */
         // Structure contain information about low-level keyboard input event
         [StructLayout(LayoutKind.Sequential)]
@@ -118,6 +122,7 @@ namespace LGBConnect
             this.Hide();
 
             // récupération de l'id et du nom de la salle
+            poste = new Poste(Parametres.poste_id);
             Salle salle = new Salle(Parametres.poste_nom);
             Espace espace = new Espace(salle.idEspace);
 
@@ -181,6 +186,8 @@ namespace LGBConnect
                 }
             }
             this.Show();
+            timer_MAJEtat_Tick(null, null);
+
         }
 
 
@@ -228,6 +235,52 @@ namespace LGBConnect
             {
                 MainForm.writeLog("mainForm.cs->btn_Connexion_Click");
             }
+            if (prochaineResa != null && prochaineResa.id != 0)
+            {
+                DateTime debutDeSession = prochaineResa.dateResa.AddMinutes(prochaineResa.debut);
+                TimeSpan diff = DateTime.Now - debutDeSession;
+
+                if (diff.TotalMinutes > -5 && diff.TotalMinutes < prochaineResa.duree) // on verrouille 5 minutes avant
+                {
+                    if (textBox_Utilisateur.Text == prochainUtilisateur.login)
+                    {
+                        login();
+                    }
+                    else
+                    {
+                        Utilisateur utilisateur = new Utilisateur(textBox_Utilisateur.Text, textBox_MotDePasse.Text);
+                        if (utilisateur.id != 0)
+                        {
+                            if (utilisateur.statut != 1) // cas du login animateur
+                            {
+                                login();
+                            }
+                            else
+                            {
+                                MessageBox.Show("Poste réservé à " + prochainUtilisateur.prenom + " " + prochainUtilisateur.nom + " !!","Login impossible sur ce poste");
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("login ou mot de passe inconnu");
+                        }
+
+                    }
+                }
+                else
+                {
+                    login();
+                }
+
+            }
+        }
+
+        private void login()
+        {
+            if (Parametres.debug == "all")
+            {
+                MainForm.writeLog("mainForm.cs->login");
+            }
 
             Utilisateur utilisateur = new Utilisateur(textBox_Utilisateur.Text, textBox_MotDePasse.Text);
             if (utilisateur.id != 0 )
@@ -235,7 +288,7 @@ namespace LGBConnect
 
                 if (Parametres.debug == "all")
                 {
-                    MainForm.writeLog("mainForm.cs->btn_Connexion_Click : login ok");
+                    MainForm.writeLog("mainForm.cs->login : login ok");
                     MainForm.writeLog("nom utilisateur : " + utilisateur.nom);
                     MainForm.writeLog("prenom utilisateur : " + utilisateur.prenom);
                     MainForm.writeLog("id utilisateur : " + utilisateur.id);
@@ -252,11 +305,11 @@ namespace LGBConnect
                 {
                     if (estAnimateur)
                     {
-                        MainForm.writeLog("mainForm.cs->btn_Connexion_Click : connexion animateur");
+                        MainForm.writeLog("mainForm.cs->login : connexion animateur");
                     }
                     else
                     {
-                        MainForm.writeLog("mainForm.cs->btn_Connexion_Click : usager standard");
+                        MainForm.writeLog("mainForm.cs->login : usager standard");
                         MainForm.writeLog("temps restant : " + utilisateur.tempsRestant());
                     }
                 }
@@ -265,7 +318,7 @@ namespace LGBConnect
                 {
                     if (Parametres.debug == "all")
                     {
-                        MainForm.writeLog("mainForm.cs->btn_Connexion_Click : temps ok, demandes de blocages et affichage du temps");
+                        MainForm.writeLog("mainForm.cs->login : temps ok, demandes de blocages et affichage du temps");
                     }
                     goFullscreen(!estPosteAnimateur);
                     blocageMenu(!estAnimateur);
@@ -281,7 +334,7 @@ namespace LGBConnect
                     // remise en place des blocages en fonction de la configuration du poste
                     if (Parametres.debug == "all")
                     {
-                        MainForm.writeLog("mainForm.cs->btn_Connexion_Click : remise en place des blocages");
+                        MainForm.writeLog("mainForm.cs->login : remise en place des blocages");
                     }
 
                     this.Show();
@@ -294,7 +347,7 @@ namespace LGBConnect
                 }
                 else
                 {
-                    if (utilisateur.tempsRestant() == 0)
+                    if (utilisateur.tempsRestant() <= 0)
                     {
                         MessageBox.Show("Crédit temps dépassé !!");
                     }
@@ -475,15 +528,43 @@ namespace LGBConnect
 
         /// <summary>
         /// Mise à jour des données de connexion dans la base CyberGestionnaire.
-        /// La date est mise par le moteur SQL, et les secondes du jour sont calculées dans la fonction
+        /// 
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void timer_MAJEtat_Tick(object sender, EventArgs e)
         {
-            Poste poste = new Poste(Parametres.poste_id);
             poste.MAJEtat();
 
+            // vérification des réservations actives
+            int idResa = Resa.prochaineResa(poste.id);
+            if (idResa != 0)
+            {
+                // resa trouvée
+                if (prochaineResa == null || idResa != prochaineResa.id)
+                {
+                    prochaineResa = new Resa(idResa);
+                    prochainUtilisateur = new Utilisateur(prochaineResa.idUtilisateur);
+                }
+                prochaineResa = new Resa(idResa); // pour debug...
+                DateTime debutDeSession = prochaineResa.dateResa.AddMinutes(prochaineResa.debut);
+                TimeSpan diff = DateTime.Now - debutDeSession;
+
+                lbl_resa.Text = prochaineResa.dateResa.AddMinutes(prochaineResa.debut).ToString("G") + " (durée : " + prochaineResa.duree + " mn)";
+
+                if (diff.TotalMinutes > -5 && diff.TotalMinutes < prochaineResa.duree) // on verrouille 5 minutes avant
+                {
+                    lbl_resa.Text = lbl_resa.Text + "\n (poste verrouillé pour " + prochainUtilisateur.prenom + " " + prochainUtilisateur.nom + ")";
+                    lbl_resa.ForeColor = System.Drawing.Color.Red;
+                } else {
+                    lbl_resa.ForeColor = System.Drawing.Color.Blue;
+                }
+            }
+            else
+            {
+                lbl_resa.Text = "";
+                lbl_resa_texte.Text = "";
+            }
         }
 
         public static void writeLog(string message)

@@ -23,6 +23,10 @@ namespace LGBConnect.classes
         private DateTime _dernierEtat;
         private Boolean _configurationLGBConnect;
 
+        public int id
+        {
+            get { return _id; }
+        }
 
         public Poste(int idPoste)
         {

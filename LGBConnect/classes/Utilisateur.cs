@@ -48,6 +48,10 @@ namespace LGBConnect.classes
         {
             get { return _prenom; }
         }
+        public String login
+        {
+            get { return _login; }
+        }
         public int statut
         {
             get { return _statut; }
@@ -245,7 +249,7 @@ namespace LGBConnect.classes
                     {
                         rdr.Close();
 
-                        sql = "SELECT sum(duree_resa) as dureedujour FROM `tab_resa` WHERE id_user_resa = @idUser AND date_resa = '" + DateTime.Today.ToString("yyyy-MM-dd") + "'AND status_resa = '1'";
+                        sql = "SELECT sum(duree_resa) as dureedujour FROM `tab_resa` WHERE id_user_resa = @idUser AND dateresa_resa = '" + DateTime.Today.ToString("yyyy-MM-dd") + "' AND status_resa = '1' AND debut_resa >= ( floor( TIME_TO_SEC( CURRENT_TIME() ) /60) + duree_resa)";
                         cmd = new MySqlCommand(sql, cnn);
                         cmd.Parameters.AddWithValue("@idUser", _id);
                         rdr = cmd.ExecuteReader();

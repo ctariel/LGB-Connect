@@ -25,6 +25,7 @@ namespace LGBConnect
         Utilisateur utilisateur;
         ConfigLogiciel configLogiciel;
         Resa resa;
+        Resa prochaineResa;
 
         frm_MsgBox msgBox_deconnexion;
 
@@ -66,8 +67,55 @@ namespace LGBConnect
                 MainForm.writeLog("frm_Temps.cs->frm_Temps_Load : temps restant = " + utilisateur.tempsRestant());
             }
 
-            // inscription de la réservation dans la base
-            resa = new Resa(utilisateur.id, utilisateur.tempsRestant(), heureConnexion);
+
+            // vérification de la présence d'une résa sur le poste
+            int idResa = Resa.prochaineResa(Parametres.poste_id);
+            if (idResa != 0)
+            {
+                prochaineResa = new Resa(idResa);
+
+                DateTime debutDeSession = prochaineResa.dateResa.AddMinutes(prochaineResa.debut);
+                TimeSpan diff = DateTime.Now - debutDeSession;
+
+                if (diff.TotalMinutes > -5 && diff.TotalMinutes < prochaineResa.duree) // on verrouille 5 minutes avant
+                {
+                    // c'est la résa qui commence !
+                    prochaineResa.activer();
+                    resa = prochaineResa;
+                }
+                else
+                {
+                    // inscription de la réservation dans la base
+                    resa = new Resa(utilisateur.id, utilisateur.tempsRestant(), heureConnexion);
+
+                    DateTime debutDeReservation = prochaineResa.dateResa.AddMinutes(prochaineResa.debut);
+                    DateTime finDeSessionPrevue = resa.dateResa.AddMinutes(resa.debut).AddMinutes(resa.duree);
+
+                    if (finDeSessionPrevue > debutDeReservation)
+                    {
+
+                        if (prochaineResa.idUtilisateur == utilisateur.id)
+                        {
+                            // cas ou l'utilisateur ayant réservé arrive plus tôt...
+                            DialogResult dresult = MessageBox.Show("Vous avez réservé ce poste pour le " + debutDeReservation.ToString("G") + ". Voulez-vous utiliser cette réservation maintenant ?", "Attention !", MessageBoxButtons.YesNo);
+                            if ( dresult == DialogResult.Yes)
+                            {
+                                prochaineResa.annuler();
+                            }
+                        }
+                        else
+                        {
+                            diff = debutDeReservation.AddMinutes(-1) - heureConnexion;
+                            MessageBox.Show("Ce poste a été reservé pour le " + debutDeReservation.ToString("G") + ". La session sur ce poste se terminera donc dans " + Math.Floor(diff.TotalMinutes) + " mn.", "Poste réservé prochainement !");
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // pas de resa, inscription d'une nouvelle réservation dans la base
+                resa = new Resa(utilisateur.id, utilisateur.tempsRestant(), heureConnexion);
+            }
 
         }
 
@@ -75,11 +123,37 @@ namespace LGBConnect
         {
 
             String affichage_restant, affichage_utilise;
+            System.TimeSpan diffRestant, diffUtilise;
 
-            DateTime heureDeconnexion = heureConnexion.AddMinutes(utilisateur.tempsRestant());
+            DateTime heureDeconnexion;
 
-            System.TimeSpan diff = heureDeconnexion - DateTime.Now;
-            System.TimeSpan diff1 = DateTime.Now - heureConnexion;
+            heureDeconnexion = heureConnexion.AddMinutes(utilisateur.tempsRestant());
+
+            if (prochaineResa == null || prochaineResa.id == 0 || prochaineResa.duree == 0) // pas de réservation active
+            {
+            }
+            else
+            {
+                DateTime debutDeSession = prochaineResa.dateResa.AddMinutes(prochaineResa.debut);
+                TimeSpan diff = DateTime.Now - debutDeSession;
+
+                if (diff.TotalMinutes > -5 && diff.TotalMinutes < prochaineResa.duree) // on verrouille 5 minutes avant
+                {
+                    // c'est la résa qui commence !
+                }
+                else
+                {
+                    DateTime debutDeReservation = prochaineResa.dateResa.AddMinutes(prochaineResa.debut);
+                    DateTime finDeSessionPrevue = resa.dateResa.AddMinutes(resa.debut).AddMinutes(resa.duree);
+                    if (finDeSessionPrevue > debutDeReservation)
+                    {
+                        heureDeconnexion = debutDeReservation.AddMinutes(-1);
+                    }
+                }
+            }
+
+            diffRestant = heureDeconnexion - DateTime.Now;
+            diffUtilise = DateTime.Now - heureConnexion;
 
 
             if (utilisateur.tempsRestant() == 1440)  // le temps affecté est de 24h00, donc infini dans la pratique
@@ -89,9 +163,9 @@ namespace LGBConnect
             }
             else
             {
-                if (diff.Ticks >= DateTime.MinValue.Ticks)
+                if (diffRestant.Ticks >= DateTime.MinValue.Ticks)
                 {
-                    affichage_restant = new DateTime(diff.Ticks).ToString("HH:mm:ss");
+                    affichage_restant = new DateTime(diffRestant.Ticks).ToString("HH:mm:ss");
                 }
                 else
                 {
@@ -99,7 +173,7 @@ namespace LGBConnect
                 }
             }
 
-            affichage_utilise = new DateTime(diff1.Ticks).ToString("HH:mm:ss");
+            affichage_utilise = new DateTime(diffUtilise.Ticks).ToString("HH:mm:ss");
 
             if (Parametres.poste_chrono == "complet")
             {
@@ -177,7 +251,7 @@ namespace LGBConnect
             // si la déconnexion automatique est activée
             if (configLogiciel.deconnexionAuto)
             {
-                if ((Math.Floor(diff.TotalMinutes)) == 2 && diff.Seconds == 0)
+                if ((Math.Floor(diffRestant.TotalMinutes)) == 2 && diffRestant.Seconds == 0)
                 {
                     if (Parametres.debug == "all")
                     {
@@ -189,7 +263,7 @@ namespace LGBConnect
                     msgBox_deconnexion.TopMost = true;
                     lbl_temps_restant.ForeColor = System.Drawing.Color.Red;
                 }
-                if ((Math.Floor(diff.TotalMinutes)) < 0)
+                if ((Math.Floor(diffRestant.TotalMinutes)) < 0)
                 {
 
                     if (Parametres.debug == "all")
@@ -197,14 +271,16 @@ namespace LGBConnect
                         MainForm.writeLog("frm_Temps.cs->timer_Tick : message de déconnexion");
                     }
 
-                    if (msgBox_deconnexion.IsDisposed)
-                    {
-                        msgBox_deconnexion = new frm_MsgBox();
+                    if (msgBox_deconnexion != null) { 
+                        if (msgBox_deconnexion.IsDisposed)
+                        {
+                            msgBox_deconnexion = new frm_MsgBox();
+                        }
                     }
                     msgBox_deconnexion.Show("Déconnexion automatique !! Au revoir !", "Avertissement", 10000);
 
                 }
-                if (diff.TotalMinutes < -0.16) // environ 10 secondes
+                if (diffRestant.TotalMinutes < -0.16) // environ 10 secondes
                 {
                     if (!msgBox_deconnexion.IsDisposed)
                         msgBox_deconnexion.Close();
