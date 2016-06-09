@@ -118,6 +118,7 @@
     <Compile Include="classes\ConfigLogiciel.cs" />
     <Compile Include="classes\Espace.cs" />
     <Compile Include="classes\Parametres.cs" />
+    <Compile Include="classes\Poste.cs" />
     <Compile Include="classes\Resa.cs" />
     <Compile Include="classes\Salle.cs" />
     <Compile Include="frm_MsgBox.cs">

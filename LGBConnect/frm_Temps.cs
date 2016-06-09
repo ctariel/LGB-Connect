@@ -22,17 +22,18 @@ namespace LGBConnect
     {
         System.Windows.Forms.Timer t = new System.Windows.Forms.Timer();
         DateTime heureConnexion, heureDeconnexion;
-        MainForm parentForm;
+        Utilisateur utilisateur;
+        ConfigLogiciel configLogiciel;
+        Resa resa;
+        Resa prochaineResa;
 
         frm_MsgBox msgBox_deconnexion;
 
-        int temps_restant = 0;
-        int deconnexion_auto = 0;
-
-        public frm_Temps(MainForm mainForm)
+        public frm_Temps(Utilisateur unUtilisateur, ConfigLogiciel uneConfigLogicielle)
         {
             InitializeComponent();
-            parentForm = mainForm;
+            utilisateur = unUtilisateur;
+            configLogiciel = uneConfigLogicielle;
         }
 
         private void frm_Temps_Load(object sender, EventArgs e)
@@ -47,7 +48,7 @@ namespace LGBConnect
             this.Top = Screen.PrimaryScreen.WorkingArea.Height - this.Height;
             this.StartPosition = FormStartPosition.Manual;
             this.TopMost = true;
-            lbl_utilisateur.Text = parentForm.prenom_utilisateur + " " + parentForm.nom_utilisateur;
+            lbl_utilisateur.Text = utilisateur.prenom + " " + utilisateur.nom;
             //this.ShowInTaskbar = false;
 
             // début de la session
@@ -61,61 +62,60 @@ namespace LGBConnect
             t.Tick += new EventHandler(timer_Tick);
             t.Start();
 
-            if (parentForm.statut_utilisateur == 1)
-            {//utilisateur
-                temps_restant = Fonction.get_temps_restant(parentForm.id_utilisateur, Parametres.connectionString);
-                if (Parametres.debug == "all")
-                {
-                    MainForm.writeLog("frm_Temps.cs->frm_Temps_Load : temps restant = " + temps_restant);
-                }
-            }
-            else // admin ou animateur
-                temps_restant = 1440; //arbitraire --> 24h00
-
-            // inscription de la réservation dans la base
-            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
-            try
+            if (Parametres.debug == "all")
             {
-                cnn.Open();
+                MainForm.writeLog("frm_Temps.cs->frm_Temps_Load : temps restant = " + utilisateur.tempsRestant());
+            }
 
-                String sql = "SELECT deconnexion_auto_logiciel FROM tab_config_logiciel";
-                MySqlCommand cmd = new MySqlCommand(sql, cnn);
-                MySqlDataReader rdr = cmd.ExecuteReader();
-                while (rdr.Read())
+
+            // vérification de la présence d'une résa sur le poste
+            int idResa = Resa.prochaineResa(Parametres.poste_id);
+            if (idResa != 0)
+            {
+                prochaineResa = new Resa(idResa);
+
+                DateTime debutDeSession = prochaineResa.dateResa.AddMinutes(prochaineResa.debut);
+                TimeSpan diff = DateTime.Now - debutDeSession;
+
+                if (diff.TotalMinutes > -5 && diff.TotalMinutes < prochaineResa.duree) // on verrouille 5 minutes avant
                 {
-                    if (!Convert.IsDBNull(rdr["deconnexion_auto_logiciel"]))
-                    {
-                        deconnexion_auto = System.Convert.ToInt32(rdr["deconnexion_auto_logiciel"]);
-                        if (Parametres.debug == "all")
-                        {
-                            MainForm.writeLog("frm_Temps.cs->frm_Temps_Load : deconnexion_auto =  " + deconnexion_auto);
-                        }
+                    // c'est la résa qui commence !
+                    prochaineResa.activer();
+                    resa = prochaineResa;
+                }
+                else
+                {
+                    // inscription de la réservation dans la base
+                    resa = new Resa(utilisateur.id, utilisateur.tempsRestant(), heureConnexion);
 
+                    DateTime debutDeReservation = prochaineResa.dateResa.AddMinutes(prochaineResa.debut);
+                    DateTime finDeSessionPrevue = resa.dateResa.AddMinutes(resa.debut).AddMinutes(resa.duree);
+
+                    if (finDeSessionPrevue > debutDeReservation)
+                    {
+
+                        if (prochaineResa.idUtilisateur == utilisateur.id)
+                        {
+                            // cas ou l'utilisateur ayant réservé arrive plus tôt...
+                            DialogResult dresult = MessageBox.Show("Vous avez réservé ce poste pour le " + debutDeReservation.ToString("G") + ". Voulez-vous utiliser cette réservation maintenant ?", "Attention !", MessageBoxButtons.YesNo);
+                            if ( dresult == DialogResult.Yes)
+                            {
+                                prochaineResa.annuler();
+                            }
+                        }
+                        else
+                        {
+                            diff = debutDeReservation.AddMinutes(-1) - heureConnexion;
+                            MessageBox.Show("Ce poste a été reservé pour le " + debutDeReservation.ToString("G") + ". La session sur ce poste se terminera donc dans " + Math.Floor(diff.TotalMinutes) + " mn.", "Poste réservé prochainement !");
+                        }
                     }
                 }
-
-                rdr.Close();
-
-                sql = "INSERT INTO `tab_resa` (`id_computer_resa`, `id_user_resa`, `dateresa_resa`, `debut_resa`, `duree_resa`, `date_resa`, `status_resa`) VALUES ('" + Parametres.poste_id + "',   '" + parentForm.id_utilisateur + "', '" + heureConnexion.ToString("yyyy-MM-dd") + "', '" + (heureConnexion.Minute + heureConnexion.Hour * 60).ToString() + "', " + temps_restant.ToString() +", '" + heureConnexion.ToString("yyyy-MM-dd") + "','0')";
-                if (Parametres.debug == "all")
-                {
-                    MainForm.writeLog("frm_Temps.cs->frm_Temps_Load : inscription du début de la résa sql =  " + sql);
-                }
-                
-                cmd = new MySqlCommand(sql, cnn);
-                rdr = cmd.ExecuteReader();
-                parentForm.id_resa = cmd.LastInsertedId;
-                if (Parametres.debug == "all")
-                {
-                    MainForm.writeLog("frm_Temps.cs->frm_Temps_Load : id resa en cours =  " + parentForm.id_resa);
-                }
-                rdr.Close();
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show("Connexion echouée !! " + ex.ToString());
+                // pas de resa, inscription d'une nouvelle réservation dans la base
+                resa = new Resa(utilisateur.id, utilisateur.tempsRestant(), heureConnexion);
             }
-            cnn.Close();
 
         }
 
@@ -123,23 +123,49 @@ namespace LGBConnect
         {
 
             String affichage_restant, affichage_utilise;
+            System.TimeSpan diffRestant, diffUtilise;
 
-            DateTime heureDeconnexion = heureConnexion.AddMinutes(this.temps_restant);
+            DateTime heureDeconnexion;
 
-            System.TimeSpan diff = heureDeconnexion - DateTime.Now;
-            System.TimeSpan diff1 = DateTime.Now - heureConnexion;
+            heureDeconnexion = heureConnexion.AddMinutes(utilisateur.tempsRestant());
+
+            if (prochaineResa == null || prochaineResa.id == 0 || prochaineResa.duree == 0) // pas de réservation active
+            {
+            }
+            else
+            {
+                DateTime debutDeSession = prochaineResa.dateResa.AddMinutes(prochaineResa.debut);
+                TimeSpan diff = DateTime.Now - debutDeSession;
+
+                if (diff.TotalMinutes > -5 && diff.TotalMinutes < prochaineResa.duree) // on verrouille 5 minutes avant
+                {
+                    // c'est la résa qui commence !
+                }
+                else
+                {
+                    DateTime debutDeReservation = prochaineResa.dateResa.AddMinutes(prochaineResa.debut);
+                    DateTime finDeSessionPrevue = resa.dateResa.AddMinutes(resa.debut).AddMinutes(resa.duree);
+                    if (finDeSessionPrevue > debutDeReservation)
+                    {
+                        heureDeconnexion = debutDeReservation.AddMinutes(-1);
+                    }
+                }
+            }
+
+            diffRestant = heureDeconnexion - DateTime.Now;
+            diffUtilise = DateTime.Now - heureConnexion;
 
 
-            if (this.temps_restant == 1440)  // le temps affecté est de 24h00, donc infini dans la pratique
+            if (utilisateur.tempsRestant() == 1440)  // le temps affecté est de 24h00, donc infini dans la pratique
             {
                 affichage_restant = "";
                 lbl_text_restant.Text = "";
             }
             else
             {
-                if (diff.Ticks >= DateTime.MinValue.Ticks)
+                if (diffRestant.Ticks >= DateTime.MinValue.Ticks)
                 {
-                    affichage_restant = new DateTime(diff.Ticks).ToString("HH:mm:ss");
+                    affichage_restant = new DateTime(diffRestant.Ticks).ToString("HH:mm:ss");
                 }
                 else
                 {
@@ -147,7 +173,7 @@ namespace LGBConnect
                 }
             }
 
-            affichage_utilise = new DateTime(diff1.Ticks).ToString("HH:mm:ss");
+            affichage_utilise = new DateTime(diffUtilise.Ticks).ToString("HH:mm:ss");
 
             if (Parametres.poste_chrono == "complet")
             {
@@ -186,7 +212,7 @@ namespace LGBConnect
             try
             {
                 cnn.Open();
-                String sql = "SELECT `status_resa` FROM `tab_resa` WHERE `id_user_resa`= '"+ parentForm.id_utilisateur + "' AND `id_resa`= '" + parentForm.id_resa +"'";
+                String sql = "SELECT `status_resa` FROM `tab_resa` WHERE `id_user_resa`= '"+ utilisateur.id + "' AND `id_resa`= '" + resa.id +"'";
 
                 MySqlCommand cmd = new MySqlCommand(sql, cnn);
                 MySqlDataReader rdr = cmd.ExecuteReader();
@@ -223,9 +249,9 @@ namespace LGBConnect
 
 
             // si la déconnexion automatique est activée
-            if (deconnexion_auto == 1)
+            if (configLogiciel.deconnexionAuto)
             {
-                if ((Math.Floor(diff.TotalMinutes)) == 2 && diff.Seconds == 0)
+                if ((Math.Floor(diffRestant.TotalMinutes)) == 2 && diffRestant.Seconds == 0)
                 {
                     if (Parametres.debug == "all")
                     {
@@ -237,7 +263,7 @@ namespace LGBConnect
                     msgBox_deconnexion.TopMost = true;
                     lbl_temps_restant.ForeColor = System.Drawing.Color.Red;
                 }
-                if ((Math.Floor(diff.TotalMinutes)) < 0)
+                if ((Math.Floor(diffRestant.TotalMinutes)) < 0)
                 {
 
                     if (Parametres.debug == "all")
@@ -245,14 +271,16 @@ namespace LGBConnect
                         MainForm.writeLog("frm_Temps.cs->timer_Tick : message de déconnexion");
                     }
 
-                    if (msgBox_deconnexion.IsDisposed)
-                    {
-                        msgBox_deconnexion = new frm_MsgBox();
+                    if (msgBox_deconnexion != null) { 
+                        if (msgBox_deconnexion.IsDisposed)
+                        {
+                            msgBox_deconnexion = new frm_MsgBox();
+                        }
                     }
                     msgBox_deconnexion.Show("Déconnexion automatique !! Au revoir !", "Avertissement", 10000);
 
                 }
-                if (diff.TotalMinutes < -0.16) // environ 10 secondes
+                if (diffRestant.TotalMinutes < -0.16) // environ 10 secondes
                 {
                     if (!msgBox_deconnexion.IsDisposed)
                         msgBox_deconnexion.Close();
@@ -268,7 +296,7 @@ namespace LGBConnect
         private void frm_Temps_FormClosed(object sender, FormClosedEventArgs e)
         {
 
-            if (parentForm.statut_utilisateur == 1) { // utilisateur standard
+            if (utilisateur.statut == 1) { // utilisateur standard
                //tuerLesProcess();
             }
 
@@ -283,32 +311,7 @@ namespace LGBConnect
                 MainForm.writeLog("frm_Temps.cs->frm_Temps_FormClosed : temps passé : " + temp_passe);
             }
 
-            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
-            try
-            {
-                cnn.Open();
-                int statut_resa = 0;
-                if (parentForm.statut_utilisateur == 1)
-                    statut_resa = 1;
-                else
-                    statut_resa = 2;
-
-                String sql = "UPDATE tab_resa SET `duree_resa`='" + temp_passe + "', `status_resa`='" + statut_resa.ToString() + "' WHERE `id_resa`='" + parentForm.id_resa + "'";
-                //sprintf(chainesql, "UPDATE tab_resa SET `duree_resa`='%d', `status_resa`='%d' WHERE `id_resa`='%d' ", *temps_passer, *status_resa, *id_resa);
-                if (Parametres.debug == "all")
-                {
-                    MainForm.writeLog("frm_Temps.cs->frm_Temps_FormClosed : inscription de la fin de la résa sql =  " + sql);
-                }
-
-                MySqlCommand cmd = new MySqlCommand(sql, cnn);
-                MySqlDataReader rdr = cmd.ExecuteReader();
-                rdr.Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Connexion echouée !! " + ex.ToString());
-            }
-            cnn.Close();
+            resa.clore((int)temp_passe);
             t.Stop();
         }
 

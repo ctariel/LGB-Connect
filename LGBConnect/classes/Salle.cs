@@ -9,7 +9,7 @@ using LGBConnect.classes;
 
 namespace LGBConnect.classes
 {
-    class Salle
+    public class Salle
     {
         private int _id;
         private String _nom;
@@ -49,10 +49,10 @@ namespace LGBConnect.classes
                 {
                     while (rdr.Read())
                     {
-                        _id = (int)rdr["id_salle"];
-                        _nom = (String)rdr["nom_salle"];
-                        _idEspace = (int)rdr["id_espace"];
-                        _commentaire = (String)rdr["comment_salle"];
+                        _id = rdr.GetInt32("id_salle");
+                        _nom = rdr.GetString("nom_salle");
+                        _idEspace = rdr.GetInt32("id_espace");
+                        _commentaire = rdr.GetString("comment_salle");
 
                         if (Parametres.debug == "all")
                         {
@@ -62,12 +62,12 @@ namespace LGBConnect.classes
                 }
                 else
                 {
-                    MainForm.writeLog("Pas de salle trouvée pour ce poste ! Veuillez revoir la configuration du logiciel !");
+                    MainForm.writeLog("Salle.cs->Salle(nomPoste) : Pas de salle trouvée pour ce poste ! Veuillez revoir la configuration du logiciel !");
                 }
             }
             catch (Exception ex)
             {
-                MainForm.writeLog("Salle.cs->Salle(nom_poste) : Connexion echouée !!" + ex.ToString());
+                MainForm.writeLog("Salle.cs->Salle(nomPoste) : Connexion echouée !!" + ex.ToString());
             }
             cnn.Close();
         }

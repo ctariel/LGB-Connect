@@ -132,10 +132,10 @@
             "ComponentsUrl" = "8:"
                 "Items"
                 {
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.5"
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.5.2"
                     {
-                    "Name" = "8:Microsoft .NET Framework 4.5 (x86 and x64)"
-                    "ProductCode" = "8:.NETFramework,Version=v4.5"
+                    "Name" = "8:Microsoft .NET Framework 4.5.2 (x86 et x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.5.2"
                     }
                 }
             }
@@ -216,7 +216,7 @@
                 {
                 "Name" = "8:.NET Framework"
                 "Message" = "8:[VSDNETMSG]"
-                "FrameworkVersion" = "8:.NETFramework,Version=v4.5"
+                "FrameworkVersion" = "8:.NETFramework,Version=v4.5.2"
                 "AllowLaterVersions" = "11:FALSE"
                 "InstallUrl" = "8:http://go.microsoft.com/fwlink/?LinkId=395269"
                 }
@@ -384,15 +384,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:LGBConnect"
-        "ProductCode" = "8:{864C2ACA-1196-413A-A727-711E6AF5A8FA}"
-        "PackageCode" = "8:{FFF40A45-0356-4A0D-A9D1-7C0F5A61A098}"
+        "ProductCode" = "8:{D8AF844C-03D7-4290-80FF-0DAF555E0566}"
+        "PackageCode" = "8:{84430FB1-9D0E-440A-9FC3-3E56FB81FB30}"
         "UpgradeCode" = "8:{6A7B3082-68C6-42ED-ACBD-614AE3A2BB68}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:0.2.2"
+        "ProductVersion" = "8:0.3.0"
         "Manufacturer" = "8:LGB"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

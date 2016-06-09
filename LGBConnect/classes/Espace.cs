@@ -9,7 +9,7 @@ using LGBConnect.classes;
 
 namespace LGBConnect.classes
 {
-    class Espace
+    public class Espace
     {
         // les champs sont calqués sur le schéma de la base de données
         private int _id;
@@ -48,15 +48,15 @@ namespace LGBConnect.classes
                 {
                     while (rdr.Read())
                     {
-                        _id = (int)rdr["id_espace"];
-                        _nom = (String)rdr["nom_espace"];
-                        _idVille = (int)rdr["id_city"];
-                        _adresse = (String)rdr["adresse"];
-                        _tel = (String)rdr["tel_espace"];
-                        _fax = (String)rdr["fax_espace"];
-                        _logo = (String)rdr["logo_espace"];
-                        _couleur = (int)rdr["couleur_espace"];
-                        _mail = (String)rdr["mail_espace"];
+                        _id = rdr.GetInt32("id_espace");
+                        _nom = rdr.GetString("nom_espace");
+                        _idVille = rdr.GetInt32("id_city");
+                        _adresse = rdr.GetString("adresse");
+                        _tel = rdr.GetString("tel_espace");
+                        _fax = rdr.GetString("fax_espace");
+                        _logo = rdr.GetString("logo_espace");
+                        _couleur = rdr.GetInt32("couleur_espace");
+                        _mail = rdr.GetString("mail_espace");
 
                         if (Parametres.debug == "all")
                         {
@@ -66,7 +66,7 @@ namespace LGBConnect.classes
                 }
                 else
                 {
-                    MainForm.writeLog("Pas d'espace trouvée pour l'id " + idEspace + " ! Veuillez revoir la configuration du logiciel !");
+                    MainForm.writeLog("Espace.cs->Espace(idEspace) : Pas d'espace trouvée pour l'id " + idEspace + " ! Veuillez revoir la configuration du logiciel !");
                 }
             }
             catch (Exception ex)

@@ -212,7 +212,7 @@ namespace LGBConnect
 
                 while (rdr.Read())
                 {
-                    lbl_Espace.Text = (String)rdr["nom_salle"];
+                    lbl_Espace.Text = rdr.GetString("nom_salle");
                 }
                 rdr.Close();
             }
