@@ -273,6 +273,10 @@ namespace LGBConnect
                 }
 
             }
+            else
+            {
+                login();
+            }
         }
 
         private void login()
