@@ -49,7 +49,7 @@ namespace LGBConnect
             this.StartPosition = FormStartPosition.Manual;
             this.TopMost = true;
             lbl_utilisateur.Text = utilisateur.prenom + " " + utilisateur.nom;
-            //this.ShowInTaskbar = false;
+            this.ShowInTaskbar = false;
 
             // début de la session
             heureConnexion = DateTime.Now;
@@ -70,16 +70,19 @@ namespace LGBConnect
 
             // vérification de la présence d'une résa sur le poste
             int idResa = Resa.prochaineResa(Parametres.poste_id);
-            if (idResa != 0)
+            if (idResa != 0) // il existe une résa future pour le poste !
             {
                 prochaineResa = new Resa(idResa);
 
+                //on calcule le début de la prochaine réservation, on et regarde dans combien de temps ca commence
                 DateTime debutDeSession = prochaineResa.dateResa.AddMinutes(prochaineResa.debut);
                 TimeSpan diff = DateTime.Now - debutDeSession;
 
-                if (diff.TotalMinutes > -5 && diff.TotalMinutes < prochaineResa.duree) // on verrouille 5 minutes avant
+                if (diff.TotalMinutes > -5 && diff.TotalMinutes < prochaineResa.duree)
                 {
-                    // c'est la résa qui commence !
+                    // le seul qui peut se connecter dans cet interval de temps est le propriétaire de la résa
+                    // (voir MainForm.btn_Connexion_Click() )
+                    // c'est donc la résa qui commence !
                     prochaineResa.activer();
                     resa = prochaineResa;
                 }
@@ -88,6 +91,8 @@ namespace LGBConnect
                     // inscription de la réservation dans la base
                     resa = new Resa(utilisateur.id, utilisateur.tempsRestant(), heureConnexion);
 
+
+                    // on vérifie que la prochaine résa ne commence pas avant la fin théorique de la session
                     DateTime debutDeReservation = prochaineResa.dateResa.AddMinutes(prochaineResa.debut);
                     DateTime finDeSessionPrevue = resa.dateResa.AddMinutes(resa.debut).AddMinutes(resa.duree);
 
@@ -175,78 +180,12 @@ namespace LGBConnect
 
             affichage_utilise = new DateTime(diffUtilise.Ticks).ToString("HH:mm:ss");
 
-            if (Parametres.poste_chrono == "complet")
-            {
-                lbl_temps_restant.Text = affichage_restant;
-                lbl_temps_utilise.Text = affichage_utilise;
-            }
-
-            if (Parametres.poste_chrono == "restant")
-            {
-                lbl_temps_restant.Text = affichage_restant;
-                lbl_temps_utilise.Text = "";
-                lbl_text_utilise.Text = "";
-            }
-            if (Parametres.poste_chrono == "utilise")
-            {
-                lbl_temps_restant.Text = "";
-                lbl_text_restant.Text = "";
-                lbl_temps_utilise.Text = affichage_utilise;
-            }
-            if (Parametres.poste_chrono == "aucun")
-            {
-                lbl_temps_restant.Text = "";
-                lbl_text_restant.Text = "";
-                lbl_temps_utilise.Text = "";
-                lbl_text_utilise.Text = "";
-            }
-
+            affichageChronos(affichage_restant, affichage_utilise);
 
             /*if (Parametres.debug == "all")
             {
                 MainForm.writeLog("frm_Temps.cs->timer_Tick : " + lbl_temps_restant.Text);
             }*/
-
-            /// vérification du statut. Si le poste a été libéré depuis la console, status_resa est différent de zéro
-            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
-            try
-            {
-                cnn.Open();
-                String sql = "SELECT `status_resa` FROM `tab_resa` WHERE `id_user_resa`= '"+ utilisateur.id + "' AND `id_resa`= '" + resa.id +"'";
-
-                MySqlCommand cmd = new MySqlCommand(sql, cnn);
-                MySqlDataReader rdr = cmd.ExecuteReader();
-                while (rdr.Read())
-                {
-     
-                    int statut = 0;
-
-                    if (!Convert.IsDBNull(rdr["status_resa"]))
-                    {
-                        statut = System.Convert.ToInt32(rdr["status_resa"]);
-                    }
-                    if (statut != 0)
-                    {
-                        if (Parametres.debug == "all")
-                        {
-                            MainForm.writeLog("frm_Temps.cs->timer_Tick : déconnexion forcée depuis la console");
-                        }
-                        msgBox_deconnexion = new frm_MsgBox();
-                        msgBox_deconnexion.Show("Déconnexion forcée depuis la console !", "Avertissement", 10000);
-                        // deconnexion forcée
-                        this.Close();
-                    }
-                }
-
-                rdr.Close();
-
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Connexion echouée !! " + ex.ToString());
-            }
-            cnn.Close();
-
 
             // si la déconnexion automatique est activée
             if (configLogiciel.deconnexionAuto)
@@ -291,15 +230,28 @@ namespace LGBConnect
                     this.Close();
                 }
             }
+
+            verificationStatutResa();
+        }
+
+        private void verificationStatutResa()
+        {
+            /// vérification du statut. Si le poste a été libéré depuis la console, status_resa est différent de zéro
+            if (resa.statut != 0)
+            {
+                if (Parametres.debug == "all")
+                {
+                    MainForm.writeLog("frm_Temps.cs->timer_Tick : déconnexion forcée depuis la console");
+                }
+                msgBox_deconnexion = new frm_MsgBox();
+                msgBox_deconnexion.Show("Déconnexion forcée depuis la console !", "Avertissement", 10000);
+                // deconnexion forcée
+                this.Close();
+            }
         }
 
         private void frm_Temps_FormClosed(object sender, FormClosedEventArgs e)
         {
-
-            if (utilisateur.statut == 1) { // utilisateur standard
-               //tuerLesProcess();
-            }
-
 
             heureDeconnexion = DateTime.Now;
             System.TimeSpan diff = heureDeconnexion - heureConnexion;
@@ -313,8 +265,44 @@ namespace LGBConnect
 
             resa.clore((int)temp_passe);
             t.Stop();
+
+
+            if (utilisateur.statut == 1)
+            { // utilisateur standard
+              //tuerLesProcess();
+            }
+
         }
 
+        private void affichageChronos(String affichage_restant, String affichage_utilise)
+        {
+            if (Parametres.poste_chrono == "complet")
+            {
+                lbl_temps_restant.Text = affichage_restant;
+                lbl_temps_utilise.Text = affichage_utilise;
+            }
+
+            if (Parametres.poste_chrono == "restant")
+            {
+                lbl_temps_restant.Text = affichage_restant;
+                lbl_temps_utilise.Text = "";
+                lbl_text_utilise.Text = "";
+            }
+            if (Parametres.poste_chrono == "utilise")
+            {
+                lbl_temps_restant.Text = "";
+                lbl_text_restant.Text = "";
+                lbl_temps_utilise.Text = affichage_utilise;
+            }
+            if (Parametres.poste_chrono == "aucun")
+            {
+                lbl_temps_restant.Text = "";
+                lbl_text_restant.Text = "";
+                lbl_temps_utilise.Text = "";
+                lbl_text_utilise.Text = "";
+            }
+
+        }
         private void btn_deconnexion_Click(object sender, EventArgs e)
         {
             this.Close();
