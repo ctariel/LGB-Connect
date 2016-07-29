@@ -1,16 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Diagnostics;
-using System.Text;
-using System.Threading.Tasks;
 using System.Threading;
 using System.Windows.Forms;
-using MySql.Data;
-using MySql.Data.MySqlClient;
 using LGBConnect.classes;
 
 namespace LGBConnect
@@ -22,10 +13,10 @@ namespace LGBConnect
     {
         System.Windows.Forms.Timer t = new System.Windows.Forms.Timer();
         DateTime heureConnexion, heureDeconnexion;
-        Utilisateur utilisateur;
-        ConfigLogiciel configLogiciel;
-        Resa resa;
-        Resa prochaineResa;
+        Utilisateur utilisateur = null;
+        ConfigLogiciel configLogiciel = null;
+        Resa resa = null;
+        Resa prochaineResa = null;
 
         frm_MsgBox msgBox_deconnexion;
 
@@ -51,6 +42,12 @@ namespace LGBConnect
             lbl_utilisateur.Text = utilisateur.prenom + " " + utilisateur.nom;
             this.ShowInTaskbar = false;
 
+
+
+        }
+
+        private void frm_Temps_Shown(object sender, EventArgs e)
+        {
             // début de la session
             heureConnexion = DateTime.Now;
             if (Parametres.debug == "all")
@@ -67,59 +64,73 @@ namespace LGBConnect
                 MainForm.writeLog("frm_Temps.cs->frm_Temps_Load : temps restant = " + utilisateur.tempsRestant());
             }
 
-
-            // vérification de la présence d'une résa sur le poste
-            int idResa = Resa.prochaineResa(Parametres.poste_id);
-            if (idResa != 0) // il existe une résa future pour le poste !
+            if (utilisateur.statut == 1)
             {
-                prochaineResa = new Resa(idResa);
-
-                //on calcule le début de la prochaine réservation, on et regarde dans combien de temps ca commence
-                DateTime debutDeSession = prochaineResa.dateResa.AddMinutes(prochaineResa.debut);
-                TimeSpan diff = DateTime.Now - debutDeSession;
-
-                if (diff.TotalMinutes > -5 && diff.TotalMinutes < prochaineResa.duree)
+                // vérification de la présence d'une résa sur le poste
+                // cas ou c'est une réservation future qui commence
+                int idResaEnCours = Resa.verifierResaEnCours(Parametres.poste_id);
+                if (idResaEnCours != 0)
                 {
-                    // le seul qui peut se connecter dans cet interval de temps est le propriétaire de la résa
-                    // (voir MainForm.btn_Connexion_Click() )
-                    // c'est donc la résa qui commence !
-                    prochaineResa.activer();
-                    resa = prochaineResa;
+                    // il y a effectivement une résa en cours sur le poste...
+                    resa = new Resa(idResaEnCours);
+                    if (resa.duree > utilisateur.tempsRestant())
+                    {
+                        resa.duree = utilisateur.tempsRestant();
+                    }
+                    if (resa.idUtilisateur != utilisateur.id)
+                    {
+                        // ca ne devrait pas arriver ! Seul l'utilisateur ayant fait la résa future
+                        // peut l'utiliser !
+                        MessageBox.Show("Erreur dans le codage ! Ce message ne devrait jamais apparaitre !");
+                        this.Close();
+                    }
                 }
                 else
                 {
-                    // inscription de la réservation dans la base
+                    // pas de resa, inscription d'une nouvelle réservation dans la base
                     resa = new Resa(utilisateur.id, utilisateur.tempsRestant(), heureConnexion);
 
 
-                    // on vérifie que la prochaine résa ne commence pas avant la fin théorique de la session
-                    DateTime debutDeReservation = prochaineResa.dateResa.AddMinutes(prochaineResa.debut);
-                    DateTime finDeSessionPrevue = resa.dateResa.AddMinutes(resa.debut).AddMinutes(resa.duree);
-
-                    if (finDeSessionPrevue > debutDeReservation)
+                    // on essaye de voir combien de temps il reste avant
+                    // une éventuelle future résa
+                    int idResaFuture = Resa.prochaineResa(Parametres.poste_id);
+                    if (idResaFuture != 0) // il existe une résa future pour le poste !
                     {
+                        prochaineResa = new Resa(idResaFuture);
 
-                        if (prochaineResa.idUtilisateur == utilisateur.id)
+                        if (resa.finDeSession > prochaineResa.debutDeSession)
                         {
-                            // cas ou l'utilisateur ayant réservé arrive plus tôt...
-                            DialogResult dresult = MessageBox.Show("Vous avez réservé ce poste pour le " + debutDeReservation.ToString("G") + ". Voulez-vous utiliser cette réservation maintenant ?", "Attention !", MessageBoxButtons.YesNo);
-                            if ( dresult == DialogResult.Yes)
+
+                            if (prochaineResa.idUtilisateur == utilisateur.id)
                             {
-                                prochaineResa.annuler();
+                                // cas ou l'utilisateur ayant réservé arrive plus tôt...
+                                DialogResult dresult = MessageBox.Show("Vous avez réservé ce poste pour le " + prochaineResa.debutDeSession.ToString("G") + ". Voulez-vous utiliser cette réservation maintenant ?", "Attention !", MessageBoxButtons.YesNo);
+                                if (dresult == DialogResult.Yes)
+                                {
+                                    prochaineResa.annuler();
+                                }
                             }
-                        }
-                        else
-                        {
-                            diff = debutDeReservation.AddMinutes(-1) - heureConnexion;
-                            MessageBox.Show("Ce poste a été reservé pour le " + debutDeReservation.ToString("G") + ". La session sur ce poste se terminera donc dans " + Math.Floor(diff.TotalMinutes) + " mn.", "Poste réservé prochainement !");
+                            else
+                            {
+                                TimeSpan diff = prochaineResa.debutDeSession.AddMinutes(-1) - heureConnexion;
+                                MessageBox.Show("Ce poste a été reservé pour le " + prochaineResa.debutDeSession.ToString("G") + ". La session sur ce poste se terminera donc dans " + Math.Floor(diff.TotalMinutes) + " mn.", "Poste réservé prochainement !");
+                                resa.duree = (int)Math.Floor(diff.TotalMinutes);
+                            }
                         }
                     }
                 }
             }
             else
             {
-                // pas de resa, inscription d'une nouvelle réservation dans la base
+                // connexion admin
                 resa = new Resa(utilisateur.id, utilisateur.tempsRestant(), heureConnexion);
+            }
+
+
+            if (resa == null)
+            {
+                MessageBox.Show("erreur dans l'initialisation de la résa.");
+                this.Close();
             }
 
         }
@@ -130,32 +141,7 @@ namespace LGBConnect
             String affichage_restant, affichage_utilise;
             System.TimeSpan diffRestant, diffUtilise;
 
-            DateTime heureDeconnexion;
-
-            heureDeconnexion = heureConnexion.AddMinutes(utilisateur.tempsRestant());
-
-            if (prochaineResa == null || prochaineResa.id == 0 || prochaineResa.duree == 0) // pas de réservation active
-            {
-            }
-            else
-            {
-                DateTime debutDeSession = prochaineResa.dateResa.AddMinutes(prochaineResa.debut);
-                TimeSpan diff = DateTime.Now - debutDeSession;
-
-                if (diff.TotalMinutes > -5 && diff.TotalMinutes < prochaineResa.duree) // on verrouille 5 minutes avant
-                {
-                    // c'est la résa qui commence !
-                }
-                else
-                {
-                    DateTime debutDeReservation = prochaineResa.dateResa.AddMinutes(prochaineResa.debut);
-                    DateTime finDeSessionPrevue = resa.dateResa.AddMinutes(resa.debut).AddMinutes(resa.duree);
-                    if (finDeSessionPrevue > debutDeReservation)
-                    {
-                        heureDeconnexion = debutDeReservation.AddMinutes(-1);
-                    }
-                }
-            }
+            DateTime heureDeconnexion = heureConnexion.AddMinutes(resa.duree);
 
             diffRestant = heureDeconnexion - DateTime.Now;
             diffUtilise = DateTime.Now - heureConnexion;
@@ -307,6 +293,9 @@ namespace LGBConnect
         {
             this.Close();
         }
+
+
+
         /// <summary>
         /// méthode un peu bourrin pour fermer les fenêtres ouvertes par l'utilisateur.
         /// Donne des résultats mitigés, désactivée pour le moment

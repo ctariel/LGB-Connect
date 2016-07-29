@@ -9,11 +9,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Microsoft.Win32;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using MySql.Data;
-using MySql.Data.MySqlClient;
+
 
 namespace LGBConnect
 {

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MySql.Data;
 using MySql.Data.MySqlClient;
 using LGBConnect.classes;
@@ -41,12 +37,28 @@ namespace LGBConnect.classes
         public int duree
         {
             get { return _duree; }
+            set { _duree = value; }
         }
         public int statut
         {
             get { return _statut;  }
         }
+        public DateTime debutDeSession
+        {
+            get
+            {
+                return _dateResa.AddMinutes(_debut);
+            }
+        }
+        public DateTime finDeSession
+        {
+            get
+            {
+                return _dateResa.AddMinutes(_debut).AddMinutes(_duree);
+            }
+        }
 
+        
 
         public Resa(int idResa)
         {

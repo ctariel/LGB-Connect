@@ -120,11 +120,18 @@ namespace LGBServ
                         if (key != null)
                         {
                             key = key.OpenSubKey("Volatile Environment");
-                            Service_LGB.WriteLog("Ouverture de Volatile");
-                            if (key.GetValue("USERNAME") != null)
+                            if (key != null)
                             {
-                                Service_LGB.WriteLog("Profil trouvé : name  = " + key.GetValue("USERNAME").ToString() + " / SSID = " + keyName);
-                                liste[key.GetValue("USERNAME").ToString()] = keyName;
+                                Service_LGB.WriteLog("Ouverture de Volatile");
+                                if (key.GetValue("USERNAME") != null)
+                                {
+                                    Service_LGB.WriteLog("Profil trouvé : name  = " + key.GetValue("USERNAME").ToString() + " / SSID = " + keyName);
+                                    liste[key.GetValue("USERNAME").ToString()] = keyName;
+                                }
+                                else
+                                {
+                                    Service_LGB.WriteLog("pas de username trouvé !");
+                                }
                             }
                         }
 

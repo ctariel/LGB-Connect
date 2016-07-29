@@ -249,7 +249,7 @@ namespace LGBConnect.classes
                     {
                         rdr.Close();
 
-                        sql = "SELECT sum(duree_resa) as dureedujour FROM `tab_resa` WHERE id_user_resa = @idUser AND dateresa_resa = '" + DateTime.Today.ToString("yyyy-MM-dd") + "' AND status_resa = '1' AND debut_resa >= ( floor( TIME_TO_SEC( CURRENT_TIME() ) /60) + duree_resa)";
+                        sql = "SELECT sum(duree_resa) as dureedujour FROM `tab_resa` WHERE id_user_resa = @idUser AND dateresa_resa = '" + DateTime.Today.ToString("yyyy-MM-dd") + "' AND status_resa = '1' AND (debut_resa +duree_resa ) <= floor( TIME_TO_SEC( CURRENT_TIME() ) /60) ";
                         cmd = new MySqlCommand(sql, cnn);
                         cmd.Parameters.AddWithValue("@idUser", _id);
                         rdr = cmd.ExecuteReader();
@@ -282,14 +282,14 @@ namespace LGBConnect.classes
 
         }
 
-        public Boolean estConnecte()
+        public Boolean estConnecte(int idPoste)
         {
             Boolean estConnecte = false;
             MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
             try
             {
                 cnn.Open();
-                String sql = "SELECT * FROM tab_resa WHERE id_user_resa = @idUser AND status_resa = '0'";
+                String sql = "SELECT * FROM tab_resa WHERE id_user_resa = @idUser AND status_resa = '0' AND id_computer_resa != " + idPoste;
                 MySqlCommand cmd = new MySqlCommand(sql, cnn);
                 cmd.Parameters.AddWithValue("@idUser", _id);
                 MySqlDataReader rdr = cmd.ExecuteReader();
