@@ -115,6 +115,7 @@
             this.Text = "frm_Temps";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frm_Temps_FormClosed);
             this.Load += new System.EventHandler(this.frm_Temps_Load);
+            this.Shown += new System.EventHandler(this.frm_Temps_Shown);
             this.ResumeLayout(false);
 
         }

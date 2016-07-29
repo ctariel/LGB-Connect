@@ -23,7 +23,6 @@ namespace LGBServ
         /// </summary>
         public bool desactiverGestionnaireDesTaches(String SSID, bool desactive)
         {
-            //MessageBox.Show("Supprimer le gestionnaire des taches : " + blocage);
             try
             {
                 RegistryKey regSSID;
@@ -60,7 +59,7 @@ namespace LGBServ
 
         
         /// <summary>
-        /// Pour évitre un changement de mot de passe de l'utilisateur publique
+        /// Pour éviter un changement de mot de passe de l'utilisateur publique
         /// </summary>
         public bool desactiverChangementMotDePasse(String SSID, bool desactive)
         {
@@ -97,18 +96,64 @@ namespace LGBServ
             }
         }
 
+        /// <summary>
+        /// renvoie tout les profils contenant un username
+        /// </summary>
         public Dictionary<String, String> lireProfiles()
         {
             Service_LGB.WriteLog("Demande de lecture des profiles");
 
-            RegistryKey OurKey = Registry.LocalMachine;
-            OurKey = OurKey.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList", true); // refusé par l'UAC sous windows 10....
-            //Service_LGB.WriteLog("Accès à la clé ProfileList");
+            try
+            {
+                Dictionary<String, String> liste = new Dictionary<string, string>();
+
+                String[] keyNames = Registry.Users.GetSubKeyNames();
+
+                // Print the contents of the array to the console.
+                foreach (String keyName in keyNames)
+                {
+                    Service_LGB.WriteLog("Clé en cours : " + keyName);
+                    if (keyName.StartsWith("S-1-5-21"))
+                    {
+                        Service_LGB.WriteLog("Clé trouvé : " + keyName);
+                        RegistryKey key = Registry.Users.OpenSubKey(keyName);
+                        if (key != null)
+                        {
+                            key = key.OpenSubKey("Volatile Environment");
+                            if (key != null)
+                            {
+                                Service_LGB.WriteLog("Ouverture de Volatile");
+                                if (key.GetValue("USERNAME") != null)
+                                {
+                                    Service_LGB.WriteLog("Profil trouvé : name  = " + key.GetValue("USERNAME").ToString() + " / SSID = " + keyName);
+                                    liste[key.GetValue("USERNAME").ToString()] = keyName;
+                                }
+                                else
+                                {
+                                    Service_LGB.WriteLog("pas de username trouvé !");
+                                }
+                            }
+                        }
+
+                    }
+                }
+                return liste;
+            }
+            catch (Exception ex)
+            {
+                Service_LGB.WriteLog("Erreur de lecture des profiles : " + ex.ToString());
+                return null;
+            }
+            
+/*            try
+            {
+                RegistryKey OurKey = Registry.LocalMachine;
+                OurKey = OurKey.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList", true); // refusé par l'UAC sous windows 10....
+                //Service_LGB.WriteLog("Accès à la clé ProfileList");
 
 
-            Dictionary<String, String> liste = new Dictionary<string, string>();
+                Dictionary<String, String> liste = new Dictionary<string, string>();
 
-            try {
                 foreach (string Keyname in OurKey.GetSubKeyNames())
                 {
                     Service_LGB.WriteLog("Clé en cours : " + Keyname);
@@ -135,7 +180,7 @@ namespace LGBServ
             {
                 Service_LGB.WriteLog("Erreur de lecture des profiles : " + ex.ToString());
                 return null;
-            }
+            }*/
         }
 
         public bool ecrireConfiguration(Dictionary<string, string> config)

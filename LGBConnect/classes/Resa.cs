@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MySql.Data;
 using MySql.Data.MySqlClient;
 using LGBConnect.classes;
@@ -19,6 +15,9 @@ namespace LGBConnect.classes
         private int _duree;
         private DateTime _date; // date à laquelle a été faite la réservation
         private int _statut;
+
+        private System.Timers.Timer _timer = new System.Timers.Timer();
+
 
         public int id {
             get { return _id;}
@@ -38,7 +37,28 @@ namespace LGBConnect.classes
         public int duree
         {
             get { return _duree; }
+            set { _duree = value; }
         }
+        public int statut
+        {
+            get { return _statut;  }
+        }
+        public DateTime debutDeSession
+        {
+            get
+            {
+                return _dateResa.AddMinutes(_debut);
+            }
+        }
+        public DateTime finDeSession
+        {
+            get
+            {
+                return _dateResa.AddMinutes(_debut).AddMinutes(_duree);
+            }
+        }
+
+        
 
         public Resa(int idResa)
         {
@@ -82,6 +102,8 @@ namespace LGBConnect.classes
                 MainForm.writeLog("Resa.cs->Resa(idResa) : Connexion echouée !!" + ex.ToString());
             }
             cnn.Close();
+
+            timer_Start();
 
         }
 
@@ -136,6 +158,15 @@ namespace LGBConnect.classes
                 MainForm.writeLog("Resa.cs->Resa(idUtilisateur, tempsRestant, heureConnexion) :Connexion echouée !! " + ex.ToString());
             }
             cnn.Close();
+            timer_Start();
+        }
+
+        private void timer_Start()
+        {
+
+            _timer.Interval = 1000; // specify interval time as you want
+            _timer.Elapsed += new System.Timers.ElapsedEventHandler(timer_Elapsed);
+            _timer.Start();
 
         }
 
@@ -271,6 +302,8 @@ namespace LGBConnect.classes
                 // on cherche la salle associé au poste
                 cnn.Open();
 
+
+                // on demande la prochaine résa (limit 1 et order by date) pour le poste
                 String sql = "SELECT * FROM tab_resa WHERE id_computer_resa = @idPoste AND status_resa ='1' AND duree_resa > 0 AND (dateresa_resa > CURRENT_DATE() OR (dateresa_resa = CURRENT_DATE() AND debut_resa >= ( floor( TIME_TO_SEC( CURRENT_TIME() ) /60) - duree_resa + 1))) order by dateresa_resa ASC, debut_resa ASC Limit 0,1";
                 MySqlCommand cmd = new MySqlCommand(sql, cnn);
                 cmd.Parameters.AddWithValue("@idPoste", idPoste);
@@ -298,6 +331,39 @@ namespace LGBConnect.classes
             return idResa;
         }
 
+        private void timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            MAJStatut();
+        }
 
+        private void MAJStatut() { 
+            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
+            try { 
+                cnn.Open();
+                String sql = "SELECT `status_resa` FROM `tab_resa` WHERE `id_resa`= '" + _id + "'";
+
+                MySqlCommand cmd = new MySqlCommand(sql, cnn);
+                MySqlDataReader rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+
+                    if (!Convert.IsDBNull(rdr["status_resa"]))
+                    {
+                        _statut = System.Convert.ToInt32(rdr["status_resa"]);
+                    }
+                }
+                rdr.Close();
+            }
+            catch (Exception ex)
+            {
+                MainForm.writeLog("Resa.cs->MAJStatut() : Connexion echouée !!" + ex.ToString());
+            }
+            cnn.Close();
+        }
+
+        ~Resa()
+        {
+            _timer.Stop();
+        }
     }
 }

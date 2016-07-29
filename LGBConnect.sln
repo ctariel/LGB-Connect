@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LGBConnect", "LGBConnect\LGBConnect.csproj", "{AE8ED626-8D15-44EF-8F25-5BD4AE13B0B1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{25FEA47F-DF41-4D66-AC11-699FBC43B814} = {25FEA47F-DF41-4D66-AC11-699FBC43B814}
+	EndProjectSection
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{768AB705-86B7-44C8-9197-065FFD28738F}"
 EndProject

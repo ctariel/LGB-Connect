@@ -99,7 +99,7 @@ namespace LGBConnect
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Connexion echouée !!" + ex.ToString());
+                MessageBox.Show("Connexion echouée !! " + ex.ToString());
                 return 1;
             }
             cnn.Close();

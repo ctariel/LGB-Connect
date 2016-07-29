@@ -1,15 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using Microsoft.Win32;
 using LGBConnect.classes;
 
 namespace LGBConnect
@@ -89,7 +82,7 @@ namespace LGBConnect
                 splash.Close();
                 if (retour != 0)
                 {
-                    Application.Exit();
+                    this.Close();
                 }
 
             }
@@ -235,135 +228,128 @@ namespace LGBConnect
             {
                 MainForm.writeLog("mainForm.cs->btn_Connexion_Click");
             }
-            if (prochaineResa != null && prochaineResa.id != 0)
-            {
-                DateTime debutDeSession = prochaineResa.dateResa.AddMinutes(prochaineResa.debut);
-                TimeSpan diff = DateTime.Now - debutDeSession;
 
-                if (diff.TotalMinutes > -5 && diff.TotalMinutes < prochaineResa.duree) // on verrouille 5 minutes avant
+            Utilisateur utilisateur = new Utilisateur(textBox_Utilisateur.Text, textBox_MotDePasse.Text);
+
+            if (utilisateur.id != 0)
+            {
+
+                if (utilisateur.statut != 1) // cas du login animateur/administrateur
                 {
-                    if (textBox_Utilisateur.Text == prochainUtilisateur.login)
+                    login(utilisateur);
+                }
+                else
+                {
+                    // est ce qu'il existe une résa future ?
+                    if (prochaineResa != null && prochaineResa.id != 0)
                     {
-                        login();
-                    }
-                    else
-                    {
-                        Utilisateur utilisateur = new Utilisateur(textBox_Utilisateur.Text, textBox_MotDePasse.Text);
-                        if (utilisateur.id != 0)
+                        // combien de temps reste t'il avant le début de la session ?
+                        TimeSpan diff = DateTime.Now - prochaineResa.debutDeSession;
+                        if (diff.TotalMinutes > -5 && diff.TotalMinutes < prochaineResa.duree) // on verrouille 5 minutes avant
                         {
-                            if (utilisateur.statut != 1) // cas du login animateur
+                            // dans un intervalle de 5 minutes avant jusqu'à la fin théorique de la résa
+                            // seul l'utilisateur ayant effectué la résa peut se logguer
+                            if (utilisateur.login == prochainUtilisateur.login)
                             {
-                                login();
+                                prochaineResa.activer();
+                                login(utilisateur);
                             }
                             else
                             {
-                                MessageBox.Show("Poste réservé à " + prochainUtilisateur.prenom + " " + prochainUtilisateur.nom + " !!","Login impossible sur ce poste");
+                                MessageBox.Show("Poste réservé à " + prochainUtilisateur.prenom + " " + prochainUtilisateur.nom + " !!", "Login impossible sur ce poste");
                             }
                         }
                         else
                         {
-                            MessageBox.Show("login ou mot de passe inconnu");
+                            login(utilisateur);
                         }
-
-                    }
-                }
-                else
-                {
-                    login();
-                }
-
-            }
-        }
-
-        private void login()
-        {
-            if (Parametres.debug == "all")
-            {
-                MainForm.writeLog("mainForm.cs->login");
-            }
-
-            Utilisateur utilisateur = new Utilisateur(textBox_Utilisateur.Text, textBox_MotDePasse.Text);
-            if (utilisateur.id != 0 )
-            {
-
-                if (Parametres.debug == "all")
-                {
-                    MainForm.writeLog("mainForm.cs->login : login ok");
-                    MainForm.writeLog("nom utilisateur : " + utilisateur.nom);
-                    MainForm.writeLog("prenom utilisateur : " + utilisateur.prenom);
-                    MainForm.writeLog("id utilisateur : " + utilisateur.id);
-                    MainForm.writeLog("statut utilisateur : " + utilisateur.statut);
-                }
-
-                utilisateur.majDerniereVisite();
-
-                Boolean estAnimateur = (utilisateur.statut != 1);
-                Boolean estPosteAnimateur = (Parametres.poste_type != "usager");
-
-
-                if (Parametres.debug == "all")
-                {
-                    if (estAnimateur)
-                    {
-                        MainForm.writeLog("mainForm.cs->login : connexion animateur");
                     }
                     else
                     {
-                        MainForm.writeLog("mainForm.cs->login : usager standard");
-                        MainForm.writeLog("temps restant : " + utilisateur.tempsRestant());
+                        // pas de résa à venir
+                        login(utilisateur);
                     }
                 }
-
-                if (estAnimateur || ( utilisateur.tempsRestant() > 0 && !utilisateur.estConnecte() ) )
-                {
-                    if (Parametres.debug == "all")
-                    {
-                        MainForm.writeLog("mainForm.cs->login : temps ok, demandes de blocages et affichage du temps");
-                    }
-                    goFullscreen(!estPosteAnimateur);
-                    blocageMenu(!estAnimateur);
-                    Fonction.blocageGestionnaireDesTaches(!estAnimateur);
-                    Fonction.blocageChangementMotDePasse(!estAnimateur);
-                    this.Hide();
-                    frmTemps = new frm_Temps(utilisateur, configLogiciel);
-                    frmTemps.ShowInTaskbar = false;
-                    frmTemps.ShowDialog();
-
-                    utilisateur.majDerniereVisite();
-
-                    // remise en place des blocages en fonction de la configuration du poste
-                    if (Parametres.debug == "all")
-                    {
-                        MainForm.writeLog("mainForm.cs->login : remise en place des blocages");
-                    }
-
-                    this.Show();
-
-                    goFullscreen(!estPosteAnimateur);
-                    blocageMenu(!estPosteAnimateur);
-                    Fonction.blocageGestionnaireDesTaches(!estPosteAnimateur);
-                    Fonction.blocageChangementMotDePasse(!estPosteAnimateur);
-                    resetFormLogin();
-                }
-                else
-                {
-                    if (utilisateur.tempsRestant() <= 0)
-                    {
-                        MessageBox.Show("Crédit temps dépassé !!");
-                    }
-                    if (utilisateur.estConnecte())
-                    {
-                        MessageBox.Show("Utilisateur déjà connecté !!");
-                    }
-                }
-
-
             }
             else
             {
                 MessageBox.Show("login ou mot de passe inconnu");
             }
+        }
 
+        private void login(Utilisateur utilisateur)
+        {
+            if (Parametres.debug == "all")
+            {
+                MainForm.writeLog("mainForm.cs->login");
+                MainForm.writeLog("mainForm.cs->login : login ok");
+                MainForm.writeLog("nom utilisateur : " + utilisateur.nom);
+                MainForm.writeLog("prenom utilisateur : " + utilisateur.prenom);
+                MainForm.writeLog("id utilisateur : " + utilisateur.id);
+                MainForm.writeLog("statut utilisateur : " + utilisateur.statut);
+            }
+
+            utilisateur.majDerniereVisite();
+
+            Boolean estAnimateur = (utilisateur.statut != 1);
+            Boolean estPosteAnimateur = (Parametres.poste_type != "usager");
+
+
+            if (Parametres.debug == "all")
+            {
+                if (estAnimateur)
+                {
+                    MainForm.writeLog("mainForm.cs->login : connexion animateur");
+                }
+                else
+                {
+                    MainForm.writeLog("mainForm.cs->login : usager standard");
+                    MainForm.writeLog("temps restant : " + utilisateur.tempsRestant());
+                }
+            }
+
+            if (estAnimateur || ( utilisateur.tempsRestant() > 0 && !utilisateur.estConnecte(Parametres.poste_id) ) )
+            {
+                if (Parametres.debug == "all")
+                {
+                    MainForm.writeLog("mainForm.cs->login : temps ok, demandes de blocages et affichage du temps");
+                }
+                //goFullscreen(!estPosteAnimateur);
+                blocageMenu(!estAnimateur);
+                Fonction.blocageGestionnaireDesTaches(!estAnimateur);
+                Fonction.blocageChangementMotDePasse(!estAnimateur);
+                this.Hide();
+                frmTemps = new frm_Temps(utilisateur, configLogiciel);
+                frmTemps.ShowInTaskbar = false;
+                frmTemps.ShowDialog();
+
+                utilisateur.majDerniereVisite();
+
+                // remise en place des blocages en fonction de la configuration du poste
+                if (Parametres.debug == "all")
+                {
+                    MainForm.writeLog("mainForm.cs->login : remise en place des blocages");
+                }
+
+                this.Show();
+
+                goFullscreen(!estPosteAnimateur);
+                blocageMenu(!estPosteAnimateur);
+                Fonction.blocageGestionnaireDesTaches(!estPosteAnimateur);
+                Fonction.blocageChangementMotDePasse(!estPosteAnimateur);
+                resetFormLogin();
+            }
+            else
+            {
+                if (utilisateur.tempsRestant() <= 0)
+                {
+                    MessageBox.Show("Crédit temps dépassé !!");
+                }
+                if (utilisateur.estConnecte(Parametres.poste_id))
+                {
+                    MessageBox.Show("Utilisateur déjà connecté !!");
+                }
+            }
         }
 
         /// <summary>
@@ -540,16 +526,12 @@ namespace LGBConnect
             int idResa = Resa.prochaineResa(poste.id);
             if (idResa != 0)
             {
-                // resa trouvée
-                if (prochaineResa == null || idResa != prochaineResa.id)
-                {
-                    prochaineResa = new Resa(idResa);
-                    prochainUtilisateur = new Utilisateur(prochaineResa.idUtilisateur);
-                }
-                prochaineResa = new Resa(idResa); // pour debug...
-                DateTime debutDeSession = prochaineResa.dateResa.AddMinutes(prochaineResa.debut);
-                TimeSpan diff = DateTime.Now - debutDeSession;
+                prochaineResa = new Resa(idResa);
+                prochainUtilisateur = new Utilisateur(prochaineResa.idUtilisateur);
 
+                TimeSpan diff = DateTime.Now - prochaineResa.debutDeSession;
+
+                lbl_resa_texte.Text = "Prochaine réservation du poste";
                 lbl_resa.Text = prochaineResa.dateResa.AddMinutes(prochaineResa.debut).ToString("G") + " (durée : " + prochaineResa.duree + " mn)";
 
                 if (diff.TotalMinutes > -5 && diff.TotalMinutes < prochaineResa.duree) // on verrouille 5 minutes avant
