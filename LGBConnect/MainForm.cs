@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using LGBConnect.classes;
 
@@ -26,42 +25,12 @@ namespace LGBConnect
         Resa prochaineResa;
         Utilisateur prochainUtilisateur;
 
-        /* --- déclaration pour  le blocage des raccourcis claviers ---- */
-        // Structure contain information about low-level keyboard input event
-        [StructLayout(LayoutKind.Sequential)]
-        private struct KBDLLHOOKSTRUCT
-        {
-            public Keys key;
-            public int scanCode;
-            public int flags;
-            public int time;
-            public IntPtr extra;
-        }
-
-        //System level functions to be used for hook and unhook keyboard input
-        private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern IntPtr SetWindowsHookEx(int id, LowLevelKeyboardProc callback, IntPtr hMod, uint dwThreadId);
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern bool UnhookWindowsHookEx(IntPtr hook);
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern IntPtr CallNextHookEx(IntPtr hook, int nCode, IntPtr wp, IntPtr lp);
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern IntPtr GetModuleHandle(string name);
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern short GetAsyncKeyState(Keys key);
-
-
-        //Declaring Global objects
-        private IntPtr ptrHook;
-        private LowLevelKeyboardProc objKeyboardProcess;
-
         public MainForm()
         {
             InitializeComponent();
             CreateContextMenu();
-
         }
+
 
         private void MainForm_Load(object sender, EventArgs e)
         {
@@ -96,11 +65,11 @@ namespace LGBConnect
             timer_MAJEtat.Interval = 5000; 
             timer_MAJEtat.Tick += new EventHandler(timer_MAJEtat_Tick);
             timer_MAJEtat.Start();
-
         }
 
         private void MainForm_Shown(object sender, EventArgs e)
         {
+
             if (Parametres.debug == "all")
             {
                 MainForm.writeLog("mainForm.cs->MainForm_Shown");
@@ -177,12 +146,11 @@ namespace LGBConnect
                 {
                     MainForm.writeLog("mainForm.cs->MainForm_Shown : poste animateur");
                 }
+
             }
             this.Show();
             timer_MAJEtat_Tick(null, null);
-
         }
-
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
@@ -196,11 +164,12 @@ namespace LGBConnect
             Fonction.blocageGestionnaireDesTaches(false);
             Fonction.blocageChangementMotDePasse(false);
             timer_MAJEtat.Stop();
-            //exit application when form is closed
+
             if (Parametres.debug == "all")
             {
                 MainForm.writeLog("mainForm.cs->MainForm_FormClosed : fin du nettoyage");
             }
+
             Application.Exit();
         }
 
@@ -314,17 +283,18 @@ namespace LGBConnect
                 {
                     MainForm.writeLog("mainForm.cs->login : temps ok, demandes de blocages et affichage du temps");
                 }
-                //goFullscreen(!estPosteAnimateur);
+                goFullscreen(!estPosteAnimateur);
                 blocageMenu(!estAnimateur);
                 Fonction.blocageGestionnaireDesTaches(!estAnimateur);
                 Fonction.blocageChangementMotDePasse(!estAnimateur);
+                blocageRaccourcisClavier(false);
+
                 this.Hide();
                 frmTemps = new frm_Temps(utilisateur, configLogiciel);
                 frmTemps.ShowInTaskbar = false;
                 frmTemps.ShowDialog();
 
                 utilisateur.majDerniereVisite();
-
                 // remise en place des blocages en fonction de la configuration du poste
                 if (Parametres.debug == "all")
                 {
@@ -335,8 +305,10 @@ namespace LGBConnect
 
                 goFullscreen(!estPosteAnimateur);
                 blocageMenu(!estPosteAnimateur);
+                blocageRaccourcisClavier(!estPosteAnimateur);
                 Fonction.blocageGestionnaireDesTaches(!estPosteAnimateur);
                 Fonction.blocageChangementMotDePasse(!estPosteAnimateur);
+
                 resetFormLogin();
             }
             else
@@ -357,6 +329,10 @@ namespace LGBConnect
         /// </summary>
         private void CreateContextMenu()
         {
+            if (Parametres.debug == "all")
+            {
+                MainForm.writeLog("mainForm.cs->CreateContextMenu");
+            }
             ContextMenuStrip menuStrip = new ContextMenuStrip();
             menuItemParametres = new ToolStripMenuItem("Parametres");
             menuItemParametres.Name = "Parametres";
@@ -375,6 +351,10 @@ namespace LGBConnect
 
         void menuItem_Click(object sender, EventArgs e)
         {
+            if (Parametres.debug == "all")
+            {
+                MainForm.writeLog("mainForm.cs->menuItem_Click");
+            }
             ToolStripItem menuItem = (ToolStripItem)sender;
             if (menuItem.Name == "Parametres")
             {
@@ -414,6 +394,10 @@ namespace LGBConnect
 
         private void resetFormLogin()
         {
+            if (Parametres.debug == "all")
+            {
+                MainForm.writeLog("mainForm.cs->resetFormLogin");
+            }
             textBox_MotDePasse.Text = "";
             textBox_Utilisateur.Text = "";
             textBox_Utilisateur.Focus();
@@ -425,6 +409,10 @@ namespace LGBConnect
         /// <param name="go"></param>
         private void goFullscreen(bool go)
         {
+            if (Parametres.debug == "all")
+            {
+                MainForm.writeLog("mainForm.cs->goFullscreen");
+            }
             if (go)
             {
                 this.TopMost = true;
@@ -446,6 +434,10 @@ namespace LGBConnect
 
         private void blocageMenu(bool blocage)
         {
+            if (Parametres.debug == "all")
+            {
+                MainForm.writeLog("mainForm.cs->blocageMenu");
+            }
             if (blocage)
             {
                 menuItemParametres.Enabled = false;
@@ -460,57 +452,23 @@ namespace LGBConnect
 
         private void blocageRaccourcisClavier(bool blocage)
         {
-            //MessageBox.Show("Bloquer les raccourcis clavier : " + blocage);
+            if (Parametres.debug == "all")
+            {
+                MainForm.writeLog("mainForm.cs->blocageRaccourcisClavier");
+            }
+
             if (blocage)
             {
-                ProcessModule objCurrentModule = Process.GetCurrentProcess().MainModule;
-                objKeyboardProcess = new LowLevelKeyboardProc(captureKey);
-                ptrHook = SetWindowsHookEx(13, objKeyboardProcess, GetModuleHandle(objCurrentModule.ModuleName), 0);
-
+                Program.kh.blocageActif = true;
             }
             else
             {
-                UnhookWindowsHookEx(ptrHook);
+                Program.kh.blocageActif = false;
             }
 
         }
-        /// <summary>
-        /// Blocage des touches clavier 
-        /// 
-        /// Pas encore réussi à bloquer le Crtl-alt-suppr...
-        /// </summary>
-        /// <param name="nCode"></param>
-        /// <param name="wp"></param>
-        /// <param name="lp"></param>
-        /// <returns></returns>
-        private IntPtr captureKey(int nCode, IntPtr wp, IntPtr lp)
-        {
-            if (nCode >= 0)
-            {
-                KBDLLHOOKSTRUCT objKeyInfo = (KBDLLHOOKSTRUCT)Marshal.PtrToStructure(lp, typeof(KBDLLHOOKSTRUCT));
 
-                if (objKeyInfo.key == Keys.RWin ||
-                    objKeyInfo.key == Keys.LWin ||
-                    objKeyInfo.key == Keys.Tab && HasAltModifier(objKeyInfo.flags) ||
-                    objKeyInfo.key == Keys.Escape && (ModifierKeys & Keys.Control) == Keys.Control ||
-                    objKeyInfo.key == Keys.Escape && HasAltModifier(objKeyInfo.flags) ||
-                    objKeyInfo.key == Keys.F4 && HasAltModifier(objKeyInfo.flags)
-                   )
-                {
-                    return (IntPtr)1;
-                }
-                if (objKeyInfo.key == Keys.Alt)
-                {
-                    return (IntPtr)1;
-                }
-            }
-            return CallNextHookEx(ptrHook, nCode, wp, lp);
-        }
 
-        bool HasAltModifier(int flags)
-        {
-            return (flags & 0x20) == 0x20;
-        }
 
         /// <summary>
         /// Mise à jour des données de connexion dans la base CyberGestionnaire.
@@ -520,7 +478,10 @@ namespace LGBConnect
         /// <param name="e"></param>
         private void timer_MAJEtat_Tick(object sender, EventArgs e)
         {
-            poste.MAJEtat();
+            if (Parametres.debug == "all")
+            {
+                MainForm.writeLog("mainForm.cs->timer_MAJEtat_Tick : Tick 5s !");
+            }
 
             // vérification des réservations actives
             int idResa = Resa.prochaineResa(poste.id);

@@ -10,18 +10,20 @@ namespace LGBConnect.classes
 {
     public class Poste
     {
-        private int _id;
-        private String _nom;
-        private String _commentaire;
-        private String _os;
-        private int _usage;
-        private String _fonction;
-        private int _idSalle;
-        private String _adresseMAC;
-        private String _adresseIP;
-        private String _nomHote;
+        private int      _id;
+        private String   _nom;
+        private String   _commentaire;
+        private String   _os;
+        private int      _usage;
+        private String   _fonction;
+        private int      _idSalle;
+        private String   _adresseMAC;
+        private String   _adresseIP;
+        private String   _nomHote;
         private DateTime _dernierEtat;
-        private Boolean _configurationLGBConnect;
+        private Boolean  _configurationLGBConnect;
+
+        private System.Timers.Timer _timer = new System.Timers.Timer();
 
         public int id
         {
@@ -72,12 +74,28 @@ namespace LGBConnect.classes
                         _configurationLGBConnect = (rdr.GetInt32("configurer_epnconnect_computer") != 0);
                     }
                 }
+                rdr.Close();
+                timer_Start();
             }
             catch (Exception ex)
             {
                 MainForm.writeLog("Poste.cs->Poste(idPoste) : Connexion echouée !!" + ex.ToString());
             }
             cnn.Close();
+        }
+
+        private void timer_Start()
+        {
+
+            _timer.Interval = 1000; // specify interval time as you want
+            _timer.Elapsed += new System.Timers.ElapsedEventHandler(timer_Elapsed);
+            _timer.Start();
+
+        }
+
+        private void timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            MAJEtat();
         }
 
         public void MAJEtat()
@@ -98,6 +116,11 @@ namespace LGBConnect.classes
                 System.Diagnostics.Debug.WriteLine("Poste.cs->MAJEtat() : Connexion echouée !!" + ex.ToString());
             }
             cnn.Close();
+        }
+
+        ~Poste()
+        {
+            _timer.Stop();
         }
     }
 }

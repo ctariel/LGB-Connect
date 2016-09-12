@@ -43,6 +43,7 @@ namespace LGBServ
 
         protected override void OnStart(string[] args)
         {
+            eventLog1.WriteEntry("Démarrage du service LGBConnect", EventLogEntryType.Information, eventId++);
 
             if (serviceHost != null)
             {
@@ -57,21 +58,22 @@ namespace LGBServ
             // listening for messages.
             serviceHost.Open();
 
-            WriteLog("LGB Service démarré");
-            eventLog1.WriteEntry("Démarrage du service LGB_Connect", EventLogEntryType.Information, eventId++);
+            WriteLog("LGBConnect Service démarré");
+            eventLog1.WriteEntry("LGBConnect Service démarré");
 
         }
 
         protected override void OnStop()
         {
+            eventLog1.WriteEntry("Arrêt du service LGBConnect", EventLogEntryType.Information, eventId++);
             if (serviceHost != null)
             {
                 serviceHost.Close();
                 serviceHost = null;
             }
-            WriteLog("LGB Service arrété");
+            WriteLog("LGBConnect Service arrété");
             //System.IO.File.Move(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logFile.txt"), Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logFile-" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") +".txt"));
-            eventLog1.WriteEntry("Arrêt du service LGB_Connect", EventLogEntryType.Information, eventId++);
+            eventLog1.WriteEntry("service LGBConnect arreté", EventLogEntryType.Information, eventId++);
         }
 
         public static void WriteLog(Exception ex)
@@ -80,7 +82,8 @@ namespace LGBServ
 
             try
             {
-                sw = new StreamWriter(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logFile.txt"), true);
+                String Filename = "logFile_" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt";
+                sw = new StreamWriter(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Filename), true);
                 sw.WriteLine(DateTime.Now.ToString() + " : " + ex.Source.ToString().Trim() + " ; " + ex.Message.ToString().Trim());
                 sw.Flush();
                 sw.Close();
@@ -97,7 +100,8 @@ namespace LGBServ
 
             try
             {
-                sw = new StreamWriter(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logFile.txt"), true);
+                String Filename = "logFile_" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt";
+                sw = new StreamWriter(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Filename), true);
                 sw.WriteLine(DateTime.Now.ToString() +  " ; " + message);
                 sw.Flush();
                 sw.Close();

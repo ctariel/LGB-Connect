@@ -48,6 +48,10 @@ namespace LGBConnect
 
         private void frm_Temps_Shown(object sender, EventArgs e)
         {
+            if (Parametres.debug == "all")
+            {
+                MainForm.writeLog("frm_Temps.cs->frm_Temps_Shown");
+            }
             // début de la session
             heureConnexion = DateTime.Now;
             if (Parametres.debug == "all")
@@ -137,6 +141,10 @@ namespace LGBConnect
 
         void timer_Tick(object sender, EventArgs e)
         {
+            if (Parametres.debug == "all")
+            {
+                MainForm.writeLog("frm_Temps.cs->timer_Tick : 1s");
+            }
 
             String affichage_restant, affichage_utilise;
             System.TimeSpan diffRestant, diffUtilise;
@@ -222,6 +230,10 @@ namespace LGBConnect
 
         private void verificationStatutResa()
         {
+            if (Parametres.debug == "all")
+            {
+                MainForm.writeLog("frm_Temps.cs->verificationStatutResa");
+            }
             /// vérification du statut. Si le poste a été libéré depuis la console, status_resa est différent de zéro
             if (resa.statut != 0)
             {
@@ -239,6 +251,10 @@ namespace LGBConnect
         private void frm_Temps_FormClosed(object sender, FormClosedEventArgs e)
         {
 
+            if (Parametres.debug == "all")
+            {
+                MainForm.writeLog("frm_Temps.cs->frm_Temps_FormClosed");
+            }
             heureDeconnexion = DateTime.Now;
             System.TimeSpan diff = heureDeconnexion - heureConnexion;
             Double temp_passe = Math.Floor(diff.TotalMinutes);
@@ -262,6 +278,10 @@ namespace LGBConnect
 
         private void affichageChronos(String affichage_restant, String affichage_utilise)
         {
+            if (Parametres.debug == "all")
+            {
+                MainForm.writeLog("frm_Temps.cs->affichageChronos");
+            }
             if (Parametres.poste_chrono == "complet")
             {
                 lbl_temps_restant.Text = affichage_restant;
@@ -291,6 +311,10 @@ namespace LGBConnect
         }
         private void btn_deconnexion_Click(object sender, EventArgs e)
         {
+            if (Parametres.debug == "all")
+            {
+                MainForm.writeLog("frm_Temps.cs->btn_deconnexion_Click");
+            }
             this.Close();
         }
 
