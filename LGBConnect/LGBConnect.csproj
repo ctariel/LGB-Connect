@@ -91,7 +91,10 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MySql.Data, Version=6.9.8.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL" />
+    <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.6.9.9\lib\net45\MySql.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
@@ -117,6 +120,7 @@
     <Compile Include="classes\ComboBoxItem.cs" />
     <Compile Include="classes\ConfigLogiciel.cs" />
     <Compile Include="classes\Espace.cs" />
+    <Compile Include="classes\Keyboard.cs" />
     <Compile Include="classes\Parametres.cs" />
     <Compile Include="classes\Poste.cs" />
     <Compile Include="classes\Resa.cs" />
@@ -192,6 +196,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="LGBConnect_CléTemporaire.pfx" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

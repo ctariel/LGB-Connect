@@ -31,49 +31,84 @@ namespace LGBConnect
         public int chargement()
         {
             this.Show();
-            progressBar_Splash.Step = 50;
+            progressBar_Splash.Step = 33;
+            int retour = 1; // echec par défaut
 
-            if (verification_Config() == 0 ) {
-                if (Parametres.debug == "all")
-                {
-                    MainForm.writeLog("SplashScreen.cs->chargement() : Config ok -----------------");
-                    MainForm.writeLog("mysql - hote :" + Parametres.db_hote);
-                    MainForm.writeLog("mysql - base :" + Parametres.db_base);
-                    MainForm.writeLog("mysql - utilisateur :" + Parametres.db_utilisateur);
-                    MainForm.writeLog("mysql - mot de passe :" + Parametres.db_motdepasse);
-                    MainForm.writeLog("poste - nom :" + Parametres.poste_nom);
-                    MainForm.writeLog("poste - id :" + Parametres.poste_id);
-                    MainForm.writeLog("poste - MAC :" + Parametres.poste_adresse_MAC);
-                    MainForm.writeLog("poste - type :" + Parametres.poste_type);
-                    MainForm.writeLog("poste - chrono :" + Parametres.poste_chrono);
-                    MainForm.writeLog("poste - debug :" + Parametres.debug);
-                    MainForm.writeLog("SplashScreen.cs->chargement() : Config ok -----------------");
-
-                }
+            if (verification_Service() == 0)
+            {
                 progressBar_Splash.PerformStep();
-                if (verification_Connexion_Base() == 0)
+
+                if (verification_Config() == 0)
                 {
                     if (Parametres.debug == "all")
                     {
-                        MainForm.writeLog("SplashScreen.cs-> chargement() : connexion à la base ok ");
+                        MainForm.writeLog("SplashScreen.cs->chargement() : Config ok -----------------");
+                        MainForm.writeLog("mysql - hote :" + Parametres.db_hote);
+                        MainForm.writeLog("mysql - base :" + Parametres.db_base);
+                        MainForm.writeLog("mysql - utilisateur :" + Parametres.db_utilisateur);
+                        MainForm.writeLog("mysql - mot de passe :" + Parametres.db_motdepasse);
+                        MainForm.writeLog("poste - nom :" + Parametres.poste_nom);
+                        MainForm.writeLog("poste - id :" + Parametres.poste_id);
+                        MainForm.writeLog("poste - MAC :" + Parametres.poste_adresse_MAC);
+                        MainForm.writeLog("poste - type :" + Parametres.poste_type);
+                        MainForm.writeLog("poste - chrono :" + Parametres.poste_chrono);
+                        MainForm.writeLog("poste - debug :" + Parametres.debug);
+                        MainForm.writeLog("SplashScreen.cs->chargement() : Config ok -----------------");
+
                     }
                     progressBar_Splash.PerformStep();
-                    this.Hide();
-                    return 0;
+
+                    if (verification_Connexion_Base() == 0)
+                    {
+                        if (Parametres.debug == "all")
+                        {
+                            MainForm.writeLog("SplashScreen.cs-> chargement() : connexion à la base ok ");
+                        }
+                        progressBar_Splash.PerformStep();
+                        retour = 0;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Problème dans la configuration : accès base de données impossible !");
+                    }
                 }
                 else
                 {
-                    MessageBox.Show("Problème dans la configuration : accès base de données impossible !");
-                    this.Hide();
-                    return 1;
+                    MessageBox.Show("Problème : pas de configuration trouvée !");
                 }
             }
             else
             {
-                this.Hide();
+                MessageBox.Show("Problème : service LGBConnect inaccessible !");
+            }
+            this.Hide();
+            return retour;
+        }
+
+        /// <summary>
+        /// Vérification de la présence du service LGB
+        /// </summary>
+        /// <returns>0 en cas de succès, 1 en cas d'échec</returns>
+        private int verification_Service()
+        {
+            try
+            {
+                ServiceFonctionsAdmin.FonctionsAdminClient client = new ServiceFonctionsAdmin.FonctionsAdminClient();
+                if (client != null) { 
+                    return 0;
+                }
+                else
+                {
+                    return 1;
+                }
+            }
+            catch
+            {
                 return 1;
             }
         }
+
+
         /// <summary>
         /// Vérification de l'existence d'une configuration valide.
         /// </summary>

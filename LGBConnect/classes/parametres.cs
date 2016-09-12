@@ -13,7 +13,7 @@ namespace LGBConnect.classes
         public static String db_utilisateur { get; set; }
         public static String db_motdepasse { get; set; }
         public static String poste_nom { get; set; }
-        public static int poste_id { get; set; }
+        public static int  poste_id { get; set; }
         public static String poste_adresse_MAC { get; set; }
         public static String poste_type { get; set; }
         public static String poste_chrono { get; set; }
@@ -47,7 +47,7 @@ namespace LGBConnect.classes
                     return 1;
                 }
             }
-            catch (Exception ex)
+            catch 
             {
                 return 1;
             }
@@ -78,7 +78,7 @@ namespace LGBConnect.classes
                 return 0;
 
             }
-            catch (Exception ex)
+            catch
             {
                 return 1;
             }

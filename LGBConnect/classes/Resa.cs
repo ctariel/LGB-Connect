@@ -96,6 +96,7 @@ namespace LGBConnect.classes
                 {
                     MainForm.writeLog("Resa.cs->Resa(idResa) : Pas de Réservation trouvée pour l'id " + idResa + " !");
                 }
+                timer_Start();
             }
             catch (Exception ex)
             {
@@ -103,7 +104,6 @@ namespace LGBConnect.classes
             }
             cnn.Close();
 
-            timer_Start();
 
         }
 
@@ -114,7 +114,7 @@ namespace LGBConnect.classes
             {
                 cnn.Open();
 
-                String sql = "INSERT INTO `tab_resa` (`id_computer_resa`, `id_user_resa`, `dateresa_resa`, `debut_resa`, `duree_resa`, `date_resa`, `status_resa`) VALUES (@idPoste, @idUtilisateur, CURRENT_DATE(), floor(TIME_TO_SEC(CURRENT_TIME())/60), @tempsRestant, CURRENT_DATE(),'0')";
+                String sql = "INSERT into `tab_resa` (`id_computer_resa`, `id_user_resa`, `dateresa_resa`, `debut_resa`, `duree_resa`, `date_resa`, `status_resa`) VALUES (@idPoste, @idUtilisateur, CURRENT_DATE(), floor(TIME_TO_SEC(CURRENT_TIME())/60), @tempsRestant, CURRENT_DATE(),'0')";
                 if (Parametres.debug == "all")
                 {
                     MainForm.writeLog("frm_Temps.cs->frm_Temps_Load : inscription du début de la résa sql =  " + sql);
@@ -152,19 +152,19 @@ namespace LGBConnect.classes
                     MainForm.writeLog("Resa.cs->Resa(idUtilisateur, tempsRestant, heureConnexion) : id resa en cours =  " + _id);
                 }
                 rdr.Close();
+                timer_Start();
             }
             catch (Exception ex)
             {
                 MainForm.writeLog("Resa.cs->Resa(idUtilisateur, tempsRestant, heureConnexion) :Connexion echouée !! " + ex.ToString());
             }
             cnn.Close();
-            timer_Start();
         }
 
         private void timer_Start()
         {
 
-            _timer.Interval = 1000; // specify interval time as you want
+            _timer.Interval = 1000; // specify Interval time as you want
             _timer.Elapsed += new System.Timers.ElapsedEventHandler(timer_Elapsed);
             _timer.Start();
 

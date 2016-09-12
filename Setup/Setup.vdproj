@@ -15,12 +15,6 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_0A606129339103BE60CCF819CC34047A"
-        "OwnerKey" = "8:_4C7ED981A3654CCDB13472BDB7A41AE8"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_47498E6A7860256499E5BD14B86B7703"
         "OwnerKey" = "8:_4C7ED981A3654CCDB13472BDB7A41AE8"
         "MsmSig" = "8:_UNDEFINED"
@@ -35,6 +29,12 @@
         {
         "MsmKey" = "8:_4C7ED981A3654CCDB13472BDB7A41AE8"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_689935A47CFB46616532FCF445131463"
+        "OwnerKey" = "8:_4C7ED981A3654CCDB13472BDB7A41AE8"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -58,6 +58,12 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_689935A47CFB46616532FCF445131463"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_4C7ED981A3654CCDB13472BDB7A41AE8"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -65,12 +71,6 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_47498E6A7860256499E5BD14B86B7703"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_0A606129339103BE60CCF819CC34047A"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -224,20 +224,20 @@
         }
         "File"
         {
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_0A606129339103BE60CCF819CC34047A"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_47498E6A7860256499E5BD14B86B7703"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:MySql.Data, Version=6.9.8.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:System.Net.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
                 "ScatterAssemblies"
                 {
-                    "_0A606129339103BE60CCF819CC34047A"
+                    "_47498E6A7860256499E5BD14B86B7703"
                     {
-                    "Name" = "8:MySql.Data.dll"
+                    "Name" = "8:System.Net.Http.dll"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:MySql.Data.dll"
+            "SourcePath" = "8:System.Net.Http.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_611379315F044A8584501AC27F64D37A"
@@ -255,20 +255,20 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_47498E6A7860256499E5BD14B86B7703"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_689935A47CFB46616532FCF445131463"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:System.Net.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+            "AssemblyAsmDisplayName" = "8:MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_47498E6A7860256499E5BD14B86B7703"
+                    "_689935A47CFB46616532FCF445131463"
                     {
-                    "Name" = "8:System.Net.Http.dll"
+                    "Name" = "8:MySql.Data.dll"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:System.Net.Http.dll"
+            "SourcePath" = "8:MySql.Data.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_611379315F044A8584501AC27F64D37A"
@@ -314,7 +314,7 @@
         {
             "{3C67513D-01DD-4637-8A68-80971EB9504F}:_611379315F044A8584501AC27F64D37A"
             {
-            "DefaultLocation" = "8:[ProgramFilesFolder][Manufacturer]\\[ProductName]"
+            "DefaultLocation" = "8:[ProgramFiles64Folder][Manufacturer]\\[ProductName]"
             "Name" = "8:#1925"
             "AlwaysCreate" = "11:FALSE"
             "Condition" = "8:"
@@ -384,15 +384,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:LGBConnect"
-        "ProductCode" = "8:{D3BE8FAD-8E0D-4998-B8C3-DDF0599C2FCD}"
-        "PackageCode" = "8:{8B640877-45F2-4B82-83CB-ABE893A14CBC}"
+        "ProductCode" = "8:{1C604F03-55AE-465D-82BB-F0D5595950C8}"
+        "PackageCode" = "8:{7A7160B4-E07F-4C2D-91E5-0520449F49AE}"
         "UpgradeCode" = "8:{6A7B3082-68C6-42ED-ACBD-614AE3A2BB68}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:0.3.1"
+        "ProductVersion" = "8:0.4.0"
         "Manufacturer" = "8:LGB"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -406,7 +406,7 @@
         "ARPIconIndex" = "3:0"
         "SearchPath" = "8:"
         "UseSystemSearchPath" = "11:TRUE"
-        "TargetPlatform" = "3:0"
+        "TargetPlatform" = "3:1"
         "PreBuildEvent" = "8:"
         "PostBuildEvent" = "8:"
         "RunPostBuildEvent" = "3:0"

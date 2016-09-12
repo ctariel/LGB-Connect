@@ -215,38 +215,46 @@ namespace LGBServ
 
         public Dictionary<string, string> lireConfiguration()
         {
-            String configFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.txt");
-            Dictionary<string, string> config = new Dictionary<string, string>();
-
-            Service_LGB.WriteLog("Demande de lecture de la configration");
-
-            if (File.Exists(configFile))
+            try
             {
-                IniFile ini = new IniFile(configFile);
+                String configFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.txt");
+                Dictionary<string, string> config = new Dictionary<string, string>();
 
-                config["mysql_hote"] = ini.IniReadValue("mysql", "hote").Trim('\0');
-                config["mysql_base"] = ini.IniReadValue("mysql", "base").Trim('\0');
-                config["mysql_utilisateur"] = ini.IniReadValue("mysql", "utilisateur").Trim('\0');
-                config["mysql_mot_de_passe"] = ini.IniReadValue("mysql", "mot_de_passe").Trim('\0');
-                config["poste_nom"] = ini.IniReadValue("poste", "nom").Trim('\0');
-                config["poste_id"] = ini.IniReadValue("poste", "id").Trim('\0');
-                config["poste_adresse_MAC"] = ini.IniReadValue("poste", "adresse_MAC").Trim('\0');
-                config["poste_type"] = ini.IniReadValue("poste", "type").Trim('\0');
-                config["poste_chrono"] = ini.IniReadValue("poste", "chrono").Trim('\0');
-                if (config["poste_chrono"] != "complet" && config["poste_chrono"] != "restant" && config["poste_chrono"] != "utilise" && config["poste_chrono"] != "aucun")
+                Service_LGB.WriteLog("Demande de lecture de la configration");
+
+                if (File.Exists(configFile))
                 {
-                    config["poste_chrono"] = "complet";
+                    IniFile ini = new IniFile(configFile);
+
+                    config["mysql_hote"] = ini.IniReadValue("mysql", "hote").Trim('\0');
+                    config["mysql_base"] = ini.IniReadValue("mysql", "base").Trim('\0');
+                    config["mysql_utilisateur"] = ini.IniReadValue("mysql", "utilisateur").Trim('\0');
+                    config["mysql_mot_de_passe"] = ini.IniReadValue("mysql", "mot_de_passe").Trim('\0');
+                    config["poste_nom"] = ini.IniReadValue("poste", "nom").Trim('\0');
+                    config["poste_id"] = ini.IniReadValue("poste", "id").Trim('\0');
+                    config["poste_adresse_MAC"] = ini.IniReadValue("poste", "adresse_MAC").Trim('\0');
+                    config["poste_type"] = ini.IniReadValue("poste", "type").Trim('\0');
+                    config["poste_chrono"] = ini.IniReadValue("poste", "chrono").Trim('\0');
+                    if (config["poste_chrono"] != "complet" && config["poste_chrono"] != "restant" && config["poste_chrono"] != "utilise" && config["poste_chrono"] != "aucun")
+                    {
+                        config["poste_chrono"] = "complet";
+                    }
+                    config["debug"] = "no";
+                    if (ini.IniReadValue("poste", "debug") == "all")
+                    {
+                        Service_LGB.WriteLog("activation du debug");
+                        config["debug"] = "all";
+                    }
+                    return config;
                 }
-                config["debug"] = "no";
-                if (ini.IniReadValue("poste", "debug") == "all")
+                else
                 {
-                    Service_LGB.WriteLog("activation du debug");
-                    config["debug"] = "all";
+                    return null;
                 }
-                return config;
             }
-            else
+            catch (Exception ex)
             {
+                Service_LGB.WriteLog("Erreur de lecture du fichier Ini : " + ex.ToString());
                 return null;
             }
 

@@ -40,9 +40,9 @@
             this.lbl_Espace = new System.Windows.Forms.Label();
             this.groupBox_inscription = new System.Windows.Forms.GroupBox();
             this.btn_inscription = new System.Windows.Forms.Button();
-            this.lbl_resa_texte = new System.Windows.Forms.Label();
             this.tableLayoutPanel_resa = new System.Windows.Forms.TableLayoutPanel();
             this.lbl_resa = new System.Windows.Forms.Label();
+            this.lbl_resa_texte = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox_inscription.SuspendLayout();
@@ -173,19 +173,6 @@
             this.btn_inscription.UseVisualStyleBackColor = true;
             this.btn_inscription.Click += new System.EventHandler(this.btn_inscription_Click);
             // 
-            // lbl_resa_texte
-            // 
-            this.lbl_resa_texte.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.lbl_resa_texte.AutoSize = true;
-            this.lbl_resa_texte.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbl_resa_texte.Location = new System.Drawing.Point(3, 0);
-            this.lbl_resa_texte.Name = "lbl_resa_texte";
-            this.lbl_resa_texte.Padding = new System.Windows.Forms.Padding(3);
-            this.lbl_resa_texte.Size = new System.Drawing.Size(189, 19);
-            this.lbl_resa_texte.TabIndex = 4;
-            this.lbl_resa_texte.Text = "prochaine réservation du poste";
-            this.lbl_resa_texte.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // tableLayoutPanel_resa
             // 
             this.tableLayoutPanel_resa.Anchor = System.Windows.Forms.AnchorStyles.None;
@@ -214,6 +201,19 @@
             this.lbl_resa.TabIndex = 5;
             this.lbl_resa.Text = "Aucune";
             this.lbl_resa.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lbl_resa_texte
+            // 
+            this.lbl_resa_texte.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.lbl_resa_texte.AutoSize = true;
+            this.lbl_resa_texte.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_resa_texte.Location = new System.Drawing.Point(3, 0);
+            this.lbl_resa_texte.Name = "lbl_resa_texte";
+            this.lbl_resa_texte.Padding = new System.Windows.Forms.Padding(3);
+            this.lbl_resa_texte.Size = new System.Drawing.Size(189, 19);
+            this.lbl_resa_texte.TabIndex = 4;
+            this.lbl_resa_texte.Text = "prochaine réservation du poste";
+            this.lbl_resa_texte.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // MainForm
             // 

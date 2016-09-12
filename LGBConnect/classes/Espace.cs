@@ -12,14 +12,14 @@ namespace LGBConnect.classes
     public class Espace
     {
         // les champs sont calqués sur le schéma de la base de données
-        private int _id;
+        private int  _id;
         private String _nom;
-        private int _idVille;
+        private int  _idVille;
         private String _adresse;
         private String _tel;
         private String _fax;
         private String _logo;
-        private int _couleur;
+        private int  _couleur;
         private String _mail;
 
         public String nom
