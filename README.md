@@ -2,7 +2,31 @@
 Logiciel pour les postes clients de cybergestionnaire :
 http://sourceforge.net/projects/cybergestionnaire/ ou http://maxletesteur.jimdo.com/ateliers/supports-animateurs/cyber-gestionnaire/
 
-# LGB Connect version 0.2.2
+# LGB Connect version 0.4.0
+
+Cete version n'apporte pas de nouveauté du coté utilisateur. Elle est surtout destinée à résoudre les problèmes d'instabilité rencontrés dans les version 0.3.x. Ces instabilités étaient du au code qui interceptait les raccourcis clavier tels que ctrl+esc ou alt+f4. En cas de charge système importante, ou simplement lors de la sortie de veille, le "low level hook" était supprimé sans avertissement par Windows, entrainant le crash de l'application. Ce "Low Level Hook" est désormais géré différement, et ne devrait plus entrainer le crash en cas de dysfonctionnement (en tout cas, mes tests ont été concluants !). 
+
+Comme pour les versions précédentes, pour mettre à jour LGB-Connect, il faut d'abord désinstaller l'ancienne version, redémarrer, puis réinstaller la nouvelle et re-redémarrer.
+
+
+## LGB Connect version 0.3.0
+
+Cette version apporte une nouveauté et quelques corrections de bugs, mais est surtout le fruit d'un travail de ré-écriture du code pour y ajouter une couche objet, et rendre les choses un peu plus "lisibles". C'est donc "sous le capot" qu'a eu lieu ma majeure partie du travail.
+
+Commençons par la nouveauté : LGB-Connect supporte désormais les réservations. Le fonctionnement choisi est le suivant : 
+- si le poste est libre, il est verrouillé 5 minutes avant le début de la réservation.
+- s'il est occupé, la personne qui arrive est prévenue de la réservation, et son temps restant est fixé pour finir une minute avant le début de la réservation.
+- si la personne arrive avant la réservation, on lui donne le choix d'utiliser sa réservation ou non. Néanmoins, sa réservation ne durera que le temps qu'il lui reste sur son forfait après la première utilisation.
+
+Les bugs corrigés : 
+- La base de registre est correctement réinitialisée à la fermeture du programme
+- il n'est plus possible de se logguer sur 2 postes avec le même identifiant
+- la date de dernière visite de l'utilisateur est désormais renseignée dans la base
+- un bug subtil sur le décalage horaire entre les postes clients et le serveur qui faisait que la console de CyberGestionnaire ne "voyait" pas forcément les postes (si il y avait plus de 60 secondes d'écart, c'était mort). Désormais, c'est l'heure du serveur qui est systématiquement utilisée. Cela évite ce problème particulier.
+
+Pour mettre à jour LGB-Connect, il faut d'abord désinstaller l'ancienne version, puis réinstaller la nouvelle. Je suis en train de chercher comment faire pour simplifier ça...
+
+## LGB Connect version 0.2.2
 
 Suivant les demandes du forum, 2 améliorations :
 * Si l'utilisateur n'a pas de temps limite à son forfait (temps = 0), on lui affecte de manière arbitraire 24h00, et il n'y a plus d'affichage du temps restant.(Attention, ça coupe quand même au bout de 24h00 !!)
