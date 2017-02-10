@@ -73,6 +73,16 @@ namespace LGBConnect.classes
                         if (Parametres.debug == "all")
                         {
                             MainForm.writeLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : ConfigLogiciel trouvée : id = " + _id);
+                            MainForm.writeLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : idEspace = " + _id);
+                            MainForm.writeLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : _configMenu = " + _configMenu);
+                            MainForm.writeLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : _pageInscription = " + _pageInscription);
+                            MainForm.writeLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : _pageRenseignement = " + _pageRenseignement);
+                            MainForm.writeLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : _connexionAnim = " + _connexionAnim);
+                            MainForm.writeLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : _bloquageTouche = " + _bloquageTouche);
+                            MainForm.writeLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : _affichageTemps = " + _affichageTemps);
+                            MainForm.writeLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : _deconnexionAuto = " + _deconnexionAuto);
+                            MainForm.writeLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : _fermetureSesssion = " + _fermetureSesssion);
+
                         }
                     }
                 }

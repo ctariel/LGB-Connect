@@ -184,6 +184,12 @@ namespace LGBConnect
             // si la déconnexion automatique est activée
             if (configLogiciel.deconnexionAuto)
             {
+
+                if (Parametres.debug == "all")
+                {
+                    MainForm.writeLog("frm_Temps.cs->timer_Tick : déconnexion auto active.");
+                    MainForm.writeLog("frm_Temps.cs->timer_Tick : diffRestant.TotalMinutes = " + diffRestant.TotalMinutes + " / diffRestant.Seconds" + diffRestant.Seconds);
+                }
                 if ((Math.Floor(diffRestant.TotalMinutes)) == 2 && diffRestant.Seconds == 0)
                 {
                     if (Parametres.debug == "all")
@@ -222,6 +228,13 @@ namespace LGBConnect
                         MainForm.writeLog("frm_Temps.cs->timer_Tick : déconnexion réelle");
                     }
                     this.Close();
+                }
+            }
+            else
+            {
+                if (Parametres.debug == "all")
+                {
+                    MainForm.writeLog("frm_Temps.cs->timer_Tick : déconnexion auto desactive.");
                 }
             }
 
