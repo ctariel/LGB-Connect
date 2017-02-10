@@ -290,6 +290,9 @@ namespace LGBConnect
                 blocageRaccourcisClavier(false);
 
                 this.Hide();
+
+                // a cet endroit, prévoir un affichage pour statistiques (tab_utilisation dans cybergestionnaire)
+
                 frmTemps = new frm_Temps(utilisateur, configLogiciel);
                 frmTemps.ShowInTaskbar = false;
                 frmTemps.ShowDialog();
