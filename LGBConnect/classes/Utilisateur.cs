@@ -32,30 +32,30 @@ namespace LGBConnect.classes
         private int _epn;
         private Boolean _newsletter;
 
-        public int id
+        public int Id
         {
             get { return _id; }
         }
-        public String nom
+        public String Nom
         {
             get { return _nom; }
         }
-        public String prenom
+        public String Prenom
         {
             get { return _prenom; }
         }
-        public String login
+        public String Login
         {
             get { return _login; }
         }
-        public int statut
+        public int Statut
         {
             get { return _statut; }
         }
 
         public Utilisateur(int idUtilisateur)
         {
-            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.ConnectionString);
             try
             {
                 cnn.Open();
@@ -64,16 +64,16 @@ namespace LGBConnect.classes
                 MySqlCommand cmd = new MySqlCommand(sql, cnn);
                 cmd.Parameters.AddWithValue("@idUser", idUtilisateur);
 
-                if (Parametres.debug == "all")
+                if (Parametres.Debug == "all")
                 {
-                    MainForm.writeLog("Utilisateur.cs->Utilisateur(id) : requete sql -------------------");
+                    MainForm.WriteLog("Utilisateur.cs->Utilisateur(id) : requete sql -------------------");
 
                     string query = cmd.CommandText;
                     foreach (MySqlParameter p in cmd.Parameters)
                     {
                         query = query.Replace(p.ParameterName, p.Value.ToString());
                     }
-                    MainForm.writeLog(query);
+                    MainForm.WriteLog(query);
                 }
 
                 MySqlDataReader rdr = cmd.ExecuteReader();
@@ -113,14 +113,14 @@ namespace LGBConnect.classes
             }
             catch (Exception ex)
             {
-                MainForm.writeLog("Utilisateur.cs->Utilisateur(id) : Connexion echouée !!" + ex.ToString());
+                MainForm.WriteLog("Utilisateur.cs->Utilisateur(id) : Connexion echouée !!" + ex.ToString());
             }
             cnn.Close();
         }
 
         public Utilisateur(String login, String motDePasse)
         {
-            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.ConnectionString);
             try
             {
                 cnn.Open();
@@ -130,16 +130,16 @@ namespace LGBConnect.classes
                 cmd.Parameters.AddWithValue("@login_user", login);
                 cmd.Parameters.AddWithValue("@pass_user", Fonction.MD5Hash(motDePasse));
 
-                if (Parametres.debug == "all")
+                if (Parametres.Debug == "all" || Parametres.Debug == "sql")
                 {
-                    MainForm.writeLog("Utilisateur.cs->Utilisateur(login,motdepasse) : requete sql -------------------");
+                    MainForm.WriteLog("Utilisateur.cs->Utilisateur(login,motdepasse) : requete sql -------------------");
 
                     string query = cmd.CommandText;
                     foreach (MySqlParameter p in cmd.Parameters)
                     {
                         query = query.Replace(p.ParameterName, p.Value.ToString());
                     }
-                    MainForm.writeLog(query);
+                    MainForm.WriteLog(query);
                 }
 
                 MySqlDataReader rdr = cmd.ExecuteReader();
@@ -179,14 +179,14 @@ namespace LGBConnect.classes
             }
             catch (Exception ex)
             {
-                MainForm.writeLog("Utilisateur.cs->Utilisateur(login,motdepasse) : Connexion echouée !!" + ex.ToString());
+                MainForm.WriteLog("Utilisateur.cs->Utilisateur(login,motdepasse) : Connexion echouée !!" + ex.ToString());
             }
             cnn.Close();
         }
 
-        public void majDerniereVisite()
+        public void MajDerniereVisite()
         {
-            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.ConnectionString);
             try
             {
                 cnn.Open();
@@ -194,106 +194,215 @@ namespace LGBConnect.classes
                 MySqlCommand cmd = new MySqlCommand(sql, cnn);
                 cmd.Parameters.AddWithValue("@derniereVisite", DateTime.Now);
                 cmd.Parameters.AddWithValue("@idUtilisateur", _id);
-                if (Parametres.debug == "all")
+                if (Parametres.Debug == "all" || Parametres.Debug == "sql")
                 {
-                    MainForm.writeLog("Utilisateur.cs->majDerniereVisite() : requete sql -------------------");
+                    MainForm.WriteLog("Utilisateur.cs->majDerniereVisite() : requete sql -------------------");
 
                     string query = cmd.CommandText;
                     foreach (MySqlParameter p in cmd.Parameters)
                     {
                         query = query.Replace(p.ParameterName, p.Value.ToString());
                     }
-                    MainForm.writeLog(query);
+                    MainForm.WriteLog(query);
                 }
                 cmd.ExecuteNonQuery();
                 _derniereVisite = DateTime.Now;
             }
             catch (Exception ex)
             {
-                MainForm.writeLog("Utilisateur.cs->majDerniereVisite() : Connexion echouée !!" + ex.ToString());
+                MainForm.WriteLog("Utilisateur.cs->majDerniereVisite() : Connexion echouée !!" + ex.ToString());
             }
             cnn.Close();
         }
 
-        public int tempsRestant()
+        public Boolean AUnForfaitValide()
         {
-            int temps_restant = 1440; // on donne 24 heures par défaut. Si on a un usager standar, alors on calcule le temps restant
+            Boolean aUnForfaitValide = false;
+
+            Forfait forfait = new Forfait(this);
+            Transaction transaction = new Transaction(this);
+            DateTime dateDeFin = DateTime.Now;
+
+            if (forfait.Id != 0 && transaction.Id != 0)
+            {
+                // ok, on a une transaction et un forfait attaché
+
+                // point de départ de validité = transaction.date
+                // duree de validité = forfait.dureeValidite * forfait.uniteValidite
+
+                if (transaction.Date < DateTime.Now)
+                {
+                    // ok, la date de début est passée
+                    if (forfait.DureeValidite != 0)
+                    {
+                        switch (forfait.UniteValidite)
+                        {
+                            case 1: // unite = jour
+                                dateDeFin = transaction.Date.AddDays(forfait.DureeValidite);
+                                break;
+
+                            case 2: // unite = semaine
+                                dateDeFin = transaction.Date.AddDays(forfait.DureeValidite * 7);
+                                break;
+                            case 3: // unite = mois
+                                dateDeFin = transaction.Date.AddMonths(forfait.DureeValidite);
+                                break;
+                            case 4: // unite = illimité !
+                                dateDeFin = DateTime.MaxValue;
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        dateDeFin = DateTime.MaxValue;
+                    }
+
+                    if (dateDeFin > DateTime.Now)
+                    {
+                        // ok, la date de fin n'est pas dépassée
+                        aUnForfaitValide = true;
+                    }
+                }
+            }
+            return aUnForfaitValide;
+        }
+
+        public int TempsRestant()
+        {
+            int temps_restant = 0;
+            int frequence = 0;
+
             if (_statut == 1)
             {  //usager standard
-                MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
+                MySqlConnection cnn = new MySqlConnection(Parametres.ConnectionString);
                 try
                 {
                     cnn.Open();
-                    String sql = "SELECT tab_forfait.nombre_temps_affectation, tab_forfait.unite_temps_affectation FROM tab_user, rel_forfait_user, tab_forfait WHERE tab_user.id_user = rel_forfait_user.id_user AND rel_forfait_user.id_forfait = tab_forfait.id_forfait AND tab_user.id_user = @idUser";
+                    String sql = "SELECT tab_forfait.nombre_temps_affectation, tab_forfait.unite_temps_affectation, tab_forfait.frequence_temps_affectation FROM tab_user, rel_forfait_user, tab_forfait WHERE tab_user.id_user = rel_forfait_user.id_user AND rel_forfait_user.id_forfait = tab_forfait.id_forfait AND tab_user.id_user = @idUser";
                     MySqlCommand cmd = new MySqlCommand(sql, cnn);
                     cmd.Parameters.AddWithValue("@idUser", _id);
-                    MySqlDataReader rdr = cmd.ExecuteReader();
-                    while (rdr.Read())
-                    {
-                        int temps = rdr.GetInt32("nombre_temps_affectation");
-                        int unite = rdr.GetInt32("unite_temps_affectation");
-                        if (unite == 1) // configuré en minutes
-                        {
-                            temps_restant = temps;
-                        }
-                        if (unite == 2) // configuré en heures
-                        {
-                            temps_restant = temps * 60;
-                        }
-                    }
-                    if (temps_restant > 0) // si le temps restant = 0, ca veut dire temps infini dans cybergestionnaire !!
-                    {
-                        rdr.Close();
 
-                        sql = "SELECT sum(duree_resa) as dureedujour FROM `tab_resa` WHERE id_user_resa = @idUser AND dateresa_resa = '" + DateTime.Today.ToString("yyyy-MM-dd") + "' AND status_resa = '1' AND (debut_resa +duree_resa ) <= floor( TIME_TO_SEC( CURRENT_TIME() ) /60) ";
+                    if (Parametres.Debug == "all" || Parametres.Debug == "sql")
+                    {
+                        MainForm.WriteLog("Utilisateur.cs->tempsRestant() : requete sql -------------------");
+
+                        string query = cmd.CommandText;
+                        foreach (MySqlParameter p in cmd.Parameters)
+                        {
+                            query = query.Replace(p.ParameterName, p.Value.ToString());
+                        }
+                        MainForm.WriteLog(query);
+                    }
+
+
+                    MySqlDataReader rdr = cmd.ExecuteReader();
+                    if (rdr.HasRows)
+                    {
+                        while (rdr.Read())
+                        {
+                            int temps = rdr.GetInt32("nombre_temps_affectation");
+                            int unite = rdr.GetInt32("unite_temps_affectation");
+                            frequence = rdr.GetInt32("frequence_temps_affectation");
+                            if (unite == 1) // configuré en minutes
+                            {
+                                temps_restant = temps;
+                            }
+                            if (unite == 2) // configuré en heures
+                            {
+                                temps_restant = temps * 60;
+                            }
+                        }
+                        rdr.Close();
+                    }
+
+                    if (temps_restant > 0) 
+                    {
+                        // ok, on a du temps configuré
+
+                        if (frequence == 1) {
+                            // duree par jour
+                            sql = "SELECT sum(duree_resa) as dureeConsommee FROM `tab_resa` WHERE id_user_resa = @idUser AND dateresa_resa = CURRENT_DATE() AND status_resa = '1' AND (debut_resa +duree_resa ) <= floor( TIME_TO_SEC( CURRENT_TIME() ) /60) ";
+                        }
+                        if (frequence == 2) {
+                            // duree par semaine
+                            sql = "SELECT sum(duree_resa) as dureeConsommee FROM `tab_resa` WHERE id_user_resa = @idUser AND `dateresa_resa`>= (CURRENT_DATE() - INTERVAL 7 DAY) AND status_resa = '1' AND (debut_resa + duree_resa) <= floor(TIME_TO_SEC(CURRENT_TIME()) / 60)";
+                        }
+                        if (frequence == 3)
+                        {
+                            // duree par mois
+                            sql = "SELECT sum(duree_resa) as dureeConsommee FROM `tab_resa` WHERE id_user_resa = @idUser AND `dateresa_resa`>= (CURRENT_DATE() - INTERVAL 1 MONTH) AND status_resa = '1' AND (debut_resa + duree_resa) <= floor(TIME_TO_SEC(CURRENT_TIME()) / 60)";
+                        }
                         cmd = new MySqlCommand(sql, cnn);
                         cmd.Parameters.AddWithValue("@idUser", _id);
+
+                        if (Parametres.Debug == "all" || Parametres.Debug == "sql")
+                        {
+                            MainForm.WriteLog("Utilisateur.cs->tempsRestant() : requete sql -------------------");
+
+                            string query = cmd.CommandText;
+                            foreach (MySqlParameter p in cmd.Parameters)
+                            {
+                                query = query.Replace(p.ParameterName, p.Value.ToString());
+                            }
+                            MainForm.WriteLog(query);
+                        }
+
                         rdr = cmd.ExecuteReader();
                         while (rdr.Read())
                         {
-                            if (!Convert.IsDBNull(rdr["dureedujour"]))
+                            if (!Convert.IsDBNull(rdr["dureeConsommee"]))
                             {
-                                int dureedujour = rdr.GetInt32("dureedujour");
-                                temps_restant = temps_restant - dureedujour;
+                                int dureeConsommee = rdr.GetInt32("dureeConsommee");
+                                temps_restant = temps_restant - dureeConsommee;
                             }
                         }
 
                         rdr.Close();
 
                     }
-                    else
-                    {
-                        temps_restant = 1440; // si le temps n'est pas configuré, on donne 24h00
-                    }
-
-
                 }
                 catch (Exception ex)
                 {
-                    MainForm.writeLog("Utilisateur.cs->tempsRestant() : Connexion echouée !! " + ex.ToString());
+                    MainForm.WriteLog("Utilisateur.cs->tempsRestant() : Connexion echouée !! " + ex.ToString());
                 }
                 cnn.Close();
+            }
+            else if (_statut == 3 || _statut == 4)
+            {
+                temps_restant = 1440; // on donne 24h aux animateurs
             }
             return temps_restant;
 
         }
 
-        public Boolean estConnecte(int idPoste)
+        public Boolean EstConnecte(int idPoste)
         {
             Boolean estConnecte = false;
-            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.ConnectionString);
             try
             {
                 cnn.Open();
                 String sql = "SELECT * FROM tab_resa WHERE id_user_resa = @idUser AND status_resa = '0' AND id_computer_resa != " + idPoste;
                 MySqlCommand cmd = new MySqlCommand(sql, cnn);
                 cmd.Parameters.AddWithValue("@idUser", _id);
+                if (Parametres.Debug == "all" || Parametres.Debug == "sql")
+                {
+                    MainForm.WriteLog("Utilisateur.cs->tempsRestant() : requete sql -------------------");
+
+                    string query = cmd.CommandText;
+                    foreach (MySqlParameter p in cmd.Parameters)
+                    {
+                        query = query.Replace(p.ParameterName, p.Value.ToString());
+                    }
+                    MainForm.WriteLog(query);
+                }
+
                 MySqlDataReader rdr = cmd.ExecuteReader();
                 estConnecte = rdr.HasRows;
             }
             catch (Exception ex)
             {
-                MainForm.writeLog("Utilisateur.cs->estConnecte() : Connexion echouée !! " + ex.ToString());
+                MainForm.WriteLog("Utilisateur.cs->estConnecte() : Connexion echouée !! " + ex.ToString());
             }
             cnn.Close();
 

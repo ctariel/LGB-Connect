@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LGBConnect</RootNamespace>
     <AssemblyName>LGBConnect</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <IsWebBootstrapper>false</IsWebBootstrapper>
@@ -29,6 +29,7 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -110,7 +111,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="assistantConfig.cs" />
+    <Compile Include="assistantConfig.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="assistantConfig.Designer.cs">
       <DependentUpon>assistantConfig.cs</DependentUpon>
     </Compile>
@@ -118,12 +121,16 @@
     <Compile Include="classes\ComboBoxItem.cs" />
     <Compile Include="classes\ConfigLogiciel.cs" />
     <Compile Include="classes\Espace.cs" />
+    <Compile Include="classes\Forfait.cs" />
     <Compile Include="classes\Keyboard.cs" />
     <Compile Include="classes\Parametres.cs" />
     <Compile Include="classes\Poste.cs" />
     <Compile Include="classes\Resa.cs" />
     <Compile Include="classes\Salle.cs" />
-    <Compile Include="frm_MsgBox.cs" />
+    <Compile Include="classes\Transaction.cs" />
+    <Compile Include="frm_MsgBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="frm_MsgBox.Designer.cs">
       <DependentUpon>frm_MsgBox.cs</DependentUpon>
     </Compile>
@@ -140,7 +147,9 @@
       <DependentUpon>frm_Temps.cs</DependentUpon>
     </Compile>
     <Compile Include="fonctions.cs" />
-    <Compile Include="MainForm.cs" />
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
@@ -149,7 +158,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
-    <Compile Include="SplashScreen.cs" />
+    <Compile Include="SplashScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="SplashScreen.Designer.cs">
       <DependentUpon>SplashScreen.cs</DependentUpon>
     </Compile>

@@ -19,38 +19,38 @@ namespace LGBConnect.classes
         private System.Timers.Timer _timer = new System.Timers.Timer();
 
 
-        public int id {
+        public int Id {
             get { return _id;}
         }
-        public int idUtilisateur
+        public int IdUtilisateur
         {
             get { return _idUtilisateur; }
         }
-        public DateTime dateResa
+        public DateTime DateResa
         {
             get { return _dateResa; }
         }
-        public int debut
+        public int Debut
         {
             get { return _debut; }
         }
-        public int duree
+        public int Duree
         {
             get { return _duree; }
             set { _duree = value; }
         }
-        public int statut
+        public int Statut
         {
             get { return _statut;  }
         }
-        public DateTime debutDeSession
+        public DateTime DebutDeSession
         {
             get
             {
                 return _dateResa.AddMinutes(_debut);
             }
         }
-        public DateTime finDeSession
+        public DateTime FinDeSession
         {
             get
             {
@@ -62,7 +62,7 @@ namespace LGBConnect.classes
 
         public Resa(int idResa)
         {
-            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.ConnectionString);
             try
             {
                 // on cherche la salle associé au poste
@@ -86,21 +86,21 @@ namespace LGBConnect.classes
                         _date = rdr.GetDateTime("date_resa");
                         _statut = Int32.Parse(rdr.GetString("status_resa"));
 
-                        if (Parametres.debug == "all")
+                        if (Parametres.Debug == "all")
                         {
-                            MainForm.writeLog("Resa.cs->Resa(idResa) : Resa trouvée : id = " + _id);
+                            MainForm.WriteLog("Resa.cs->Resa(idResa) : Resa trouvée : id = " + _id);
                         }
                     }
                 }
                 else
                 {
-                    MainForm.writeLog("Resa.cs->Resa(idResa) : Pas de Réservation trouvée pour l'id " + idResa + " !");
+                    MainForm.WriteLog("Resa.cs->Resa(idResa) : Pas de Réservation trouvée pour l'id " + idResa + " !");
                 }
-                timer_Start();
+                Timer_Start();
             }
             catch (Exception ex)
             {
-                MainForm.writeLog("Resa.cs->Resa(idResa) : Connexion echouée !!" + ex.ToString());
+                MainForm.WriteLog("Resa.cs->Resa(idResa) : Connexion echouée !!" + ex.ToString());
             }
             cnn.Close();
 
@@ -109,32 +109,32 @@ namespace LGBConnect.classes
 
         public Resa(int idUtilisateur, int tempsRestant, DateTime heureConnexion)
         {
-            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.ConnectionString);
             try
             {
                 cnn.Open();
 
                 String sql = "INSERT into `tab_resa` (`id_computer_resa`, `id_user_resa`, `dateresa_resa`, `debut_resa`, `duree_resa`, `date_resa`, `status_resa`) VALUES (@idPoste, @idUtilisateur, CURRENT_DATE(), floor(TIME_TO_SEC(CURRENT_TIME())/60), @tempsRestant, CURRENT_DATE(),'0')";
-                if (Parametres.debug == "all")
+                if (Parametres.Debug == "all")
                 {
-                    MainForm.writeLog("frm_Temps.cs->frm_Temps_Load : inscription du début de la résa sql =  " + sql);
+                    MainForm.WriteLog("frm_Temps.cs->frm_Temps_Load : inscription du début de la résa sql =  " + sql);
                 }
 
                 MySqlCommand cmd = new MySqlCommand(sql, cnn);
-                cmd.Parameters.AddWithValue("@idPoste", Parametres.poste_id);
+                cmd.Parameters.AddWithValue("@idPoste", Parametres.Poste_id);
                 cmd.Parameters.AddWithValue("@idUtilisateur", idUtilisateur);
                 cmd.Parameters.AddWithValue("@tempsRestant", tempsRestant.ToString());
 
-                if (Parametres.debug == "all")
+                if (Parametres.Debug == "all")
                 {
-                    MainForm.writeLog("Resa.cs->Resa(idUtilisateur ,tempsRestant, heureConnexion) : requete sql -------------------");
+                    MainForm.WriteLog("Resa.cs->Resa(idUtilisateur ,tempsRestant, heureConnexion) : requete sql -------------------");
 
                     string query = cmd.CommandText;
                     foreach (MySqlParameter p in cmd.Parameters)
                     {
                         query = query.Replace(p.ParameterName, p.Value.ToString());
                     }
-                    MainForm.writeLog(query);
+                    MainForm.WriteLog(query);
                 }
 
                 MySqlDataReader rdr = cmd.ExecuteReader();
@@ -143,46 +143,46 @@ namespace LGBConnect.classes
                 _dateResa = heureConnexion.Date;
                 _debut = heureConnexion.Minute + heureConnexion.Hour * 60;
                 _duree = tempsRestant;
-                _idPoste = Parametres.poste_id;
+                _idPoste = Parametres.Poste_id;
                 _idUtilisateur = idUtilisateur;
                 _statut = 0;
 
-                if (Parametres.debug == "all")
+                if (Parametres.Debug == "all")
                 {
-                    MainForm.writeLog("Resa.cs->Resa(idUtilisateur, tempsRestant, heureConnexion) : id resa en cours =  " + _id);
+                    MainForm.WriteLog("Resa.cs->Resa(idUtilisateur, tempsRestant, heureConnexion) : id resa en cours =  " + _id);
                 }
                 rdr.Close();
-                timer_Start();
+                Timer_Start();
             }
             catch (Exception ex)
             {
-                MainForm.writeLog("Resa.cs->Resa(idUtilisateur, tempsRestant, heureConnexion) :Connexion echouée !! " + ex.ToString());
+                MainForm.WriteLog("Resa.cs->Resa(idUtilisateur, tempsRestant, heureConnexion) :Connexion echouée !! " + ex.ToString());
             }
             cnn.Close();
         }
 
-        private void timer_Start()
+        private void Timer_Start()
         {
 
             _timer.Interval = 1000; // specify Interval time as you want
-            _timer.Elapsed += new System.Timers.ElapsedEventHandler(timer_Elapsed);
+            _timer.Elapsed += new System.Timers.ElapsedEventHandler(Timer_Elapsed);
             _timer.Start();
 
         }
 
 
-        public void clore(int tempsPasse)
+        public void Clore(int tempsPasse)
         {
             Utilisateur utilisateur = new Utilisateur(_idUtilisateur);
 
-            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.ConnectionString);
             try
             {
                 cnn.Open();
                 String sql = "UPDATE tab_resa SET `duree_resa`= @tempsPasse, `status_resa`= @statutResa WHERE `id_resa` = @idResa";
                 MySqlCommand cmd = new MySqlCommand(sql, cnn);
                 cmd.Parameters.AddWithValue("@tempsPasse", tempsPasse);
-                if(utilisateur.statut != 1 )
+                if(utilisateur.Statut != 1 )
                 {
                     _statut = 2; // animateur ou plus
                 }
@@ -192,31 +192,31 @@ namespace LGBConnect.classes
                 }
                 cmd.Parameters.AddWithValue("@statutResa", _statut.ToString());
                 cmd.Parameters.AddWithValue("@idResa", _id);
-                if (Parametres.debug == "all")
+                if (Parametres.Debug == "all")
                 {
-                    MainForm.writeLog("Resa.cs->Clore(tempsPasse) : requete sql -------------------");
+                    MainForm.WriteLog("Resa.cs->Clore(tempsPasse) : requete sql -------------------");
 
                     string query = cmd.CommandText;
                     foreach (MySqlParameter p in cmd.Parameters)
                     {
                         query = query.Replace(p.ParameterName, p.Value.ToString());
                     }
-                    MainForm.writeLog(query);
+                    MainForm.WriteLog(query);
                 }
                 cmd.ExecuteNonQuery();
 
             }
             catch (Exception ex)
             {
-                MainForm.writeLog("Resa.cs->clore(tempsPasse) : Connexion echouée !!" + ex.ToString());
+                MainForm.WriteLog("Resa.cs->clore(tempsPasse) : Connexion echouée !!" + ex.ToString());
             }
             cnn.Close();
 
         }
 
-        public void annuler()
+        public void Annuler()
         {
-            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.ConnectionString);
             try
             {
                 cnn.Open();
@@ -231,16 +231,16 @@ namespace LGBConnect.classes
             }
             catch (Exception ex)
             {
-                MainForm.writeLog("Resa.cs->annuler() : Connexion echouée !!" + ex.ToString());
+                MainForm.WriteLog("Resa.cs->annuler() : Connexion echouée !!" + ex.ToString());
             }
             cnn.Close();
 
         }
 
 
-        public void activer()
+        public void Activer()
         {
-            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.ConnectionString);
             try
             {
                 cnn.Open();
@@ -252,16 +252,16 @@ namespace LGBConnect.classes
             }
             catch (Exception ex)
             {
-                MainForm.writeLog("Resa.cs->activer() : Connexion echouée !!" + ex.ToString());
+                MainForm.WriteLog("Resa.cs->activer() : Connexion echouée !!" + ex.ToString());
             }
             cnn.Close();
         }
 
 
-        public static int verifierResaEnCours(int idPoste)
+        public static int VerifierResaEnCours(int idPoste)
         {
             int idResa = 0;
-            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.ConnectionString);
             try
             {
                 cnn.Open();
@@ -273,9 +273,9 @@ namespace LGBConnect.classes
                 MySqlDataReader rdr = cmd.ExecuteReader();
                 if (rdr.HasRows) // une resa en cours a ete trouvée !
                 {
-                    if (Parametres.debug == "all")
+                    if (Parametres.Debug == "all")
                     {
-                        MainForm.writeLog("Resa.cs->verifierResaEnCours(idPoste) : resa en cours trouvée pour le poste " + idPoste);
+                        MainForm.WriteLog("Resa.cs->verifierResaEnCours(idPoste) : resa en cours trouvée pour le poste " + idPoste);
                     }
                     while (rdr.Read())
                     {
@@ -286,17 +286,17 @@ namespace LGBConnect.classes
             }
             catch (Exception ex)
             {
-                MainForm.writeLog("Resa.cs->verifierResaEnCours(idPoste) : Connexion echouée !!" + ex.ToString());
+                MainForm.WriteLog("Resa.cs->verifierResaEnCours(idPoste) : Connexion echouée !!" + ex.ToString());
             }
             cnn.Close();
 
             return idResa;
         }
 
-        public static int prochaineResa(int idPoste)
+        public static int ProchaineResa(int idPoste)
         {
             int idResa = 0;
-            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.ConnectionString);
             try
             {
                 // on cherche la salle associé au poste
@@ -311,9 +311,9 @@ namespace LGBConnect.classes
                 MySqlDataReader rdr = cmd.ExecuteReader();
                 if (rdr.HasRows) // une resa en cours a ete trouvée !
                 {
-                    if (Parametres.debug == "all")
+                    if (Parametres.Debug == "all")
                     {
-                        MainForm.writeLog("Resa.cs->prochaineResa(idPoste) : resa a venir trouvée pour le poste " + idPoste);
+                        MainForm.WriteLog("Resa.cs->prochaineResa(idPoste) : resa a venir trouvée pour le poste " + idPoste);
                     }
                     while (rdr.Read())
                     {
@@ -324,20 +324,20 @@ namespace LGBConnect.classes
             }
             catch (Exception ex)
             {
-                MainForm.writeLog("Resa.cs->prochaineResa(idPoste) : Connexion echouée !!" + ex.ToString());
+                MainForm.WriteLog("Resa.cs->prochaineResa(idPoste) : Connexion echouée !!" + ex.ToString());
             }
             cnn.Close();
 
             return idResa;
         }
 
-        private void timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             MAJStatut();
         }
 
         private void MAJStatut() { 
-            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.ConnectionString);
             try { 
                 cnn.Open();
                 String sql = "SELECT `status_resa` FROM `tab_resa` WHERE `id_resa`= '" + _id + "'";
@@ -356,7 +356,7 @@ namespace LGBConnect.classes
             }
             catch (Exception ex)
             {
-                MainForm.writeLog("Resa.cs->MAJStatut() : Connexion echouée !!" + ex.ToString());
+                MainForm.WriteLog("Resa.cs->MAJStatut() : Connexion echouée !!" + ex.ToString());
             }
             cnn.Close();
         }

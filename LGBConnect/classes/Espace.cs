@@ -22,7 +22,7 @@ namespace LGBConnect.classes
         private int  _couleur;
         private String _mail;
 
-        public String nom
+        public String Nom
         {
             get
             {
@@ -33,7 +33,7 @@ namespace LGBConnect.classes
 
         public Espace(int idEspace)
         {
-            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.ConnectionString);
             try
             {
                 // on cherche la salle associé au poste
@@ -58,20 +58,20 @@ namespace LGBConnect.classes
                         _couleur = rdr.GetInt32("couleur_espace");
                         _mail = rdr.GetString("mail_espace");
 
-                        if (Parametres.debug == "all")
+                        if (Parametres.Debug == "all")
                         {
-                            MainForm.writeLog("Espace.cs->Espace(idEspace) : espace trouvé : id = " + _id);
+                            MainForm.WriteLog("Espace.cs->Espace(idEspace) : espace trouvé : id = " + _id);
                         }
                     }
                 }
                 else
                 {
-                    MainForm.writeLog("Espace.cs->Espace(idEspace) : Pas d'espace trouvée pour l'id " + idEspace + " ! Veuillez revoir la configuration du logiciel !");
+                    MainForm.WriteLog("Espace.cs->Espace(idEspace) : Pas d'espace trouvée pour l'id " + idEspace + " ! Veuillez revoir la configuration du logiciel !");
                 }
             }
             catch (Exception ex)
             {
-                MainForm.writeLog("Espace.cs->Espace(idEspace) : Connexion echouée !!" + ex.ToString());
+                MainForm.WriteLog("Espace.cs->Espace(idEspace) : Connexion echouée !!" + ex.ToString());
             }
             cnn.Close();
 

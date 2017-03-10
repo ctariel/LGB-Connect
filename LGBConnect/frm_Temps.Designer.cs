@@ -66,7 +66,7 @@
             this.btn_deconnexion.TabIndex = 2;
             this.btn_deconnexion.Text = "Déconnexion";
             this.btn_deconnexion.UseVisualStyleBackColor = true;
-            this.btn_deconnexion.Click += new System.EventHandler(this.btn_deconnexion_Click);
+            this.btn_deconnexion.Click += new System.EventHandler(this.Btn_deconnexion_Click);
             // 
             // lbl_temps_utilise
             // 
@@ -113,9 +113,9 @@
             this.Controls.Add(this.lbl_utilisateur);
             this.Name = "frm_Temps";
             this.Text = "frm_Temps";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frm_Temps_FormClosed);
-            this.Load += new System.EventHandler(this.frm_Temps_Load);
-            this.Shown += new System.EventHandler(this.frm_Temps_Shown);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Frm_Temps_FormClosed);
+            this.Load += new System.EventHandler(this.Frm_Temps_Load);
+            this.Shown += new System.EventHandler(this.Frm_Temps_Shown);
             this.ResumeLayout(false);
 
         }

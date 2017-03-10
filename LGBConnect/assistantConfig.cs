@@ -39,12 +39,12 @@ namespace LGBConnect
         {
             panel_Page1.Parent = panel_principal;
 
-            if (Parametres.lireConfiguration() == 0)
+            if (Parametres.LireConfiguration() == 0)
             {
-                textBox_Hote.Text = Parametres.db_hote;
-                textBox_Base.Text = Parametres.db_base;
-                textBox_Utilisateur.Text = Parametres.db_utilisateur;
-                textBox_MotDePasse.Text = Parametres.db_motdepasse;
+                textBox_Hote.Text = Parametres.Db_hote;
+                textBox_Base.Text = Parametres.Db_base;
+                textBox_Utilisateur.Text = Parametres.Db_utilisateur;
+                textBox_MotDePasse.Text = Parametres.Db_motdepasse;
             }
         }
 
@@ -78,14 +78,14 @@ namespace LGBConnect
         /// <param name="e"></param>
         private void btn_TestConnexion_Click(object sender, EventArgs e)
         {
-            Parametres.db_hote = textBox_Hote.Text;
-            Parametres.db_base = textBox_Base.Text;
-            Parametres.db_utilisateur = textBox_Utilisateur.Text;
-            Parametres.db_motdepasse = textBox_MotDePasse.Text;
+            Parametres.Db_hote = textBox_Hote.Text;
+            Parametres.Db_base = textBox_Base.Text;
+            Parametres.Db_utilisateur = textBox_Utilisateur.Text;
+            Parametres.Db_motdepasse = textBox_MotDePasse.Text;
 
             MySqlConnection cnn;
 
-            cnn = new MySqlConnection(Parametres.connectionString);
+            cnn = new MySqlConnection(Parametres.ConnectionString);
             try
             {
                 cnn.Open();
@@ -163,15 +163,15 @@ namespace LGBConnect
         {
             string sql = string.Empty;
 
-            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.ConnectionString);
             try
             {
-                if (Parametres.poste_nom == "") { 
+                if (Parametres.Poste_nom == "") { 
                     sql = "SELECT  `id_computer`,`nom_computer` FROM `tab_computer` WHERE `configurer_epnconnect_computer`!='1'";
                 }
                 else
                 {
-                    sql = "SELECT `id_computer`,`nom_computer` FROM `tab_computer` WHERE `configurer_epnconnect_computer`!='1' or nom_computer='" + Parametres.poste_nom + "'";
+                    sql = "SELECT `id_computer`,`nom_computer` FROM `tab_computer` WHERE `configurer_epnconnect_computer`!='1' or nom_computer='" + Parametres.Poste_nom + "'";
 
                 }
                 MySqlDataAdapter da_Postes = new MySqlDataAdapter(sql, cnn);
@@ -186,9 +186,9 @@ namespace LGBConnect
 
                 comboBox_Poste.DataSource = ds_Postes.Tables[0];
 
-                if (Parametres.poste_nom != "")
+                if (Parametres.Poste_nom != "")
                 {
-                    comboBox_Poste.SelectedIndex = comboBox_Poste.FindStringExact(Parametres.poste_nom);
+                    comboBox_Poste.SelectedIndex = comboBox_Poste.FindStringExact(Parametres.Poste_nom);
                 }
             }
             catch (Exception ex)
@@ -200,7 +200,7 @@ namespace LGBConnect
 
         private void configureLabelEspace()
         {
-            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.ConnectionString);
             try
             {
                 cnn.Open();
@@ -290,7 +290,7 @@ namespace LGBConnect
 
         private void configureTypePoste()
         {
-            if (Parametres.poste_type == "animateur")
+            if (Parametres.Poste_type == "animateur")
             {
                 radioButton_PosteAnimateur.Checked = true;
             }
@@ -310,19 +310,19 @@ namespace LGBConnect
         {
             String usage = "";
 
-            Parametres.poste_nom = comboBox_Poste.Text;
-            Parametres.poste_id = (int)comboBox_Poste.SelectedValue;
+            Parametres.Poste_nom = comboBox_Poste.Text;
+            Parametres.Poste_id = (int)comboBox_Poste.SelectedValue;
 
             if (radioButton_PosteAnimateur.Checked)
             {
-                Parametres.poste_type = "animateur";
+                Parametres.Poste_type = "animateur";
                 usage = "2";
             }
             else
             {
                 if (radioButton_PosteUsager.Checked)
                 {
-                    Parametres.poste_type = "usager";
+                    Parametres.Poste_type = "usager";
                     usage = "1";
                 }
             }
@@ -330,29 +330,29 @@ namespace LGBConnect
 
             if (comboBox_MAC.Items.Count > 0)
             {
-                Parametres.poste_adresse_MAC = (comboBox_MAC.SelectedItem as ComboboxItem).Value.ToString();
+                Parametres.Poste_adresse_MAC = (comboBox_MAC.SelectedItem as ComboboxItem).Value.ToString();
             }
             else
             {
-                Parametres.poste_adresse_MAC = "";
+                Parametres.Poste_adresse_MAC = "";
             }
 
-            Parametres.ecrireConfiguration();
+            Parametres.EcrireConfiguration();
 
             // mise à jour de la base de donnnées
 
-            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.ConnectionString);
             try
             {
                 cnn.Open();
 
                 string sql = "UPDATE tab_computer " +
                     "SET usage_computer='" + usage + "', " +
-                    "adresse_mac_computer='" + Parametres.poste_adresse_MAC + "', " +
+                    "adresse_mac_computer='" + Parametres.Poste_adresse_MAC + "', " +
                     "adresse_ip_computer='" + lbl_IP.Text + "', " +
-                    "nom_hote_computer='" + Parametres.poste_nom + "', " +
+                    "nom_hote_computer='" + Parametres.Poste_nom + "', " +
                     "configurer_epnconnect_computer='1'" +
-                    " WHERE nom_computer='" + Parametres.poste_nom + "'";
+                    " WHERE nom_computer='" + Parametres.Poste_nom + "'";
                 Debug.WriteLine("SQL : " + sql);
 
                 MySqlCommand cmd = new MySqlCommand(sql, cnn);
