@@ -25,14 +25,14 @@ namespace LGBConnect.classes
 
         private System.Timers.Timer _timer = new System.Timers.Timer();
 
-        public int id
+        public int Id
         {
             get { return _id; }
         }
 
         public Poste(int idPoste)
         {
-            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.ConnectionString);
             try
             {
                 cnn.Open();
@@ -41,16 +41,16 @@ namespace LGBConnect.classes
                 MySqlCommand cmd = new MySqlCommand(sql, cnn);
                 cmd.Parameters.AddWithValue("@idPoste", idPoste);
 
-                if (Parametres.debug == "all")
+                if (Parametres.Debug == "all")
                 {
-                    MainForm.writeLog("Poste.cs->Poste(idPoste) : requete sql -------------------");
+                    MainForm.WriteLog("Poste.cs->Poste(idPoste) : requete sql -------------------");
 
                     string query = cmd.CommandText;
                     foreach (MySqlParameter p in cmd.Parameters)
                     {
                         query = query.Replace(p.ParameterName, p.Value.ToString());
                     }
-                    MainForm.writeLog(query);
+                    MainForm.WriteLog(query);
                 }
 
                 MySqlDataReader rdr = cmd.ExecuteReader();
@@ -75,32 +75,32 @@ namespace LGBConnect.classes
                     }
                 }
                 rdr.Close();
-                timer_Start();
+                Timer_Start();
             }
             catch (Exception ex)
             {
-                MainForm.writeLog("Poste.cs->Poste(idPoste) : Connexion echouée !!" + ex.ToString());
+                MainForm.WriteLog("Poste.cs->Poste(idPoste) : Connexion echouée !!" + ex.ToString());
             }
             cnn.Close();
         }
 
-        private void timer_Start()
+        private void Timer_Start()
         {
 
             _timer.Interval = 1000; // specify interval time as you want
-            _timer.Elapsed += new System.Timers.ElapsedEventHandler(timer_Elapsed);
+            _timer.Elapsed += new System.Timers.ElapsedEventHandler(Timer_Elapsed);
             _timer.Start();
 
         }
 
-        private void timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             MAJEtat();
         }
 
         public void MAJEtat()
         {
-            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.ConnectionString);
             try
             {
                 cnn.Open();

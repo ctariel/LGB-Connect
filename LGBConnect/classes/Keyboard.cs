@@ -56,7 +56,7 @@ public class KeyboardHook : IDisposable
         BlockAllKeys
     }
 
-    public bool blocageActif { get; set; }
+    public bool BlocageActif { get; set; }
 
     //Internal parameters
     private bool BlockAllKeys = false;
@@ -207,13 +207,38 @@ public class KeyboardHook : IDisposable
         //bool BlockKey = BlockAllKeys;
 
         //Filter wParam for KeyUp events only
-        if (nCode >= 0 && blocageActif)
+        if (nCode >= 0 && BlocageActif)
         {
             if (wParam == (IntPtr)WM_KEYUP || wParam == (IntPtr)WM_SYSKEYUP || wParam == (IntPtr)WM_KEYDOWN || wParam == (IntPtr)WM_SYSKEYDOWN)
             {
 
-                Debug.WriteLine("lParam.vkCode = " + lParam.vkCode + " / lParam.flags = " + lParam.flags);
+                //Debug.WriteLine("lParam.vkCode = " + lParam.vkCode + " / lParam.flags = " + lParam.flags);
                 bool Suppress = false;
+
+                if (BlockAllKeys == true)
+                {
+                    if (((lParam.flags == 32) && (lParam.vkCode == 0x09)) ||     // Alt+Tab
+                        ((lParam.flags == 32) && (lParam.vkCode == 0x1B)) ||      // Alt+Esc
+                        ((lParam.flags == 0) && (lParam.vkCode == 0x1B)) ||      // Ctrl+Esc
+                        ((lParam.flags == 1) && (lParam.vkCode == 0x5B)) ||      // Left Windows Key
+                        ((lParam.flags == 1) && (lParam.vkCode == 0x5C)) ||      // Right Windows Key
+                        ((lParam.flags == 32) && (lParam.vkCode == 0x73)) ||      // Alt+F4              
+                        ((lParam.flags == 32) && (lParam.vkCode == 0x20)))
+                        Suppress = true;
+                }
+
+                if (BlockAltTab == true)
+                {
+                    if (((lParam.flags == 32) && (lParam.vkCode == 0x09)))     // Alt+Tab
+                        Suppress = true;
+                }
+
+                if (BlockWindowsKey == true)
+                {
+                    if (((lParam.flags == 1) && (lParam.vkCode == 0x5B)) ||      // Left Windows Key
+                        ((lParam.flags == 1) && (lParam.vkCode == 0x5C)))       // Right Windows Key
+                        Suppress = true;
+                }
 
                 if (((lParam.flags == 32) && (lParam.vkCode == 0x09)) ||     // Alt+Tab
                     ((lParam.flags == 32) && (lParam.vkCode == 0x1B)) ||      // Alt+Esc
@@ -286,8 +311,7 @@ public class KeyboardHook : IDisposable
     /// <param name="e">An instance of KeyboardHookEventArgs</param>
     public void OnKeyIntercepted(KeyboardHookEventArgs e)
     {
-        if (KeyIntercepted != null)
-            KeyIntercepted(e);
+        KeyIntercepted?.Invoke(e);
     }
 
     /// <summary>

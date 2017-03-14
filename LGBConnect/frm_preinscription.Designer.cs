@@ -1,6 +1,6 @@
 ﻿namespace LGBConnect
 {
-    partial class frm_preinscription
+    partial class Frm_preinscription
     {
         /// <summary>
         /// Required designer variable.
@@ -439,7 +439,7 @@
             this.comboBox_codePostal.Name = "comboBox_codePostal";
             this.comboBox_codePostal.Size = new System.Drawing.Size(94, 24);
             this.comboBox_codePostal.TabIndex = 0;
-            this.comboBox_codePostal.TextChanged += new System.EventHandler(this.comboBox_codePostal_TextChanged);
+            this.comboBox_codePostal.TextChanged += new System.EventHandler(this.ComboBox_codePostal_TextChanged);
             // 
             // comboBox_ville
             // 
@@ -451,7 +451,7 @@
             this.comboBox_ville.Name = "comboBox_ville";
             this.comboBox_ville.Size = new System.Drawing.Size(280, 24);
             this.comboBox_ville.TabIndex = 1;
-            this.comboBox_ville.SelectedIndexChanged += new System.EventHandler(this.comboBox_ville_SelectedIndexChanged);
+            this.comboBox_ville.SelectedIndexChanged += new System.EventHandler(this.ComboBox_ville_SelectedIndexChanged);
             // 
             // lbl_email
             // 
@@ -673,7 +673,7 @@
             this.checkBox_equipement_internetMaison.TabIndex = 5;
             this.checkBox_equipement_internetMaison.Text = "Internet à la maison (ADSL, satellite ou fibre)";
             this.checkBox_equipement_internetMaison.UseVisualStyleBackColor = true;
-            this.checkBox_equipement_internetMaison.CheckedChanged += new System.EventHandler(this.checkBox_equipement_internetMaison_CheckedChanged);
+            this.checkBox_equipement_internetMaison.CheckedChanged += new System.EventHandler(this.CheckBox_equipement_internetMaison_CheckedChanged);
             // 
             // checkBox_equipement_television
             // 
@@ -684,7 +684,7 @@
             this.checkBox_equipement_television.TabIndex = 4;
             this.checkBox_equipement_television.Text = "Télévision connectée";
             this.checkBox_equipement_television.UseVisualStyleBackColor = true;
-            this.checkBox_equipement_television.CheckedChanged += new System.EventHandler(this.checkBox_equipement_television_CheckedChanged);
+            this.checkBox_equipement_television.CheckedChanged += new System.EventHandler(this.CheckBox_equipement_television_CheckedChanged);
             // 
             // checkBox_equipement_smartphone
             // 
@@ -695,7 +695,7 @@
             this.checkBox_equipement_smartphone.TabIndex = 3;
             this.checkBox_equipement_smartphone.Text = "Smartphone";
             this.checkBox_equipement_smartphone.UseVisualStyleBackColor = true;
-            this.checkBox_equipement_smartphone.CheckedChanged += new System.EventHandler(this.checkBox_equipement_smartphone_CheckedChanged);
+            this.checkBox_equipement_smartphone.CheckedChanged += new System.EventHandler(this.CheckBox_equipement_smartphone_CheckedChanged);
             // 
             // checkBox_equipement_tablette
             // 
@@ -706,7 +706,7 @@
             this.checkBox_equipement_tablette.TabIndex = 2;
             this.checkBox_equipement_tablette.Text = "Tablette";
             this.checkBox_equipement_tablette.UseVisualStyleBackColor = true;
-            this.checkBox_equipement_tablette.CheckedChanged += new System.EventHandler(this.checkBox_equipement_tablette_CheckedChanged);
+            this.checkBox_equipement_tablette.CheckedChanged += new System.EventHandler(this.CheckBox_equipement_tablette_CheckedChanged);
             // 
             // checkBox_equipement_ordinateur
             // 
@@ -717,7 +717,7 @@
             this.checkBox_equipement_ordinateur.TabIndex = 1;
             this.checkBox_equipement_ordinateur.Text = "Ordinateur";
             this.checkBox_equipement_ordinateur.UseVisualStyleBackColor = true;
-            this.checkBox_equipement_ordinateur.CheckedChanged += new System.EventHandler(this.checkBox_equipement_ordinateur_CheckedChanged);
+            this.checkBox_equipement_ordinateur.CheckedChanged += new System.EventHandler(this.CheckBox_equipement_ordinateur_CheckedChanged);
             // 
             // checkBox_equipement_aucun
             // 
@@ -728,7 +728,7 @@
             this.checkBox_equipement_aucun.TabIndex = 0;
             this.checkBox_equipement_aucun.Text = "Aucun équipement";
             this.checkBox_equipement_aucun.UseVisualStyleBackColor = true;
-            this.checkBox_equipement_aucun.CheckedChanged += new System.EventHandler(this.checkBox_equipement_aucun_CheckedChanged);
+            this.checkBox_equipement_aucun.CheckedChanged += new System.EventHandler(this.CheckBox_equipement_aucun_CheckedChanged);
             // 
             // checkBox_equipement_internetMobile
             // 
@@ -739,7 +739,7 @@
             this.checkBox_equipement_internetMobile.TabIndex = 6;
             this.checkBox_equipement_internetMobile.Text = "Internet mobile (3G, 4G, ...)";
             this.checkBox_equipement_internetMobile.UseVisualStyleBackColor = true;
-            this.checkBox_equipement_internetMobile.CheckedChanged += new System.EventHandler(this.checkBox_equipement_internetMobile_CheckedChanged);
+            this.checkBox_equipement_internetMobile.CheckedChanged += new System.EventHandler(this.CheckBox_equipement_internetMobile_CheckedChanged);
             // 
             // checkBox_equipement_pasdeconnexion
             // 
@@ -750,7 +750,7 @@
             this.checkBox_equipement_pasdeconnexion.TabIndex = 7;
             this.checkBox_equipement_pasdeconnexion.Text = "Pas de connexion";
             this.checkBox_equipement_pasdeconnexion.UseVisualStyleBackColor = true;
-            this.checkBox_equipement_pasdeconnexion.CheckStateChanged += new System.EventHandler(this.checkBox_equipement_pasdeconnexion_CheckedChanged);
+            this.checkBox_equipement_pasdeconnexion.CheckStateChanged += new System.EventHandler(this.CheckBox_equipement_pasdeconnexion_CheckedChanged);
             // 
             // tableLayoutPanel_lieu
             // 
@@ -921,7 +921,7 @@
             this.btn_annuler.TabIndex = 31;
             this.btn_annuler.Text = "Annuler";
             this.btn_annuler.UseVisualStyleBackColor = true;
-            this.btn_annuler.Click += new System.EventHandler(this.btn_annuler_Click);
+            this.btn_annuler.Click += new System.EventHandler(this.Btn_annuler_Click);
             // 
             // btn_envoyer
             // 
@@ -933,7 +933,7 @@
             this.btn_envoyer.TabIndex = 30;
             this.btn_envoyer.Text = "Envoyer le formulaire";
             this.btn_envoyer.UseVisualStyleBackColor = true;
-            this.btn_envoyer.Click += new System.EventHandler(this.btn_envoyer_Click);
+            this.btn_envoyer.Click += new System.EventHandler(this.Btn_envoyer_Click);
             // 
             // frm_preinscription
             // 
@@ -949,8 +949,8 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Formulaire de pré-inscription";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frm_preinscription_FormClosed);
-            this.Load += new System.EventHandler(this.frm_preinscription_Load);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Frm_preinscription_FormClosed);
+            this.Load += new System.EventHandler(this.Frm_preinscription_Load);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
             this.groupBox_infosPerso.ResumeLayout(false);

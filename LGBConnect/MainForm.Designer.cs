@@ -99,7 +99,7 @@
             this.btn_Connexion.TabIndex = 3;
             this.btn_Connexion.Text = "connexion";
             this.btn_Connexion.UseVisualStyleBackColor = true;
-            this.btn_Connexion.Click += new System.EventHandler(this.btn_Connexion_Click);
+            this.btn_Connexion.Click += new System.EventHandler(this.Btn_Connexion_Click);
             // 
             // textBox_MotDePasse
             // 
@@ -171,7 +171,7 @@
             this.btn_inscription.TabIndex = 4;
             this.btn_inscription.Text = "Inscrivez-vous !";
             this.btn_inscription.UseVisualStyleBackColor = true;
-            this.btn_inscription.Click += new System.EventHandler(this.btn_inscription_Click);
+            this.btn_inscription.Click += new System.EventHandler(this.Btn_inscription_Click);
             // 
             // tableLayoutPanel_resa
             // 

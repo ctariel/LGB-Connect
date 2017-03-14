@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LGBConnect</RootNamespace>
     <AssemblyName>LGBConnect</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <IsWebBootstrapper>false</IsWebBootstrapper>
@@ -29,6 +29,7 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -120,11 +121,13 @@
     <Compile Include="classes\ComboBoxItem.cs" />
     <Compile Include="classes\ConfigLogiciel.cs" />
     <Compile Include="classes\Espace.cs" />
+    <Compile Include="classes\Forfait.cs" />
     <Compile Include="classes\Keyboard.cs" />
     <Compile Include="classes\Parametres.cs" />
     <Compile Include="classes\Poste.cs" />
     <Compile Include="classes\Resa.cs" />
     <Compile Include="classes\Salle.cs" />
+    <Compile Include="classes\Transaction.cs" />
     <Compile Include="frm_MsgBox.cs">
       <SubType>Form</SubType>
     </Compile>

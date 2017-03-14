@@ -22,19 +22,19 @@ namespace LGBConnect.classes
         private int _deconnexionAuto;
         private int _fermetureSesssion;
 
-        public Boolean pageInscription
+        public Boolean PageInscription
         {
             get
             {
                 return (_pageInscription != 0);
             }
         }
-        public Boolean exists()
+        public Boolean Exists()
         {
             return _id != 0;
         }
 
-        public Boolean deconnexionAuto
+        public Boolean DeconnexionAuto
         {
             get
             {
@@ -44,7 +44,7 @@ namespace LGBConnect.classes
 
         public ConfigLogiciel(int idEspace)
         {
-            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.ConnectionString);
             try
             {
                 // on cherche la salle associé au poste
@@ -70,30 +70,30 @@ namespace LGBConnect.classes
                         _deconnexionAuto = rdr.GetInt32("deconnexion_auto_logiciel");
                         _fermetureSesssion = rdr.GetInt32("fermeture_session_auto");
 
-                        if (Parametres.debug == "all")
+                        if (Parametres.Debug == "all")
                         {
-                            MainForm.writeLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : ConfigLogiciel trouvée : id = " + _id);
-                            MainForm.writeLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : idEspace = " + _id);
-                            MainForm.writeLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : _configMenu = " + _configMenu);
-                            MainForm.writeLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : _pageInscription = " + _pageInscription);
-                            MainForm.writeLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : _pageRenseignement = " + _pageRenseignement);
-                            MainForm.writeLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : _connexionAnim = " + _connexionAnim);
-                            MainForm.writeLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : _bloquageTouche = " + _bloquageTouche);
-                            MainForm.writeLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : _affichageTemps = " + _affichageTemps);
-                            MainForm.writeLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : _deconnexionAuto = " + _deconnexionAuto);
-                            MainForm.writeLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : _fermetureSesssion = " + _fermetureSesssion);
+                            MainForm.WriteLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : ConfigLogiciel trouvée : id = " + _id);
+                            MainForm.WriteLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : idEspace = " + _id);
+                            MainForm.WriteLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : _configMenu = " + _configMenu);
+                            MainForm.WriteLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : _pageInscription = " + _pageInscription);
+                            MainForm.WriteLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : _pageRenseignement = " + _pageRenseignement);
+                            MainForm.WriteLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : _connexionAnim = " + _connexionAnim);
+                            MainForm.WriteLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : _bloquageTouche = " + _bloquageTouche);
+                            MainForm.WriteLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : _affichageTemps = " + _affichageTemps);
+                            MainForm.WriteLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : _deconnexionAuto = " + _deconnexionAuto);
+                            MainForm.WriteLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : _fermetureSesssion = " + _fermetureSesssion);
 
                         }
                     }
                 }
                 else
                 {
-                    MainForm.writeLog("Pas de config logiciel trouvée pour l'espace id = " + idEspace + " !");
+                    MainForm.WriteLog("Pas de config logiciel trouvée pour l'espace id = " + idEspace + " !");
                 }
             }
             catch (Exception ex)
             {
-                MainForm.writeLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : Connexion echouée !!" + ex.ToString());
+                MainForm.WriteLog("ConfigLogiciel.cs->ConfigLogiciel(idEspace) : Connexion echouée !!" + ex.ToString());
             }
             cnn.Close();
 

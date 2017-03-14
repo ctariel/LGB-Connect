@@ -40,29 +40,29 @@ namespace LGBConnect
 
                 if (verification_Config() == 0)
                 {
-                    if (Parametres.debug == "all")
+                    if (Parametres.Debug == "all")
                     {
-                        MainForm.writeLog("SplashScreen.cs->chargement() : Config ok -----------------");
-                        MainForm.writeLog("mysql - hote :" + Parametres.db_hote);
-                        MainForm.writeLog("mysql - base :" + Parametres.db_base);
-                        MainForm.writeLog("mysql - utilisateur :" + Parametres.db_utilisateur);
-                        MainForm.writeLog("mysql - mot de passe :" + Parametres.db_motdepasse);
-                        MainForm.writeLog("poste - nom :" + Parametres.poste_nom);
-                        MainForm.writeLog("poste - id :" + Parametres.poste_id);
-                        MainForm.writeLog("poste - MAC :" + Parametres.poste_adresse_MAC);
-                        MainForm.writeLog("poste - type :" + Parametres.poste_type);
-                        MainForm.writeLog("poste - chrono :" + Parametres.poste_chrono);
-                        MainForm.writeLog("poste - debug :" + Parametres.debug);
-                        MainForm.writeLog("SplashScreen.cs->chargement() : Config ok -----------------");
+                        MainForm.WriteLog("SplashScreen.cs->chargement() : Config ok -----------------");
+                        MainForm.WriteLog("mysql - hote :" + Parametres.Db_hote);
+                        MainForm.WriteLog("mysql - base :" + Parametres.Db_base);
+                        MainForm.WriteLog("mysql - utilisateur :" + Parametres.Db_utilisateur);
+                        MainForm.WriteLog("mysql - mot de passe :" + Parametres.Db_motdepasse);
+                        MainForm.WriteLog("poste - nom :" + Parametres.Poste_nom);
+                        MainForm.WriteLog("poste - id :" + Parametres.Poste_id);
+                        MainForm.WriteLog("poste - MAC :" + Parametres.Poste_adresse_MAC);
+                        MainForm.WriteLog("poste - type :" + Parametres.Poste_type);
+                        MainForm.WriteLog("poste - chrono :" + Parametres.Poste_chrono);
+                        MainForm.WriteLog("poste - debug :" + Parametres.Debug);
+                        MainForm.WriteLog("SplashScreen.cs->chargement() : Config ok -----------------");
 
                     }
                     progressBar_Splash.PerformStep();
 
                     if (verification_Connexion_Base() == 0)
                     {
-                        if (Parametres.debug == "all")
+                        if (Parametres.Debug == "all")
                         {
-                            MainForm.writeLog("SplashScreen.cs-> chargement() : connexion à la base ok ");
+                            MainForm.WriteLog("SplashScreen.cs-> chargement() : connexion à la base ok ");
                         }
                         progressBar_Splash.PerformStep();
                         retour = 0;
@@ -115,7 +115,7 @@ namespace LGBConnect
         /// <returns>0 en cas de succès, 1 en cas d'échec</returns>
         private int verification_Config()
         {
-            return Parametres.lireConfiguration();
+            return Parametres.LireConfiguration();
         }
 
         /// <summary>
@@ -128,7 +128,7 @@ namespace LGBConnect
             //System.Diagnostics.Debug.WriteLine("connection string = " + parentForm.connectionString);
             try
             {
-                cnn = new MySqlConnection(Parametres.connectionString);
+                cnn = new MySqlConnection(Parametres.ConnectionString);
                 cnn.Open();
                 // MessageBox.Show("connexion réussie !! ");
             }

@@ -16,7 +16,7 @@ namespace LGBConnect.classes
         private int _idEspace;
         private String _commentaire;
 
-        public String nom
+        public String Nom
         {
             get
             {
@@ -24,7 +24,7 @@ namespace LGBConnect.classes
             }
         }
 
-        public int idEspace
+        public int IdEspace
         {
             get
             {
@@ -34,7 +34,7 @@ namespace LGBConnect.classes
 
         public Salle(String nomPoste)
         {
-            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.ConnectionString);
             try
             {
                 // on cherche la salle associé au poste
@@ -54,20 +54,20 @@ namespace LGBConnect.classes
                         _idEspace = rdr.GetInt32("id_espace");
                         _commentaire = rdr.GetString("comment_salle");
 
-                        if (Parametres.debug == "all")
+                        if (Parametres.Debug == "all")
                         {
-                            MainForm.writeLog("Salle.cs->Salle(nomPoste) : salle trouvée : id = " + _id);
+                            MainForm.WriteLog("Salle.cs->Salle(nomPoste) : salle trouvée : id = " + _id);
                         }
                     }
                 }
                 else
                 {
-                    MainForm.writeLog("Salle.cs->Salle(nomPoste) : Pas de salle trouvée pour ce poste ! Veuillez revoir la configuration du logiciel !");
+                    MainForm.WriteLog("Salle.cs->Salle(nomPoste) : Pas de salle trouvée pour ce poste ! Veuillez revoir la configuration du logiciel !");
                 }
             }
             catch (Exception ex)
             {
-                MainForm.writeLog("Salle.cs->Salle(nomPoste) : Connexion echouée !!" + ex.ToString());
+                MainForm.WriteLog("Salle.cs->Salle(nomPoste) : Connexion echouée !!" + ex.ToString());
             }
             cnn.Close();
         }

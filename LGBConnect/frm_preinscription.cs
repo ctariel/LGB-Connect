@@ -13,47 +13,47 @@ using LGBConnect.classes;
 
 namespace LGBConnect
 {
-    public partial class frm_preinscription : Form
+    public partial class Frm_preinscription : Form
     {
         MainForm parentForm;
 
-        public frm_preinscription(MainForm mainForm)
+        public Frm_preinscription(MainForm mainForm)
         {
             InitializeComponent();
             parentForm = mainForm;
         }
 
-        private void frm_preinscription_Load(object sender, EventArgs e)
+        private void Frm_preinscription_Load(object sender, EventArgs e)
         {
-            remplirComboCodePostal();
-            remplirComboVille();
-            remplirComboPays();
-            remplirComboEPN();
-            remplirComboMetier();
+            RemplirComboCodePostal();
+            RemplirComboVille();
+            RemplirComboPays();
+            RemplirComboEPN();
+            RemplirComboMetier();
 
         }
 
-        private void frm_preinscription_FormClosed(object sender, FormClosedEventArgs e)
+        private void Frm_preinscription_FormClosed(object sender, FormClosedEventArgs e)
         {
             parentForm.TopMost = true;
         }
 
-        private void btn_annuler_Click(object sender, EventArgs e)
+        private void Btn_annuler_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void comboBox_codePostal_TextChanged(object sender, EventArgs e)
+        private void ComboBox_codePostal_TextChanged(object sender, EventArgs e)
         {
-            remplirComboVille();
+            RemplirComboVille();
         }
 
-        private void comboBox_ville_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboBox_ville_SelectedIndexChanged(object sender, EventArgs e)
         {
-            remplirComboPays();
+            RemplirComboPays();
         }
 
-        private void checkBox_equipement_aucun_CheckedChanged(object sender, EventArgs e)
+        private void CheckBox_equipement_aucun_CheckedChanged(object sender, EventArgs e)
         {
             checkBox_equipement_ordinateur.Enabled = !checkBox_equipement_aucun.Checked;
             checkBox_equipement_tablette.Enabled = !checkBox_equipement_aucun.Checked;
@@ -61,43 +61,43 @@ namespace LGBConnect
             checkBox_equipement_television.Enabled = !checkBox_equipement_aucun.Checked;
         }
 
-        private void checkBox_equipement_ordinateur_CheckedChanged(object sender, EventArgs e)
+        private void CheckBox_equipement_ordinateur_CheckedChanged(object sender, EventArgs e)
         {
-            enable_checkBox_equipement_aucun();
+            Enable_checkBox_equipement_aucun();
         }
-        private void checkBox_equipement_tablette_CheckedChanged(object sender, EventArgs e)
+        private void CheckBox_equipement_tablette_CheckedChanged(object sender, EventArgs e)
         {
-            enable_checkBox_equipement_aucun();
-        }
-
-        private void checkBox_equipement_smartphone_CheckedChanged(object sender, EventArgs e)
-        {
-            enable_checkBox_equipement_aucun();
+            Enable_checkBox_equipement_aucun();
         }
 
-        private void checkBox_equipement_television_CheckedChanged(object sender, EventArgs e)
+        private void CheckBox_equipement_smartphone_CheckedChanged(object sender, EventArgs e)
         {
-            enable_checkBox_equipement_aucun();
+            Enable_checkBox_equipement_aucun();
         }
 
-        private void checkBox_equipement_internetMaison_CheckedChanged(object sender, EventArgs e)
+        private void CheckBox_equipement_television_CheckedChanged(object sender, EventArgs e)
         {
-            enable_checkBox_equipement_pasdeconnexion();
+            Enable_checkBox_equipement_aucun();
         }
 
-        private void checkBox_equipement_internetMobile_CheckedChanged(object sender, EventArgs e)
+        private void CheckBox_equipement_internetMaison_CheckedChanged(object sender, EventArgs e)
         {
-            enable_checkBox_equipement_pasdeconnexion();
+            Enable_checkBox_equipement_pasdeconnexion();
+        }
+
+        private void CheckBox_equipement_internetMobile_CheckedChanged(object sender, EventArgs e)
+        {
+            Enable_checkBox_equipement_pasdeconnexion();
 
         }
 
-        private void checkBox_equipement_pasdeconnexion_CheckedChanged(object sender, EventArgs e)
+        private void CheckBox_equipement_pasdeconnexion_CheckedChanged(object sender, EventArgs e)
         {
             checkBox_equipement_internetMobile.Enabled = !checkBox_equipement_pasdeconnexion.Checked;
             checkBox_equipement_internetMaison.Enabled = !checkBox_equipement_pasdeconnexion.Checked;
         }
 
-        private void enable_checkBox_equipement_aucun()
+        private void Enable_checkBox_equipement_aucun()
         {
             if (checkBox_equipement_ordinateur.Checked || checkBox_equipement_smartphone.Checked || checkBox_equipement_tablette.Checked || checkBox_equipement_television.Checked)
             {
@@ -109,7 +109,7 @@ namespace LGBConnect
             }
         }
 
-        private void enable_checkBox_equipement_pasdeconnexion()
+        private void Enable_checkBox_equipement_pasdeconnexion()
         {
             if (checkBox_equipement_internetMaison.Checked || checkBox_equipement_internetMobile.Checked)
             {
@@ -121,10 +121,10 @@ namespace LGBConnect
             }
         }
 
-        private void remplirComboCodePostal()
+        private void RemplirComboCodePostal()
         {
 
-            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.ConnectionString);
             DataSet ds_codesPostaux;
             string sql = string.Empty;
 
@@ -154,9 +154,9 @@ namespace LGBConnect
             }
         }
 
-        private void remplirComboVille()
+        private void RemplirComboVille()
         {
-            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.ConnectionString);
             DataSet ds_Villes;
             string sql = string.Empty;
 
@@ -196,9 +196,9 @@ namespace LGBConnect
                 System.Diagnostics.Debug.WriteLine("Connexion echouée !!" + ex.ToString());
             }
         }
-        private void remplirComboPays()
+        private void RemplirComboPays()
         {
-            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.ConnectionString);
             DataSet ds_Pays;
             string sql = string.Empty;
 
@@ -238,18 +238,18 @@ namespace LGBConnect
             }
         }
 
-        private void remplirComboEPN()
+        private void RemplirComboEPN()
         {
-            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.ConnectionString);
             DataSet ds_EPN;
             string sql = string.Empty;
             
             // récupération de l'id et du nom de la salle
-            Salle salle = new Salle(Parametres.poste_nom);
+            Salle salle = new Salle(Parametres.Poste_nom);
 
             try
             {
-                sql = "SELECT tab_espace.* FROM tab_espace WHERE tab_espace.id_espace ='" + salle.idEspace + "'";
+                sql = "SELECT tab_espace.* FROM tab_espace WHERE tab_espace.id_espace ='" + salle.IdEspace + "'";
 
                 MySqlDataAdapter da_EPN = new MySqlDataAdapter(sql, cnn);
                 MySqlCommandBuilder cb = new MySqlCommandBuilder(da_EPN);
@@ -274,9 +274,9 @@ namespace LGBConnect
 
         }
 
-        private void remplirComboMetier()
+        private void RemplirComboMetier()
         {
-            MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
+            MySqlConnection cnn = new MySqlConnection(Parametres.ConnectionString);
             DataSet ds_Metier;
             string sql = string.Empty;
 
@@ -315,7 +315,7 @@ namespace LGBConnect
 
         }
 
-        private void btn_envoyer_Click(object sender, EventArgs e)
+        private void Btn_envoyer_Click(object sender, EventArgs e)
         {
             bool form_valide = true;
             String sexe;
@@ -484,7 +484,7 @@ namespace LGBConnect
 
             if (form_valide)
             {
-                MySqlConnection cnn = new MySqlConnection(Parametres.connectionString);
+                MySqlConnection cnn = new MySqlConnection(Parametres.ConnectionString);
                 cnn.Open();
                 try
                 {

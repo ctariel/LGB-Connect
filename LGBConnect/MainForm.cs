@@ -34,7 +34,7 @@ namespace LGBConnect
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            Parametres.debug = "no"; // par défaut
+            Parametres.Debug = "no"; // par défaut
 
             int retour = 0;
 
@@ -56,23 +56,23 @@ namespace LGBConnect
 
             }
 
-            if (Parametres.debug == "all")
+            if (Parametres.Debug == "all")
             {
-                MainForm.writeLog("mainForm.cs->load : chargement de la configuration terminé");
+                MainForm.WriteLog("mainForm.cs->load : chargement de la configuration terminé");
             }
 
             // timer pour mettre à jour la base de données quand le logiciel est actif (tab_computer.lastetat)
             timer_MAJEtat.Interval = 5000; 
-            timer_MAJEtat.Tick += new EventHandler(timer_MAJEtat_Tick);
+            timer_MAJEtat.Tick += new EventHandler(Timer_MAJEtat_Tick);
             timer_MAJEtat.Start();
         }
 
         private void MainForm_Shown(object sender, EventArgs e)
         {
 
-            if (Parametres.debug == "all")
+            if (Parametres.Debug == "all")
             {
-                MainForm.writeLog("mainForm.cs->MainForm_Shown");
+                MainForm.WriteLog("mainForm.cs->MainForm_Shown");
             }
 
 
@@ -84,30 +84,30 @@ namespace LGBConnect
             this.Hide();
 
             // récupération de l'id et du nom de la salle
-            poste = new Poste(Parametres.poste_id);
-            Salle salle = new Salle(Parametres.poste_nom);
-            Espace espace = new Espace(salle.idEspace);
+            poste = new Poste(Parametres.Poste_id);
+            Salle salle = new Salle(Parametres.Poste_nom);
+            Espace espace = new Espace(salle.IdEspace);
 
-            lbl_Espace.Text = espace.nom + "\n" + salle.nom;
+            lbl_Espace.Text = espace.Nom + "\n" + salle.Nom;
 
             // on vérifie que pour l'espace sélectionné, il y a une config logiciel dans cyberGestionnaire.
             // Pour le moment, cette configuration ne sert qu'à déterminer s'il faut afficher la page de préinscription
-            configLogiciel = new ConfigLogiciel(salle.idEspace);
+            configLogiciel = new ConfigLogiciel(salle.IdEspace);
 
-            if (configLogiciel.exists() && configLogiciel.pageInscription)
+            if (configLogiciel.Exists() && configLogiciel.PageInscription)
             {
                 groupBox_inscription.Show();
-                if (Parametres.debug == "all")
+                if (Parametres.Debug == "all")
                 {
-                    MainForm.writeLog("mainForm.cs->MainForm_Shown : préinscription activée !");
+                    MainForm.WriteLog("mainForm.cs->MainForm_Shown : préinscription activée !");
                 }
             }
             else
             {
                 groupBox_inscription.Hide();
-                if (Parametres.debug == "all")
+                if (Parametres.Debug == "all")
                 {
-                    MainForm.writeLog("mainForm.cs->MainForm_Shown : préinscription désactivée");
+                    MainForm.WriteLog("mainForm.cs->MainForm_Shown : préinscription désactivée");
                 }
             }
 
@@ -120,68 +120,68 @@ namespace LGBConnect
             // - on rouvre le poste avec l'identifiant trouvé dans la résa. Charge ensuite à frm_temps de se dépatouiller avec ca.
             //   Ce n'est pas l'approche que je retiens
 
-            int idResa = Resa.verifierResaEnCours(Parametres.poste_id);
+            int idResa = Resa.VerifierResaEnCours(Parametres.Poste_id);
             while (idResa != 0)
             {
                 Resa resa = new Resa(idResa);
-                resa.annuler();
-                idResa = Resa.verifierResaEnCours(Parametres.poste_id);
+                resa.Annuler();
+                idResa = Resa.VerifierResaEnCours(Parametres.Poste_id);
             }
 
 
-            if (Parametres.poste_type == "usager")
+            if (Parametres.Poste_type == "usager")
             {
-                if (Parametres.debug == "all")
+                if (Parametres.Debug == "all")
                 {
-                    MainForm.writeLog("mainForm.cs->MainForm_Shown : poste usager : blocage demandé");
+                    MainForm.WriteLog("mainForm.cs->MainForm_Shown : poste usager : blocage demandé");
                 }
 
                 Fonction.blocageGestionnaireDesTaches(true);
                 Fonction.blocageChangementMotDePasse(true);
-                goFullscreen(true);
+                GoFullscreen(true);
             }
-            if (Parametres.poste_type == "animateur")
+            if (Parametres.Poste_type == "animateur")
             {
-                if (Parametres.debug == "all")
+                if (Parametres.Debug == "all")
                 {
-                    MainForm.writeLog("mainForm.cs->MainForm_Shown : poste animateur");
+                    MainForm.WriteLog("mainForm.cs->MainForm_Shown : poste animateur");
                 }
 
             }
             this.Show();
-            timer_MAJEtat_Tick(null, null);
+            Timer_MAJEtat_Tick(null, null);
         }
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if (Parametres.debug == "all")
+            if (Parametres.Debug == "all")
             {
-                MainForm.writeLog("mainForm.cs->MainForm_FormClosed : demande de déblocage et nettoyage");
+                MainForm.WriteLog("mainForm.cs->MainForm_FormClosed : demande de déblocage et nettoyage");
             }
 
             // déblocage systématique
-            blocageRaccourcisClavier(false);
+            BlocageRaccourcisClavier(false);
             Fonction.blocageGestionnaireDesTaches(false);
             Fonction.blocageChangementMotDePasse(false);
             timer_MAJEtat.Stop();
 
-            if (Parametres.debug == "all")
+            if (Parametres.Debug == "all")
             {
-                MainForm.writeLog("mainForm.cs->MainForm_FormClosed : fin du nettoyage");
+                MainForm.WriteLog("mainForm.cs->MainForm_FormClosed : fin du nettoyage");
             }
 
             Application.Exit();
         }
 
-        private void btn_inscription_Click(object sender, EventArgs e)
+        private void Btn_inscription_Click(object sender, EventArgs e)
         {
-            if (Parametres.debug == "all")
+            if (Parametres.Debug == "all")
             {
-                MainForm.writeLog("mainForm.cs->btn_inscription_Click");
+                MainForm.WriteLog("mainForm.cs->btn_inscription_Click");
             }
-            frm_preinscription form_preinscription = new frm_preinscription(this);
+            Frm_preinscription form_preinscription = new Frm_preinscription(this);
             this.TopMost = false;
-            if (Parametres.poste_type == "usager")
+            if (Parametres.Poste_type == "usager")
             {
                 form_preinscription.TopMost = true;
                 form_preinscription.FormBorderStyle = FormBorderStyle.None;
@@ -191,133 +191,156 @@ namespace LGBConnect
             form_preinscription.Show();
         }
 
-        private void btn_Connexion_Click(object sender, EventArgs e)
+        private void Btn_Connexion_Click(object sender, EventArgs e)
         {
-            if (Parametres.debug == "all")
+            if (Parametres.Debug == "all")
             {
-                MainForm.writeLog("mainForm.cs->btn_Connexion_Click");
+                MainForm.WriteLog("mainForm.cs->btn_Connexion_Click");
             }
 
             Utilisateur utilisateur = new Utilisateur(textBox_Utilisateur.Text, textBox_MotDePasse.Text);
-
-            if (utilisateur.id != 0)
+            if (utilisateur.Id != 0)
             {
-
-                if (utilisateur.statut != 1) // cas du login animateur/administrateur
+                if (Parametres.Debug == "all")
                 {
-                    login(utilisateur);
+                    MainForm.WriteLog("mainForm.cs->btn_Connexion_Click : Statut utilisateur = " + utilisateur.Statut);
                 }
-                else
+
+                if (utilisateur.Statut == 3 || utilisateur.Statut == 4) // cas du login animateur/administrateur
                 {
-                    // est ce qu'il existe une résa future ?
-                    if (prochaineResa != null && prochaineResa.id != 0)
+                    Login(utilisateur);
+                }
+                else if(utilisateur.Statut == 2 )
+                {
+                    MessageBox.Show("Votre adhésion est expirée. Veuillez prendre contact avec votre animateur !", "Erreur de connexion", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                else 
+                {
+                    if (utilisateur.AUnForfaitValide())
                     {
-                        // combien de temps reste t'il avant le début de la session ?
-                        TimeSpan diff = DateTime.Now - prochaineResa.debutDeSession;
-                        if (diff.TotalMinutes > -5 && diff.TotalMinutes < prochaineResa.duree) // on verrouille 5 minutes avant
+                        // est ce qu'il existe une résa future ?
+                        if (prochaineResa != null && prochaineResa.Id != 0)
                         {
-                            // dans un intervalle de 5 minutes avant jusqu'à la fin théorique de la résa
-                            // seul l'utilisateur ayant effectué la résa peut se logguer
-                            if (utilisateur.login == prochainUtilisateur.login)
+                            // combien de temps reste t'il avant le début de la session ?
+                            TimeSpan diff = DateTime.Now - prochaineResa.DebutDeSession;
+                            if (diff.TotalMinutes > -5 && diff.TotalMinutes < prochaineResa.Duree) // on verrouille 5 minutes avant
                             {
-                                prochaineResa.activer();
-                                login(utilisateur);
+                                // dans un intervalle de 5 minutes avant jusqu'à la fin théorique de la résa
+                                // seul l'utilisateur ayant effectué la résa peut se logguer
+                                if (utilisateur.Login == prochainUtilisateur.Login)
+                                {
+                                    prochaineResa.Activer();
+                                    Login(utilisateur);
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Poste réservé à " + prochainUtilisateur.Prenom + " " + prochainUtilisateur.Nom + " !!", "Login impossible sur ce poste", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                }
                             }
                             else
                             {
-                                MessageBox.Show("Poste réservé à " + prochainUtilisateur.prenom + " " + prochainUtilisateur.nom + " !!", "Login impossible sur ce poste");
+                                Login(utilisateur);
                             }
                         }
                         else
                         {
-                            login(utilisateur);
+                            // pas de résa à venir
+                            Login(utilisateur);
                         }
                     }
                     else
                     {
-                        // pas de résa à venir
-                        login(utilisateur);
+                        MessageBox.Show("Forfait invalide ! Veuillez contacter l'animateur de l'espace.", "Erreur de connexion", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                 }
             }
             else
             {
-                MessageBox.Show("login ou mot de passe inconnu");
+                MessageBox.Show("login ou mot de passe inconnu", "Erreur de connexion", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
-        private void login(Utilisateur utilisateur)
+        private void Login(Utilisateur utilisateur)
         {
-            if (Parametres.debug == "all")
+            if (Parametres.Debug == "all")
             {
-                MainForm.writeLog("mainForm.cs->login");
-                MainForm.writeLog("mainForm.cs->login : login ok");
-                MainForm.writeLog("nom utilisateur : " + utilisateur.nom);
-                MainForm.writeLog("prenom utilisateur : " + utilisateur.prenom);
-                MainForm.writeLog("id utilisateur : " + utilisateur.id);
-                MainForm.writeLog("statut utilisateur : " + utilisateur.statut);
+                MainForm.WriteLog("mainForm.cs->login");
+                MainForm.WriteLog("mainForm.cs->login : login ok");
+                MainForm.WriteLog("nom utilisateur : " + utilisateur.Nom);
+                MainForm.WriteLog("prenom utilisateur : " + utilisateur.Prenom);
+                MainForm.WriteLog("id utilisateur : " + utilisateur.Id);
+                MainForm.WriteLog("statut utilisateur : " + utilisateur.Statut);
+                MainForm.WriteLog("Validité du forfait : " + utilisateur.AUnForfaitValide().ToString());
             }
 
-            utilisateur.majDerniereVisite();
+            utilisateur.MajDerniereVisite();
 
-            Boolean estAnimateur = (utilisateur.statut != 1);
-            Boolean estPosteAnimateur = (Parametres.poste_type != "usager");
+            int tempsRestant = utilisateur.TempsRestant(); // je stocke la valeur pour éviter de multiples interrogations à la base
 
 
-            if (Parametres.debug == "all")
+            Boolean estAnimateur = (utilisateur.Statut == 3 || utilisateur.Statut == 4);
+            Boolean estPosteAnimateur = (Parametres.Poste_type != "usager");
+
+
+            if (Parametres.Debug == "all")
             {
                 if (estAnimateur)
                 {
-                    MainForm.writeLog("mainForm.cs->login : connexion animateur");
+                    MainForm.WriteLog("mainForm.cs->login : connexion animateur");
                 }
                 else
                 {
-                    MainForm.writeLog("mainForm.cs->login : usager standard");
-                    MainForm.writeLog("temps restant : " + utilisateur.tempsRestant());
+                    MainForm.WriteLog("mainForm.cs->login : usager standard");
+                    MainForm.WriteLog("temps restant : " + tempsRestant);
                 }
             }
 
-            if (estAnimateur || ( utilisateur.tempsRestant() > 0 && !utilisateur.estConnecte(Parametres.poste_id) ) )
+            if (estAnimateur || (tempsRestant > 0 && !utilisateur.EstConnecte(Parametres.Poste_id) ) )
             {
-                if (Parametres.debug == "all")
+                if (Parametres.Debug == "all")
                 {
-                    MainForm.writeLog("mainForm.cs->login : temps ok, demandes de blocages et affichage du temps");
+                    MainForm.WriteLog("mainForm.cs->login : temps ok, demandes de blocages et affichage du temps");
                 }
-                goFullscreen(!estPosteAnimateur);
-                blocageMenu(!estAnimateur);
+                GoFullscreen(!estPosteAnimateur);
+                BlocageMenu(!estAnimateur);
                 Fonction.blocageGestionnaireDesTaches(!estAnimateur);
                 Fonction.blocageChangementMotDePasse(!estAnimateur);
-                blocageRaccourcisClavier(false);
+                BlocageRaccourcisClavier(false);
 
                 this.Hide();
-                frmTemps = new frm_Temps(utilisateur, configLogiciel);
-                frmTemps.ShowInTaskbar = false;
+
+                // a cet endroit, prévoir un affichage pour statistiques (tab_utilisation dans cybergestionnaire)
+
+                frmTemps = new frm_Temps(utilisateur, configLogiciel)
+                {
+                    ShowInTaskbar = false
+                };
                 frmTemps.ShowDialog();
 
-                utilisateur.majDerniereVisite();
+                utilisateur.MajDerniereVisite();
                 // remise en place des blocages en fonction de la configuration du poste
-                if (Parametres.debug == "all")
+                if (Parametres.Debug == "all")
                 {
-                    MainForm.writeLog("mainForm.cs->login : remise en place des blocages");
+                    MainForm.WriteLog("mainForm.cs->login : remise en place des blocages");
                 }
 
                 this.Show();
 
-                goFullscreen(!estPosteAnimateur);
-                blocageMenu(!estPosteAnimateur);
-                blocageRaccourcisClavier(!estPosteAnimateur);
+                GoFullscreen(!estPosteAnimateur);
+                BlocageMenu(!estPosteAnimateur);
+                BlocageRaccourcisClavier(!estPosteAnimateur);
                 Fonction.blocageGestionnaireDesTaches(!estPosteAnimateur);
                 Fonction.blocageChangementMotDePasse(!estPosteAnimateur);
 
-                resetFormLogin();
+                ResetFormLogin();
             }
             else
             {
-                if (utilisateur.tempsRestant() <= 0)
+                if (tempsRestant <= 0)
                 {
                     MessageBox.Show("Crédit temps dépassé !!");
                 }
-                if (utilisateur.estConnecte(Parametres.poste_id))
+                if (utilisateur.EstConnecte(Parametres.Poste_id))
                 {
                     MessageBox.Show("Utilisateur déjà connecté !!");
                 }
@@ -329,57 +352,63 @@ namespace LGBConnect
         /// </summary>
         private void CreateContextMenu()
         {
-            if (Parametres.debug == "all")
+            if (Parametres.Debug == "all")
             {
-                MainForm.writeLog("mainForm.cs->CreateContextMenu");
+                MainForm.WriteLog("mainForm.cs->CreateContextMenu");
             }
             ContextMenuStrip menuStrip = new ContextMenuStrip();
-            menuItemParametres = new ToolStripMenuItem("Parametres");
-            menuItemParametres.Name = "Parametres";
-            menuItemFinSession = new ToolStripMenuItem("Fin de session");
-            menuItemFinSession.Name = "FinSession";
-            menuItemQuitter = new ToolStripMenuItem("Quitter");
-            menuItemQuitter.Name = "Quitter";
-            menuItemParametres.Click += new EventHandler(menuItem_Click);
-            menuItemFinSession.Click += new EventHandler(menuItem_Click);
-            menuItemQuitter.Click += new EventHandler(menuItem_Click);
+            menuItemParametres = new ToolStripMenuItem("Parametres")
+            {
+                Name = "Parametres"
+            };
+            menuItemFinSession = new ToolStripMenuItem("Fin de session")
+            {
+                Name = "FinSession"
+            };
+            menuItemQuitter = new ToolStripMenuItem("Quitter")
+            {
+                Name = "Quitter"
+            };
+            menuItemParametres.Click += new EventHandler(MenuItem_Click);
+            menuItemFinSession.Click += new EventHandler(MenuItem_Click);
+            menuItemQuitter.Click += new EventHandler(MenuItem_Click);
             menuStrip.Items.Add(menuItemParametres);
             menuStrip.Items.Add(menuItemFinSession);
             menuStrip.Items.Add(menuItemQuitter);
             notifyIcon1.ContextMenuStrip = menuStrip;
         }
 
-        void menuItem_Click(object sender, EventArgs e)
+        void MenuItem_Click(object sender, EventArgs e)
         {
-            if (Parametres.debug == "all")
+            if (Parametres.Debug == "all")
             {
-                MainForm.writeLog("mainForm.cs->menuItem_Click");
+                MainForm.WriteLog("mainForm.cs->menuItem_Click");
             }
             ToolStripItem menuItem = (ToolStripItem)sender;
             if (menuItem.Name == "Parametres")
             {
                 assistantConfig assistant = new assistantConfig();
                 assistant.ShowDialog();
-                if (Parametres.poste_type == "usager")
+                if (Parametres.Poste_type == "usager")
                 {
-                    goFullscreen(true);
+                    GoFullscreen(true);
                 }
-                if (Parametres.poste_type == "animateur")
+                if (Parametres.Poste_type == "animateur")
                 {
-                    goFullscreen(false);
+                    GoFullscreen(false);
                 }
 
             }
             if (menuItem.Name == "FinSession")
             {
                 if (frmTemps != null) {
-                    if (Parametres.poste_type == "usager")
+                    if (Parametres.Poste_type == "usager")
                     {
-                        goFullscreen(true);
+                        GoFullscreen(true);
                     }
-                    if (Parametres.poste_type == "animateur")
+                    if (Parametres.Poste_type == "animateur")
                     {
-                        goFullscreen(false);
+                        GoFullscreen(false);
                     }
                     frmTemps.Close();
                 }
@@ -392,11 +421,11 @@ namespace LGBConnect
             }
         }
 
-        private void resetFormLogin()
+        private void ResetFormLogin()
         {
-            if (Parametres.debug == "all")
+            if (Parametres.Debug == "all")
             {
-                MainForm.writeLog("mainForm.cs->resetFormLogin");
+                MainForm.WriteLog("mainForm.cs->resetFormLogin");
             }
             textBox_MotDePasse.Text = "";
             textBox_Utilisateur.Text = "";
@@ -407,11 +436,11 @@ namespace LGBConnect
         /// Forcage en plein écran
         /// </summary>
         /// <param name="go"></param>
-        private void goFullscreen(bool go)
+        private void GoFullscreen(bool go)
         {
-            if (Parametres.debug == "all")
+            if (Parametres.Debug == "all")
             {
-                MainForm.writeLog("mainForm.cs->goFullscreen");
+                MainForm.WriteLog("mainForm.cs->goFullscreen");
             }
             if (go)
             {
@@ -419,7 +448,7 @@ namespace LGBConnect
                 this.FormBorderStyle = FormBorderStyle.None;
                 this.WindowState = FormWindowState.Maximized;
                 this.Bounds = Screen.PrimaryScreen.Bounds;
-                blocageRaccourcisClavier(true);
+                BlocageRaccourcisClavier(true);
             }
             else
             {
@@ -428,15 +457,15 @@ namespace LGBConnect
                 this.WindowState = FormWindowState.Normal;
                 this.Size = new Size(640, 480);
                 this.CenterToScreen();
-                blocageRaccourcisClavier(false);
+                BlocageRaccourcisClavier(false);
             }
         }
 
-        private void blocageMenu(bool blocage)
+        private void BlocageMenu(bool blocage)
         {
-            if (Parametres.debug == "all")
+            if (Parametres.Debug == "all")
             {
-                MainForm.writeLog("mainForm.cs->blocageMenu");
+                MainForm.WriteLog("mainForm.cs->blocageMenu");
             }
             if (blocage)
             {
@@ -450,20 +479,20 @@ namespace LGBConnect
             }
         }
 
-        private void blocageRaccourcisClavier(bool blocage)
+        private void BlocageRaccourcisClavier(bool blocage)
         {
-            if (Parametres.debug == "all")
+            if (Parametres.Debug == "all")
             {
-                MainForm.writeLog("mainForm.cs->blocageRaccourcisClavier");
+                MainForm.WriteLog("mainForm.cs->blocageRaccourcisClavier");
             }
 
             if (blocage)
             {
-                Program.kh.blocageActif = true;
+                Program.kh.BlocageActif = true;
             }
             else
             {
-                Program.kh.blocageActif = false;
+                Program.kh.BlocageActif = false;
             }
 
         }
@@ -476,28 +505,28 @@ namespace LGBConnect
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void timer_MAJEtat_Tick(object sender, EventArgs e)
+        private void Timer_MAJEtat_Tick(object sender, EventArgs e)
         {
-            if (Parametres.debug == "all")
+            if (Parametres.Debug == "all")
             {
-                MainForm.writeLog("mainForm.cs->timer_MAJEtat_Tick : Tick 5s !");
+                MainForm.WriteLog("mainForm.cs->timer_MAJEtat_Tick : Tick 5s !");
             }
 
             // vérification des réservations actives
-            int idResa = Resa.prochaineResa(poste.id);
+            int idResa = Resa.ProchaineResa(poste.Id);
             if (idResa != 0)
             {
                 prochaineResa = new Resa(idResa);
-                prochainUtilisateur = new Utilisateur(prochaineResa.idUtilisateur);
+                prochainUtilisateur = new Utilisateur(prochaineResa.IdUtilisateur);
 
-                TimeSpan diff = DateTime.Now - prochaineResa.debutDeSession;
+                TimeSpan diff = DateTime.Now - prochaineResa.DebutDeSession;
 
                 lbl_resa_texte.Text = "Prochaine réservation du poste";
-                lbl_resa.Text = prochaineResa.dateResa.AddMinutes(prochaineResa.debut).ToString("G") + " (durée : " + prochaineResa.duree + " mn)";
+                lbl_resa.Text = prochaineResa.DateResa.AddMinutes(prochaineResa.Debut).ToString("G") + " (durée : " + prochaineResa.Duree + " mn)";
 
-                if (diff.TotalMinutes > -5 && diff.TotalMinutes < prochaineResa.duree) // on verrouille 5 minutes avant
+                if (diff.TotalMinutes > -5 && diff.TotalMinutes < prochaineResa.Duree) // on verrouille 5 minutes avant
                 {
-                    lbl_resa.Text = lbl_resa.Text + "\n (poste verrouillé pour " + prochainUtilisateur.prenom + " " + prochainUtilisateur.nom + ")";
+                    lbl_resa.Text = lbl_resa.Text + "\n (poste verrouillé pour " + prochainUtilisateur.Prenom + " " + prochainUtilisateur.Nom + ")";
                     lbl_resa.ForeColor = System.Drawing.Color.Red;
                 } else {
                     lbl_resa.ForeColor = System.Drawing.Color.Blue;
@@ -510,7 +539,7 @@ namespace LGBConnect
             }
         }
 
-        public static void writeLog(string message)
+        public static void WriteLog(string message)
         {
             ServiceFonctionsAdmin.FonctionsAdminClient client = new ServiceFonctionsAdmin.FonctionsAdminClient();
             client.writeLog(message);
