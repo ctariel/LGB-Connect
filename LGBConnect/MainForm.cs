@@ -199,14 +199,22 @@ namespace LGBConnect
             }
 
             Utilisateur utilisateur = new Utilisateur(textBox_Utilisateur.Text, textBox_MotDePasse.Text);
-
             if (utilisateur.Id != 0)
             {
-                if (utilisateur.Statut != 1) // cas du login animateur/administrateur
+                if (Parametres.Debug == "all")
+                {
+                    MainForm.WriteLog("mainForm.cs->btn_Connexion_Click : Statut utilisateur = " + utilisateur.Statut);
+                }
+
+                if (utilisateur.Statut == 3 || utilisateur.Statut == 4) // cas du login animateur/administrateur
                 {
                     Login(utilisateur);
                 }
-                else
+                else if(utilisateur.Statut == 2 )
+                {
+                    MessageBox.Show("Votre adhésion est expirée. Veuillez prendre contact avec votre animateur !", "Erreur de connexion", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                else 
                 {
                     if (utilisateur.AUnForfaitValide())
                     {
@@ -226,7 +234,7 @@ namespace LGBConnect
                                 }
                                 else
                                 {
-                                    MessageBox.Show("Poste réservé à " + prochainUtilisateur.Prenom + " " + prochainUtilisateur.Nom + " !!", "Login impossible sur ce poste");
+                                    MessageBox.Show("Poste réservé à " + prochainUtilisateur.Prenom + " " + prochainUtilisateur.Nom + " !!", "Login impossible sur ce poste", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                                 }
                             }
                             else
@@ -242,13 +250,13 @@ namespace LGBConnect
                     }
                     else
                     {
-                        MessageBox.Show("Forfait invalide ! Veuillez contacter l'animateur de l'espace.");
+                        MessageBox.Show("Forfait invalide ! Veuillez contacter l'animateur de l'espace.", "Erreur de connexion", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                 }
             }
             else
             {
-                MessageBox.Show("login ou mot de passe inconnu");
+                MessageBox.Show("login ou mot de passe inconnu", "Erreur de connexion", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
@@ -270,7 +278,7 @@ namespace LGBConnect
             int tempsRestant = utilisateur.TempsRestant(); // je stocke la valeur pour éviter de multiples interrogations à la base
 
 
-            Boolean estAnimateur = (utilisateur.Statut != 1);
+            Boolean estAnimateur = (utilisateur.Statut == 3 || utilisateur.Statut == 4);
             Boolean estPosteAnimateur = (Parametres.Poste_type != "usager");
 
 

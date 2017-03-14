@@ -127,7 +127,7 @@ namespace LGBConnect
                     }
                 }
             }
-            else
+            else if (utilisateur.Statut == 3 || utilisateur.Statut == 4)
             {
                 // connexion admin
                 resa = new Resa(utilisateur.Id, tempsRestant, heureConnexion);
@@ -291,7 +291,7 @@ namespace LGBConnect
 
             if (utilisateur.Statut == 1)
             { // utilisateur standard
-              //tuerLesProcess();
+              // TuerLesProcess();
             }
 
         }
@@ -353,11 +353,11 @@ namespace LGBConnect
             Process[] processes = Process.GetProcesses();
             foreach (var item in processes)
             {
+                Console.WriteLine(item.MainWindowTitle);
                 if (item != Process.GetCurrentProcess())   // don't kill me !!!!
                 {
                     if (item.MainWindowTitle.Length > 0)
                     {
-                        Console.WriteLine(item.MainWindowTitle);
                         if (item.MainWindowTitle != "frm_Temps" && item.MainWindowTitle != "LGBConnect (Débogage) - Microsoft Visual Studio (Administrateur)" && item.MainWindowTitle != "LGBConnect (Exécution) - Microsoft Visual Studio (Administrateur)")
                         {
                             // MessageBox.Show("Closing " + item.MainWindowTitle);
