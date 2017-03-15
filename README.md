@@ -2,9 +2,18 @@
 Logiciel pour les postes clients de cybergestionnaire :
 http://sourceforge.net/projects/cybergestionnaire/ ou http://maxletesteur.jimdo.com/ateliers/supports-animateurs/cyber-gestionnaire/
 
-# LGB Connect version 0.4.0
 
-Cete version n'apporte pas de nouveauté du coté utilisateur. Elle est surtout destinée à résoudre les problèmes d'instabilité rencontrés dans les version 0.3.x. Ces instabilités étaient du au code qui interceptait les raccourcis clavier tels que ctrl+esc ou alt+f4. En cas de charge système importante, ou simplement lors de la sortie de veille, le "low level hook" était supprimé sans avertissement par Windows, entrainant le crash de l'application. Ce "Low Level Hook" est désormais géré différement, et ne devrait plus entrainer le crash en cas de dysfonctionnement (en tout cas, mes tests ont été concluants !). 
+# LGB Connect version 0.5.0
+
+Au menu, 2 ajouts :
+- vérification du statut de l'utilisateur : si celui-ci est inactif dans CyberGestionnaire, il ne peut plus se connecter. Ce n'était pas le cas auparavant, un bug lui donnait en réalité un temps infini !
+- Vérification du forfait temps : si un utilisateur n'a pas de forfait de consultation affecté, il ne peut plus se connecter.
+
+Comme pour les versions précédentes, pour mettre à jour LGB-Connect, il faut d'abord désinstaller l'ancienne version, redémarrer, puis réinstaller la nouvelle et re-redémarrer.
+
+## LGB Connect version 0.4.0
+
+Cette version n'apporte pas de nouveauté du coté utilisateur. Elle est surtout destinée à résoudre les problèmes d'instabilité rencontrés dans les version 0.3.x. Ces instabilités étaient du au code qui interceptait les raccourcis clavier tels que ctrl+esc ou alt+f4. En cas de charge système importante, ou simplement lors de la sortie de veille, le "low level hook" était supprimé sans avertissement par Windows, entrainant le crash de l'application. Ce "Low Level Hook" est désormais géré différement, et ne devrait plus entrainer le crash en cas de dysfonctionnement (en tout cas, mes tests ont été concluants !). 
 
 Comme pour les versions précédentes, pour mettre à jour LGB-Connect, il faut d'abord désinstaller l'ancienne version, redémarrer, puis réinstaller la nouvelle et re-redémarrer.
 
