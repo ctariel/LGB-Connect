@@ -39,13 +39,13 @@ namespace LGBServ
                 {
                     reg.SetValue("DisableTaskMgr", 1, RegistryValueKind.DWord);
                     reg.SetValue("DisableLockWorkstation", 1, RegistryValueKind.DWord);
-                    Service_LGB.WriteLog("Gestionnaire des taches désactivé pour le SSID : " + SSID);
+                    //Service_LGB.WriteLog("Gestionnaire des taches désactivé pour le SSID : " + SSID);
                 }
                 else
                 {
                     reg.SetValue("DisableTaskMgr", 0, RegistryValueKind.DWord);
                     reg.SetValue("DisableLockWorkstation", 0, RegistryValueKind.DWord);
-                    Service_LGB.WriteLog("Gestionnaire des taches ré-activé pour le SSID : " + SSID);
+                    //Service_LGB.WriteLog("Gestionnaire des taches ré-activé pour le SSID : " + SSID);
                 }
                 reg.Close();
                 return true;
@@ -79,12 +79,12 @@ namespace LGBServ
                 if (desactive)
                 {
                     reg.SetValue("DisableChangePassword", 1, RegistryValueKind.DWord);
-                    Service_LGB.WriteLog("Changement du mot de passe désactivé pour le SSID : " + SSID);
+                    //Service_LGB.WriteLog("Changement du mot de passe désactivé pour le SSID : " + SSID);
                 }
                 else
                 {
                     reg.SetValue("DisableChangePassword", 0, RegistryValueKind.DWord);
-                    Service_LGB.WriteLog("Changement du mot de passe ré-activé pour le SSID : " + SSID);
+                    //Service_LGB.WriteLog("Changement du mot de passe ré-activé pour le SSID : " + SSID);
                 }
                 reg.Close();
                 return true;
@@ -101,7 +101,7 @@ namespace LGBServ
         /// </summary>
         public Dictionary<String, String> lireProfiles()
         {
-            Service_LGB.WriteLog("Demande de lecture des profiles");
+            //Service_LGB.WriteLog("Demande de lecture des profiles");
 
             try
             {
@@ -112,25 +112,25 @@ namespace LGBServ
                 // Print the contents of the array to the console.
                 foreach (String keyName in keyNames)
                 {
-                    Service_LGB.WriteLog("Clé en cours : " + keyName);
+                    //Service_LGB.WriteLog("Clé en cours : " + keyName);
                     if (keyName.StartsWith("S-1-5-21"))
                     {
-                        Service_LGB.WriteLog("Clé trouvé : " + keyName);
+                        //Service_LGB.WriteLog("Clé trouvé : " + keyName);
                         RegistryKey key = Registry.Users.OpenSubKey(keyName);
                         if (key != null)
                         {
                             key = key.OpenSubKey("Volatile Environment");
                             if (key != null)
                             {
-                                Service_LGB.WriteLog("Ouverture de Volatile");
+                                //Service_LGB.WriteLog("Ouverture de Volatile");
                                 if (key.GetValue("USERNAME") != null)
                                 {
-                                    Service_LGB.WriteLog("Profil trouvé : name  = " + key.GetValue("USERNAME").ToString() + " / SSID = " + keyName);
+                                    //Service_LGB.WriteLog("Profil trouvé : name  = " + key.GetValue("USERNAME").ToString() + " / SSID = " + keyName);
                                     liste[key.GetValue("USERNAME").ToString()] = keyName;
                                 }
                                 else
                                 {
-                                    Service_LGB.WriteLog("pas de username trouvé !");
+                                    //Service_LGB.WriteLog("pas de username trouvé !");
                                 }
                             }
                         }
@@ -189,11 +189,11 @@ namespace LGBServ
             try
             {
                 String configFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.txt");
-                Service_LGB.WriteLog("Création du fichier Ini.");
+                //Service_LGB.WriteLog("Création du fichier Ini.");
 
                 IniFile ini = new IniFile(configFile);
 
-                Service_LGB.WriteLog("Ecriture dans le fichier Ini.");
+                //Service_LGB.WriteLog("Ecriture dans le fichier Ini.");
                 ini.IniWriteValue("mysql", "hote", config["mysql_hote"]);
                 ini.IniWriteValue("mysql", "base", config["mysql_base"]);
                 ini.IniWriteValue("mysql", "utilisateur", config["mysql_utilisateur"]);
@@ -220,7 +220,7 @@ namespace LGBServ
                 String configFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.txt");
                 Dictionary<string, string> config = new Dictionary<string, string>();
 
-                Service_LGB.WriteLog("Demande de lecture de la configration");
+                //Service_LGB.WriteLog("Demande de lecture de la configration");
 
                 if (File.Exists(configFile))
                 {
