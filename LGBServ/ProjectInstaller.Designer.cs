@@ -50,6 +50,7 @@
             this.Installers.AddRange(new System.Configuration.Install.Installer[] {
             this.serviceProcessInstaller_LGB,
             this.serviceInstaller_LGB});
+            this.Committed += new System.Configuration.Install.InstallEventHandler(this.ProjectInstaller_Committed);
 
         }
 
