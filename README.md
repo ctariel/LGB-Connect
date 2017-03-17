@@ -3,7 +3,13 @@ Logiciel pour les postes clients de cybergestionnaire :
 http://sourceforge.net/projects/cybergestionnaire/ ou http://maxletesteur.jimdo.com/ateliers/supports-animateurs/cyber-gestionnaire/
 
 
-# LGB Connect version 0.5.0
+# LGB Connect version 0.5.1
+
+A la demande de mon espace, la fenetre d'affichage du temps est désormais transparente, et permet de pouvoir interagir avec les élément dessous (en dehors du bouton de déconnexion).
+
+Pour la mise à jour, j'ai gagné un redémarrage : vous pouvez désinstaller et réinstaller dans la foulée. Ensuite, un redémarrage reste la manière la plus simple de faire, mais pour les motivés, on peut démarrer le service "Service LGB" puis le programme manuellement sans avoir à redémarrer le poste. La prochaine étape pour moi consistera à permettre la mise à jour sans désinstallation.
+
+## LGB Connect version 0.5.0
 
 Au menu, 2 ajouts :
 - vérification du statut de l'utilisateur : si celui-ci est inactif dans CyberGestionnaire, il ne peut plus se connecter. Ce n'était pas le cas auparavant, un bug lui donnait en réalité un temps infini !
