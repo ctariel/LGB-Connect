@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Win32;
+using System.Security.Cryptography;
 
 namespace LGBServ
 {
@@ -194,10 +195,10 @@ namespace LGBServ
                 IniFile ini = new IniFile(configFile);
 
                 //Service_LGB.WriteLog("Ecriture dans le fichier Ini.");
-                ini.IniWriteValue("mysql", "hote", config["mysql_hote"]);
-                ini.IniWriteValue("mysql", "base", config["mysql_base"]);
-                ini.IniWriteValue("mysql", "utilisateur", config["mysql_utilisateur"]);
-                ini.IniWriteValue("mysql", "mot_de_passe", config["mysql_mot_de_passe"]);
+                ini.IniWriteValue("mysql", "hote", Encrypt(config["mysql_hote"], "graindesel"));
+                ini.IniWriteValue("mysql", "base", Encrypt(config["mysql_base"], "graindesel"));
+                ini.IniWriteValue("mysql", "utilisateur", Encrypt(config["mysql_utilisateur"], "graindesel"));
+                ini.IniWriteValue("mysql", "mot_de_passe", Encrypt(config["mysql_mot_de_passe"], "graindesel"));
                 ini.IniWriteValue("poste", "nom", config["poste_nom"]);
                 ini.IniWriteValue("poste", "id", config["poste_id"]);
                 ini.IniWriteValue("poste", "adresse_MAC", config["poste_adresse_MAC"]);
@@ -220,16 +221,17 @@ namespace LGBServ
                 String configFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.txt");
                 Dictionary<string, string> config = new Dictionary<string, string>();
 
-                //Service_LGB.WriteLog("Demande de lecture de la configration");
+                Service_LGB.WriteLog("Demande de lecture de la configration");
 
                 if (File.Exists(configFile))
                 {
                     IniFile ini = new IniFile(configFile);
 
-                    config["mysql_hote"] = ini.IniReadValue("mysql", "hote").Trim('\0');
-                    config["mysql_base"] = ini.IniReadValue("mysql", "base").Trim('\0');
-                    config["mysql_utilisateur"] = ini.IniReadValue("mysql", "utilisateur").Trim('\0');
-                    config["mysql_mot_de_passe"] = ini.IniReadValue("mysql", "mot_de_passe").Trim('\0');
+                    Service_LGB.WriteLog("Données avant décryptage : " + ini.IniReadValue("mysql", "hote").Trim('\0'));
+                    config["mysql_hote"] = Decrypt(ini.IniReadValue("mysql", "hote").Trim('\0'), "graindesel");
+                    config["mysql_base"] = Decrypt(ini.IniReadValue("mysql", "base").Trim('\0'), "graindesel");
+                    config["mysql_utilisateur"] = Decrypt(ini.IniReadValue("mysql", "utilisateur").Trim('\0'), "graindesel");
+                    config["mysql_mot_de_passe"] = Decrypt(ini.IniReadValue("mysql", "mot_de_passe").Trim('\0'), "graindesel");
                     config["poste_nom"] = ini.IniReadValue("poste", "nom").Trim('\0');
                     config["poste_id"] = ini.IniReadValue("poste", "id").Trim('\0');
                     config["poste_adresse_MAC"] = ini.IniReadValue("poste", "adresse_MAC").Trim('\0');
@@ -264,5 +266,26 @@ namespace LGBServ
         {
             Service_LGB.WriteLog("client : " + message);
         }
+
+        static public string Encrypt(string password, string salt)
+        {
+            byte[] passwordBytes = Encoding.Unicode.GetBytes(password);
+            byte[] saltBytes = Encoding.Unicode.GetBytes(salt);
+
+            byte[] cipherBytes = ProtectedData.Protect(passwordBytes, saltBytes, DataProtectionScope.CurrentUser);
+
+            return Convert.ToBase64String(cipherBytes);
+        }
+
+        static public string Decrypt(string cipher, string salt)
+        {
+            byte[] cipherBytes = Convert.FromBase64String(cipher);
+            byte[] saltBytes = Encoding.Unicode.GetBytes(salt);
+
+            byte[] passwordBytes = ProtectedData.Unprotect(cipherBytes, saltBytes, DataProtectionScope.CurrentUser);
+
+            return Encoding.Unicode.GetString(passwordBytes);
+        }
+
     }
 }
