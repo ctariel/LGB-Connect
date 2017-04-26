@@ -2,8 +2,11 @@
 Logiciel pour les postes clients de cybergestionnaire :
 http://sourceforge.net/projects/cybergestionnaire/ ou http://maxletesteur.jimdo.com/ateliers/supports-animateurs/cyber-gestionnaire/
 
+# LGB Connect version 0.5.2
 
-# LGB Connect version 0.5.1
+Désormais, les informations contenues dans le fichier de config sont cryptées. 
+
+## LGB Connect version 0.5.1
 
 A la demande de mon espace, la fenetre d'affichage du temps est désormais transparente, et permet de pouvoir interagir avec les élément dessous (en dehors du bouton de déconnexion).
 
