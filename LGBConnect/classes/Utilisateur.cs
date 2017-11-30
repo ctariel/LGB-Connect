@@ -278,7 +278,7 @@ namespace LGBConnect.classes
                 try
                 {
                     cnn.Open();
-                    String sql = "SELECT tab_forfait.nombre_temps_affectation, tab_forfait.unite_temps_affectation, tab_forfait.frequence_temps_affectation FROM tab_user, rel_forfait_user, tab_forfait WHERE tab_user.id_user = rel_forfait_user.id_user AND rel_forfait_user.id_forfait = tab_forfait.id_forfait AND tab_user.id_user = @idUser";
+                    String sql = "SELECT tab_forfait.nombre_temps_affectation, tab_forfait.unite_temps_affectation, tab_forfait.frequence_temps_affectation FROM tab_user, tab_transactions, tab_forfait WHERE tab_user.id_user = tab_transactions.id_user AND tab_transactions.type_transac = 'temps' AND tab_transactions.id_tarif = tab_forfait.id_forfait AND tab_user.id_user = @idUser";
                     MySqlCommand cmd = new MySqlCommand(sql, cnn);
                     cmd.Parameters.AddWithValue("@idUser", _id);
 

@@ -168,6 +168,7 @@
             this.textBox_MotDePasse.Name = "textBox_MotDePasse";
             this.textBox_MotDePasse.Size = new System.Drawing.Size(174, 20);
             this.textBox_MotDePasse.TabIndex = 4;
+            this.textBox_MotDePasse.UseSystemPasswordChar = true;
             this.textBox_MotDePasse.TextChanged += new System.EventHandler(this.textBox_MotDePasse_TextChanged);
             // 
             // textBox_Base

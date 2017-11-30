@@ -310,8 +310,16 @@ namespace LGBConnect
         {
             String usage = "";
 
-            Parametres.Poste_nom = comboBox_Poste.Text;
-            Parametres.Poste_id = (int)comboBox_Poste.SelectedValue;
+            if (comboBox_MAC.Items.Count > 0)
+            {
+                Parametres.Poste_nom = comboBox_Poste.Text;
+                Parametres.Poste_id = (int)comboBox_Poste.SelectedValue;
+            }
+            else
+            {
+                Parametres.Poste_nom = "";
+                Parametres.Poste_id = 0;
+            }
 
             if (radioButton_PosteAnimateur.Checked)
             {
