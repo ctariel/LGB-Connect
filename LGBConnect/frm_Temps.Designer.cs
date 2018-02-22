@@ -46,6 +46,7 @@
             this.lbl_utilisateur.TabIndex = 0;
             this.lbl_utilisateur.Text = "utilisateur";
             this.lbl_utilisateur.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lbl_utilisateur.UseCompatibleTextRendering = true;
             // 
             // lbl_temps_restant
             // 
